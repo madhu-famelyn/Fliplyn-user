@@ -15,7 +15,7 @@ export default function SignIn() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const { login } = useAuth(); // ✅ Auth context hook
+  const { login } = useAuth();
 
   const countryCodes = [
     { code: '+91', country: 'India' },
@@ -34,12 +34,17 @@ export default function SignIn() {
         if (!email) throw new Error('Please enter your email');
         await initiateLogin({ company_email: email });
       } else {
-        if (!phoneNumber) throw new Error('Please enter your phone number');
-        await initiateLogin({ phone_number: phoneNumber });
+        if (!phoneNumber || phoneNumber.length !== 10) {
+          throw new Error('Please enter a valid 10-digit phone number');
+        }
+
+        const fullPhone = selectedCode.replace('+', '') + phoneNumber;
+        await initiateLogin({ phone_number: fullPhone });
       }
+
       setOtpSent(true);
     } catch (err) {
-      setError(err.detail || 'Failed to send OTP');
+      setError(err.detail || err.message || 'Failed to send OTP');
     } finally {
       setLoading(false);
     }
@@ -49,19 +54,18 @@ export default function SignIn() {
     setError('');
     setLoading(true);
     try {
+      const fullPhone = selectedCode.replace('+', '') + phoneNumber;
+
       const response = await verifyLoginOTP({
-        phone_number: !useEmail ? phoneNumber : undefined,
+        phone_number: !useEmail ? fullPhone : undefined,
         company_email: useEmail ? email : undefined,
         otp,
       });
 
-      // ✅ Store auth data in context
       login(response.access_token, response.user);
-
-      // ✅ Navigate to next page
       navigate('/select-country');
     } catch (err) {
-      setError(err.detail || 'OTP verification failed');
+      setError(err.detail || err.message || 'OTP verification failed');
     } finally {
       setLoading(false);
     }
@@ -75,7 +79,7 @@ export default function SignIn() {
 
       <main className="signin-main">
         <div className="signin-card">
-          <h2>Welcome Back</h2>
+          <h2 className="signin-title">Welcome Back</h2>
           <p className="signin-subtext">
             Sign in to continue ordering from your favorite spots.
           </p>
@@ -105,6 +109,7 @@ export default function SignIn() {
                       placeholder="Enter 10-digit mobile number"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
+                      maxLength={10}
                     />
                   </div>
                   <p className="signin-switch" onClick={() => setUseEmail(true)}>

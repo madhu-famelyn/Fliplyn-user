@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from 'react';
 import {
   BrowserRouter as Router,
@@ -22,13 +23,7 @@ import PaymentSuccess from './Component/Pages/Success/Success';
 import Profile from './Component/Pages/Profile/Profile';
 import Transactions from './Component/Pages/Transactions/Transactions';
 
-import { useAuth, AuthProvider } from './Component/AuthContext/ContextApi';
-
-// 🔒 Wrapper for protected routes
-function PrivateRoute({ children }) {
-  const { token } = useAuth();
-  return token ? children : <Navigate to="/signin" />;
-}
+import { AuthProvider } from './Component/AuthContext/ContextApi';
 
 function AppContent() {
   const [loading, setLoading] = useState(true);
@@ -39,101 +34,22 @@ function AppContent() {
 
   return (
     <Routes>
-      {/* ✅ Public Routes */}
+      {/* Public Routes (no auth required) */}
       <Route path="/" element={<Navigate to="/signin" />} />
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/otp" element={<OtpVerify />} />
-
-      {/* 🔐 Protected Routes */}
-      <Route
-        path="/select-country"
-        element={
-          <PrivateRoute>
-            <SelectCountry />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/select-city"
-        element={
-          <PrivateRoute>
-            <SelectCity />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/confirm-location"
-        element={
-          <PrivateRoute>
-            <ConfirmLocation />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/stalls"
-        element={
-          <PrivateRoute>
-            <Stall />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/categories/:stallId"
-        element={
-          <PrivateRoute>
-            <Category />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/cart"
-        element={
-          <PrivateRoute>
-            <Cart />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/wallet"
-        element={
-          <PrivateRoute>
-            <PaymentMethodPage />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/transactions-wallet"
-        element={
-          <PrivateRoute>
-            <TransactionHistory />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/success"
-        element={
-          <PrivateRoute>
-            <PaymentSuccess />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <PrivateRoute>
-            <Profile />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/trans"
-        element={
-          <PrivateRoute>
-            <Transactions />
-          </PrivateRoute>
-        }
-      />
+      <Route path="/select-country" element={<SelectCountry />} />
+      <Route path="/select-city" element={<SelectCity />} />
+      <Route path="/confirm-location" element={<ConfirmLocation />} />
+      <Route path="/stalls" element={<Stall />} />
+      <Route path="/categories/:stallId" element={<Category />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/wallet" element={<PaymentMethodPage />} />
+      <Route path="/transactions-wallet" element={<TransactionHistory />} />
+      <Route path="/success" element={<PaymentSuccess />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/trans" element={<Transactions />} />
     </Routes>
   );
 }

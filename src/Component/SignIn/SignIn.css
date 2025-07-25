@@ -13,6 +13,23 @@
   font-size: 26px;
   line-height: 33.27px;
 }
+.signin-card h2 {
+  font-size: 22px;
+}
+.signin-title {
+  font-family: "Helvetica Neue", sans-serif;
+  font-weight: 700;
+  font-style: bold; /* Note: This will be ignored if font-weight is already 700 */
+  font-size: 26px;
+  line-height: 33.27px;
+  letter-spacing: 0%;
+  vertical-align: middle;
+  text-align: center;
+
+  /* leading-trim is not widely supported in CSS */
+  /* You can remove it or simulate spacing control manually if needed */
+}
+
 
 /* ==== Header ==== */
 .signin-header-container {
