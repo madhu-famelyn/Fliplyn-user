@@ -1,0 +1,237 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Segoe+UI:wght@400;600&family=Helvetica+Neue:wght@400;700&display=swap');
+
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  color: #000000;
+}
+
+/* Wrapper */
+.receipt-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 16px 16px;
+  background-color: white;
+}
+
+/* Status */
+.status-wrapper {
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.success-status {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 16px;
+  color: #000000;
+}
+
+.success-icon {
+  background-color: #0FBB0F;   /* ✅ green */
+  border-radius: 50%;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  width: 10px;
+  height: 10px;
+}
+
+.success-icon svg {
+  color: white;        /* ✅ white tick */
+  width: 12px;
+  height: 12px;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  background-color: #16c784;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Receipt Card */
+.receipt-card {
+  background-color: white;
+  border: 1px solid #CFCFCF;
+  border-radius: 8px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+/* Title */
+.stall-name {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+/* Token Number */
+.token-no {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #686868;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+/* First line under token */
+.token-no::after {
+  content: "";
+  display: block;
+  margin: 14px auto 0;
+  width: 420px;
+  border-top: 1.5px dashed #000000;
+}
+
+/* Second big dashed line separator */
+.token-separator {
+  width: 420px;
+  border-top: 1.5px dashed #000000;
+  margin: 20px auto;
+}
+
+/* Date + Time */
+.order-date {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Repeating separator lines */
+.separator {
+  width: 420px;
+  border-top: 1.5px dashed #000000;
+  margin: 20px auto;
+}
+
+/* Receipt Table */
+.receipt-table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  color: #000000;
+  text-align: left;
+}
+
+.receipt-table thead th {
+  padding: 10px 0 8px;
+  border-bottom: 1.5px dashed #000000;
+  font-weight: 600;
+}
+
+.receipt-table tbody td {
+  padding: 10px 0;
+  border-bottom: 1.5px dashed #000000;
+}
+
+/* Totals */
+.grand-total-row td {
+  font-weight: 600;
+  padding-top: 12px;
+  border-top: 2px solid #000000;
+}
+
+/* Download Button */
+.download-btn {
+  margin-top: 24px;
+  background-color: #ff6b00;
+  color: white;
+  padding: 12px 20px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #e55e00;
+}
+
+/* Loading State */
+.loading-text {
+  font-size: 16px;
+  color: #666666;
+  margin-top: 80px;
+  text-align: center;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 480px) {
+  .receipt-card {
+    padding: 20px;
+  }
+
+  .stall-name {
+    font-size: 26px;
+  }
+
+  .token-no {
+    font-size: 22px;
+  }
+
+  .download-btn {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .token-no::after,
+  .token-separator,
+  .separator {
+    width: 100%;
+  }
+}
+
+/* External Download Button (outside the card) */
+.download-btn {
+  display: block;
+  margin: 24px auto 0;        /* space above button */
+  background-color: #ff6b00;
+  color: white;
+  padding: 12px 32px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s ease;
+
+  width: 100%;
+  max-width: 490px;   /* ✅ matches token/separator width */
+  text-align: center;
+}
+
+.download-btn:hover {
+  background-color: #e55e00;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 480px) {
+  .download-btn {
+    width: 100%;
+    font-size: 14px;
+    padding: 12px 0;
+  }
+}

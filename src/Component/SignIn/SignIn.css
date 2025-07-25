@@ -1,0 +1,221 @@
+/* ✅ Import Inter (logo) and Helvetica (body) fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Helvetica:wght@400;700&display=swap');
+
+/* ==== Wrapper ==== */
+.signin-wrapper {
+  background-color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Helvetica', 'Helvetica Neue', sans-serif;
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 33.27px;
+}
+
+/* ==== Header ==== */
+.signin-header-container {
+  border: 1px solid #d3d3d3;
+  padding: 0.5rem 2rem;
+}
+
+.signin-header {
+  padding: 1rem 2rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  font-style: normal;
+}
+
+/* ==== Main ==== */
+.signin-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signin-card {
+  width: 90%;
+  max-width: 400px;
+  padding: 2rem;
+  border-radius: 10px;
+  text-align: center;
+  border: none;
+  background-color: #fff;
+}
+
+/* Medium+ screens show border */
+@media screen and (min-width: 768px) {
+  .signin-card {
+    border: 1px solid #ddd;
+  }
+}
+
+.signin-subtext {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 1.5rem;
+  font-weight: 400;
+}
+
+/* ==== Labels ==== */
+.signin-label {
+  font-weight: 400;
+  margin-bottom: 6px;
+  font-size: 14px;
+  display: block;
+  text-align: left;
+  color: #333;
+}
+
+/* ==== Phone Number Input ==== */
+.signin-phone-input {
+  display: flex;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.signin-code {
+  padding: 0.5rem;
+  border: none;
+  background: #f9f9f9;
+  width: 80px;
+  font-size: 14px;
+  border-right: 1px solid #ccc;
+  font-weight: 400;
+}
+
+.signin-number {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* ==== Email & OTP Input ==== */
+.signin-email {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* ==== Toggle Text (Email/Phone) ==== */
+.signin-switch {
+  color: #f57c00;
+  font-weight: 700;
+  font-size: 14px;
+  text-align: left;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+/* ==== Button ==== */
+.signin-button {
+  background: #F17F1C; /* ✅ Updated orange background */
+  border: 1px solid #FFA455; /* ✅ Updated border */
+  padding: 0.7rem;
+  width: 100%;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  box-shadow: 0px 8px 24px 0px #F17F1C4D; /* ✅ Updated deeper shadow */
+  transition: all 0.3s ease;
+}
+
+
+/* ==== Footer ==== */
+.signin-footer {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.signup-link {
+  color: #f57c00;
+  cursor: pointer;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+/* ✅ Mobile Screen Media Queries for SignIn with top spacing + center alignment */
+@media screen and (max-width: 767px) {
+  .signin-header-container {
+    padding: 0.75rem 1rem;
+    border-width: 1px 0;
+  }
+
+  .signin-header {
+    font-size: 24px;
+    padding: 0.75rem 1rem;
+    text-align: left;
+  }
+
+  .signin-main {
+    padding: 1rem;
+    margin-top: 1rem; /* space below header */
+    display: flex;
+    flex-direction: column;
+    align-items: center;       /* ✅ Horizontal center */
+    justify-content: center;   /* ✅ Vertical center */
+    min-height: calc(100vh - 100px); /* Adjust height dynamically */
+  }
+
+  .signin-card {
+    width: 100%;
+    max-width: 380px; /* Optional max width for better layout */
+    padding: 1.25rem;
+    border: none;
+    border-radius: 0;
+    text-align: left;
+  }
+
+  .signin-subtext {
+    font-size: 12px;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .signin-label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .signin-code {
+    width: 70px;
+    font-size: 13px;
+  }
+
+  .signin-number,
+  .signin-email {
+    font-size: 13px;
+    padding: 0.45rem;
+  }
+
+  .signin-switch {
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .signin-button {
+    font-size: 14px;
+    padding: 0.6rem;
+  }
+
+  .signin-footer {
+    font-size: 13px;
+    text-align: center;
+  }
+}

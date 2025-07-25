@@ -1,0 +1,156 @@
+.stall-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: #ffffff;
+}
+/* ✅ Wrap to align heading and subtext to the left */
+.stall-heading-wrapper {
+  text-align: left;
+  margin-left:240px; /* ✅ Adjust spacing from left edge */
+  margin-bottom: 32px;
+}
+
+/* ✅ Heading styling (you can keep or adjust sizes here) */
+.stall-heading {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.stall-subtext {
+  font-size: 18px;
+  color: #888;
+}
+
+/* ✅ Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .stall-heading-wrapper {
+    margin-left: 16px;
+    margin-right: 16px;
+    text-align: left;
+  }
+
+  .stall-heading {
+    font-size: 24px;
+  }
+
+  .stall-subtext {
+    font-size: 14px;
+  }
+
+  .stall-grid {
+    gap: 16px;
+  }
+
+  .stall-card {
+    width: 160px;
+    height: 120px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ✅ Mobile shadow */
+  }
+
+  .stall-image {
+    border-radius: 12px;
+  }
+
+  .view-menu-overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 8px 0;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.65);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    opacity: 1; /* ✅ Always visible on mobile */
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+
+  .stall-card:hover .view-menu-overlay {
+    opacity: 1; /* ✅ Keep this to ensure hover doesn't conflict */
+  }
+}
+
+
+
+.stall-content {
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+}
+
+.stall-heading {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.stall-subtext {
+  font-size: 18px;
+  color: #888;
+  margin-bottom: 32px;
+}
+
+.stall-empty {
+  font-size: 18px;
+  color: #555;
+}
+
+.stall-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.stall-card-wrapper {
+  cursor: pointer;
+}
+
+.stall-card {
+  position: relative;
+  background-color: #f2f2f2;
+  border-radius: 16px;
+  width: 220px;
+  height: 160px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  transition: transform 0.25s ease;
+}
+
+.stall-card:hover {
+  transform: scale(1.03);
+}
+
+.stall-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+/* View menu overlay hidden by default */
+.view-menu-overlay {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-weight: 500;
+  font-size: 16px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+}
+
+/* Show overlay only on hover */
+.stall-card:hover .view-menu-overlay {
+  opacity: 1;
+}

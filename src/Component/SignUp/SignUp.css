@@ -1,0 +1,248 @@
+/* ✅ Import fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
+
+* {
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.signup-wrapper {
+  background-color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✅ Header Styles */
+.signup-header-container {
+  width: 1440px;
+  height: 78px;
+  padding: 24px 30px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.signup-header {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 100%;
+  color: #000000;
+}
+
+/* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* ✅ Signup Card */
+.signup-card {
+  width: 92%;
+  max-width: 340px;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: left;
+  border: none;
+}
+
+@media screen and (min-width: 768px) {
+  .signup-card {
+    border: 1px solid #ddd;
+  }
+}
+
+/* ✅ "Create Your Account" heading */
+.signup-card h2 {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 33.27px;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+/* ✅ Subtext */
+.signup-subtext {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14.26px;
+  color: #555;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* ✅ Label */
+.signup-label {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14.26px;
+  color: #333;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* ✅ Input Fields */
+.signup-input {
+  width: 100%;
+  padding: 0.45rem;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.signup-phone-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.signup-code {
+  padding: 0.45rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  flex: 0 0 75px;
+  font-size: 14px;
+}
+
+.signup-number {
+  flex: 1;
+  padding: 0.45rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+/* ✅ Send OTP Link */
+.signup-send-otp {
+  background: none;
+  border: none;
+  color: #f57c00;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  padding-left: 0;
+}
+
+/* ✅ Switch method link */
+.signup-switch {
+  color: #f57c00;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  margin-top: -0.25rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ✅ Main Button */
+.signup-button {
+  width: 290.4px;
+  height: 38.6px;
+  padding: 14px 36px;
+  gap: 8px;
+  border-radius: 8px;
+  border: 1px solid #FFA455;
+  background: #F17F1C;
+  box-shadow: 0px 8px 24px 0px #F17F1C4D;
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+
+/* ✅ Footer */
+.signup-footer {
+  text-align: center;
+  font-size: 13px;
+  margin-top: 1rem;
+}
+
+.signup-link {
+  color: #f57c00;
+  cursor: pointer;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+
+/* ✅ Mobile Screen Media Queries */
+@media screen and (max-width: 767px) {
+  .signup-header-container {
+    width: 100%;
+    height: auto;
+    padding: 16px 20px;
+    flex-direction: row;
+    justify-content: left;
+  }
+
+  .signup-header {
+    font-size: 24px;
+    text-align: left;
+  }
+
+  .signup-main {
+    padding: 0.5rem;
+  }
+
+  .signup-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 0;
+  }
+
+  .signup-card h2 {
+    font-size: 22px;
+    line-height: 30px;
+  }
+
+  .signup-subtext {
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  .signup-label {
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  .signup-input,
+  .signup-code,
+  .signup-number {
+    font-size: 13px;
+    padding: 0.4rem;
+  }
+
+  .signup-send-otp,
+  .signup-switch {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .signup-button {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+
+  .signup-footer {
+    font-size: 12px;
+    margin-top: 1rem;
+  }
+}

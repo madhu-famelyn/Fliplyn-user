@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap'); /* Optional backup */
+
+
+.transactions-wrapper {
+  background-color: #ffffff;
+  min-height: 100vh;
+  padding: 80px 292px; /* Matches Figma: top, right, bottom, left */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px; /* Matches the vertical gap between elements */
+}
+
+.transactions-container {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 36px;
+  width: 100%;
+  max-width: 856px; /* 1440px - 292*2 (padding left + right) */
+  box-sizing: border-box;
+}
+
+
+
+.transaction-title {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 500;             /* Matches Medium */
+  font-style: normal;
+  font-size: 20px;
+  line-height: 140%;            /* 1.4 or 28px */
+  letter-spacing: 0;
+  margin-bottom: 24px;
+  color: black;
+}
+
+.transaction-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.transaction-header,
+.transaction-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.5fr 1fr;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.transaction-header {
+  font-weight: 600;
+  font-size: 14px;
+  color: #888;
+  border-bottom: 1px solid #ccc;
+}
+
+.transaction-row {
+  font-size: 15px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.transaction-row:last-child {
+  border-bottom: none;
+}
+
+.status {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  width: fit-content;
+}
+
+.status.success {
+  background-color: #d4f5d4;
+  color: #0f8a0f;
+}
+
+.status.failed {
+  background-color: #ffe1e1;
+  color: #c00;
+}
+
+.transactions-loading,
+.transactions-empty {
+  font-size: 16px;
+  color: #999;
+  text-align: center;
+  padding-top: 40px;
+}

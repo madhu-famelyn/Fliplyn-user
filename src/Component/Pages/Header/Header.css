@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap');
+
+
+
+
+/* ✅ Base navbar - Height Reduced */
+.stall-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 16px 51px; /* ⬅️ Reduced vertical padding from 24px to 16px */
+  border-bottom: 1px solid #D0D0D0;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* ✅ Logo (unchanged) */
+.stall-logo {
+  font-family: 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #000000;
+}
+
+/* ✅ Nav links container */
+.stall-links {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+}
+
+.stall-links a {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300; /* Light */
+}
+.stall-links a {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-style: normal;
+  font-weight: 400; /* Regular weight */
+  font-size: 18px;
+  line-height: 100%; /* As per Figma */
+  letter-spacing: 0;
+  color: #000000;
+  text-decoration: none;
+  padding: 6px 0;
+  transition: all 0.3s ease;
+  position: relative;
+  opacity: 1;
+}
+
+
+
+/* ✅ Hover underline effect */
+.stall-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #000;
+  transition: width 0.3s ease-in-out;
+}
+
+.stall-links a:hover::after {
+  width: 100%;
+}
+
+/* ✅ User Icon */
+.user-icon {
+  font-size: 22px;
+  vertical-align: middle;
+}
+
+/* ✅ Hamburger Icon */
+.hamburger {
+  display: none;
+  font-size: 26px;
+  color: #000000;
+  cursor: pointer;
+  z-index: 1100;
+}
+
+/* ✅ Responsive Mobile Nav */
+@media screen and (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .stall-links {
+    position: fixed;
+    top: 86px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 86px);
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 32px 24px;
+    gap: 24px;
+    background-color: #ffffff;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+    z-index: 999;
+  }
+
+  .stall-links.open {
+    transform: translateY(0%);
+  }
+
+  .stall-links a {
+    width: 100%;
+    font-size: 18px;
+  }
+}

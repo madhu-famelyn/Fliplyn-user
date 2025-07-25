@@ -1,0 +1,108 @@
+/* src/pages/SelectCountry.css */
+
+.country-wrapper {
+  background-color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.country-header {
+  border-bottom: 1px solid #ddd;
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.country-content {
+  padding: 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.country-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.country-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.25rem;
+}
+
+.country-card {
+  width: 145px; /* ✅ Slightly increased width */
+  height: 83px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  gap: 0.3rem;
+  text-align: left;
+}
+
+.country-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.country-flag {
+  width: 34px;
+  height: 22px;
+  object-fit: cover;
+}
+
+.country-name {
+  font-family: 'Helvetica Neue', sans-serif; /* ✅ Custom font */
+  font-weight: 500;                          /* ✅ Medium */
+  font-style: normal;
+  font-size: 18px;                           /* ✅ As specified */
+  line-height: 14.4px;
+  letter-spacing: 0%;
+  color: #000;
+  vertical-align: middle;
+}
+
+/* Responsive styles for smaller screens */
+@media (max-width: 768px) {
+  .country-content {
+    padding: 1.5rem;
+  }
+
+  .country-title {
+    text-align: left;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+  }
+
+  .country-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  .country-card {
+    padding: 1rem;
+    border-radius: 8px;
+    width: 100%;
+    height: auto;
+  }
+
+  .country-flag {
+    width: 30px;
+    height: 20px;
+  }
+
+  .country-name {
+    font-size: 18px; /* Adjusted for smaller screens */
+    line-height: 1.2;
+  }
+}

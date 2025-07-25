@@ -1,0 +1,154 @@
+.payment-page-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 24px;
+  background-color: #fff;
+  font-family: 'Inter', sans-serif;
+}
+
+.payment-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #222;
+}
+
+.payment-subtitle {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 24px;
+}
+
+.method-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.payment-methods {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.method-btn {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.method-btn.selected {
+  background-color: #ff7a00;
+  color: #fff;
+  border-color: #ff7a00;
+}
+
+.wallet-section {
+  padding: 16px 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 32px;
+}
+
+.wallet-label {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.wallet-amount {
+  font-size: 22px;
+  font-weight: 600;
+  color: #000;
+}
+
+/* Payment buttons */
+.payment-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.continue-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #fff;
+  border: 2px solid #ff7a00;
+  color: #ff7a00;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.continue-btn:hover {
+  background-color: #fff4e8;
+}
+
+.confirm-btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #ff7a00;
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.confirm-btn:hover {
+  background-color: #e86c00;
+}
+.insufficient-text {
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 140%;
+  color: #717171;
+}
+
+.go-to-wallet-btn {
+  width: 213px;
+  height: 39px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: #434343;
+  color: #fff;
+  font-family: Roboto, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.go-to-wallet-btn:hover {
+  background-color: #333333;
+}
+
+
+/* Responsive (optional) */
+@media (max-width: 480px) {
+  .payment-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .method-btn {
+    flex: 1 1 100%;
+  }
+}
+
