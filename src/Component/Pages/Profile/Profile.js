@@ -19,7 +19,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (user?.id) {
-      axios.get(`http://localhost:8000/user/${user.id}`)
+      axios.get(`https://fliplyn.onrender.com/user/${user.id}`)
         .then(res => {
           setFullUser(res.data);
           setFormData({
@@ -43,7 +43,7 @@ export default function Profile() {
   };
 
   const handleUpdateSubmit = () => {
-    axios.put(`http://localhost:8000/user/${user.id}`, formData)
+    axios.put(`https://fliplyn.onrender.com/user/${user.id}`, formData)
       .then(res => {
         setFullUser(res.data);
         setShowEditModal(false);

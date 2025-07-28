@@ -18,7 +18,7 @@ export default function PaymentSuccess() {
 
   const fetchOrderDetails = async (orderId) => {
     try {
-      const res = await axios.get(`http://localhost:8000/orders/${orderId}`);
+      const res = await axios.get(`https://fliplyn.onrender.com/orders/${orderId}`);
       setOrderDetails(res.data);
     } catch (err) {
       console.error('Failed to fetch order details:', err);

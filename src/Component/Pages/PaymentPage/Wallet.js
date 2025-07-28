@@ -31,10 +31,10 @@ export default function PaymentMethodPage() {
 
     const fetchWalletAndUser = async () => {
       try {
-        const walletRes = await axios.get(`http://localhost:8000/wallets/${userId}`);
+        const walletRes = await axios.get(`https://fliplyn.onrender.com/wallets/${userId}`);
         setWalletBalance(walletRes.data.balance_amount);
 
-        const userRes = await axios.get(`http://localhost:8000/user/${userId}`);
+        const userRes = await axios.get(`https://fliplyn.onrender.com/user/${userId}`);
         setUserDetails({
           phone_number: userRes.data.phone_number,
           company_email: userRes.data.company_email,
@@ -46,7 +46,7 @@ export default function PaymentMethodPage() {
 
     const fetchCartItems = async () => {
       try {
-        const res = await axios.get(`http://localhost:8000/cart/${userId}`, {
+        const res = await axios.get(`https://fliplyn.onrender.com/cart/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCartItems(res.data.items);
@@ -74,11 +74,11 @@ const handleConfirmPayment = async () => {
   };
 
   try {
-    const res = await axios.post('http://localhost:8000/orders/place', requestBody);
+    const res = await axios.post('https://fliplyn.onrender.com/orders/place', requestBody);
     console.log('Order placed:', res.data);
 
     // ✅ Clear the cart after order success
-    await axios.delete(`http://localhost:8000/cart/clear/${userId}`, {
+    await axios.delete(`https://fliplyn.onrender.com/cart/clear/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

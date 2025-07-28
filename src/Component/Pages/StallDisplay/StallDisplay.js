@@ -21,7 +21,7 @@ export default function StallDisplay({ name = '', description = '', imageUrl = '
       {/* ✅ Stall Banner */}
       <div
         className="stall-banner"
-        style={{ backgroundImage: `url(http://localhost:8000/${imageUrl})` }}
+        style={{ backgroundImage: `url(https://fliplyn.onrender.com/${imageUrl})` }}
       >
         <div className="stall-banner-overlay">
           <div className="stall-info-left">
