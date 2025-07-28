@@ -176,7 +176,7 @@ export default function SignIn() {
             </>
           ) : (
             <>
-              <label className="signin-label">OTP Code</label>
+              <label className="signin-label">OTP Code </label>
               <input
                 type="text"
                 className="signin-email"
@@ -208,4 +208,11 @@ export default function SignIn() {
     </div>
   );
 }
+
+
+
+
+
+
+
 
