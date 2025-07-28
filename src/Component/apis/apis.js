@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 
-const BASE_URL = 'http://localhost:8000'; // Change to your actual backend URL
+const BASE_URL = 'https://fliplyn.onrender.com';
 
 export const signupUser = (userData) => {
   return axios.post(`${BASE_URL}/signup`, userData);
