@@ -27,11 +27,13 @@ export default function SignIn() {
   ];
 
   const handleSendOTP = async () => {
+    console.log('Sending OTP...');
     setError('');
     setLoading(true);
     try {
       if (useEmail) {
         if (!email) throw new Error('Please enter your email');
+        console.log('Sending OTP to email:', email);
         await initiateLogin({ company_email: email });
       } else {
         if (!phoneNumber || phoneNumber.length !== 10) {
@@ -39,11 +41,14 @@ export default function SignIn() {
         }
 
         const fullPhone = selectedCode.replace('+', '') + phoneNumber;
+        console.log('Sending OTP to phone:', fullPhone);
         await initiateLogin({ phone_number: fullPhone });
       }
 
+      console.log('OTP sent successfully');
       setOtpSent(true);
     } catch (err) {
+      console.error('Error sending OTP:', err);
       setError(err.detail || err.message || 'Failed to send OTP');
     } finally {
       setLoading(false);
@@ -51,20 +56,28 @@ export default function SignIn() {
   };
 
   const handleVerifyOTP = async () => {
+    console.log('Verifying OTP...');
     setError('');
     setLoading(true);
     try {
       const fullPhone = selectedCode.replace('+', '') + phoneNumber;
 
-      const response = await verifyLoginOTP({
+      const payload = {
         phone_number: !useEmail ? fullPhone : undefined,
         company_email: useEmail ? email : undefined,
         otp,
-      });
+      };
+
+      console.log('Verifying with payload:', payload);
+
+      const response = await verifyLoginOTP(payload);
+      console.log('OTP Verified. Response:', response);
 
       login(response.access_token, response.user);
+      console.log('Login successful. Navigating to /select-country');
       navigate('/select-country');
     } catch (err) {
+      console.error('OTP verification failed:', err);
       setError(err.detail || err.message || 'OTP verification failed');
     } finally {
       setLoading(false);
@@ -95,7 +108,10 @@ export default function SignIn() {
                     <select
                       className="signin-code"
                       value={selectedCode}
-                      onChange={(e) => setSelectedCode(e.target.value)}
+                      onChange={(e) => {
+                        setSelectedCode(e.target.value);
+                        console.log('Country code changed:', e.target.value);
+                      }}
                     >
                       {countryCodes.map(({ code }) => (
                         <option key={code} value={code}>
@@ -108,11 +124,20 @@ export default function SignIn() {
                       className="signin-number"
                       placeholder="Enter 10-digit mobile number"
                       value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      onChange={(e) => {
+                        setPhoneNumber(e.target.value);
+                        console.log('Phone number updated:', e.target.value);
+                      }}
                       maxLength={10}
                     />
                   </div>
-                  <p className="signin-switch" onClick={() => setUseEmail(true)}>
+                  <p
+                    className="signin-switch"
+                    onClick={() => {
+                      setUseEmail(true);
+                      console.log('Switched to email login');
+                    }}
+                  >
                     Use Email Instead
                   </p>
                 </>
@@ -124,15 +149,28 @@ export default function SignIn() {
                     className="signin-email"
                     placeholder="Enter your email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      console.log('Email updated:', e.target.value);
+                    }}
                   />
-                  <p className="signin-switch" onClick={() => setUseEmail(false)}>
+                  <p
+                    className="signin-switch"
+                    onClick={() => {
+                      setUseEmail(false);
+                      console.log('Switched to phone login');
+                    }}
+                  >
                     Use Phone Number Instead
                   </p>
                 </>
               )}
 
-              <button className="signin-button" onClick={handleSendOTP} disabled={loading}>
+              <button
+                className="signin-button"
+                onClick={handleSendOTP}
+                disabled={loading}
+              >
                 {loading ? 'Sending OTP...' : 'Send OTP'}
               </button>
             </>
@@ -144,19 +182,30 @@ export default function SignIn() {
                 className="signin-email"
                 placeholder="Enter OTP"
                 value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                onChange={(e) => {
+                  setOtp(e.target.value);
+                  console.log('OTP entered:', e.target.value);
+                }}
               />
-              <button className="signin-button" onClick={handleVerifyOTP} disabled={loading}>
+              <button
+                className="signin-button"
+                onClick={handleVerifyOTP}
+                disabled={loading}
+              >
                 {loading ? 'Verifying...' : 'Verify OTP'}
               </button>
             </>
           )}
 
           <p className="signin-footer">
-            New here? <Link to="/signup" className="signup-link">Sign Up</Link>
+            New here?{' '}
+            <Link to="/signup" className="signup-link">
+              Sign Up
+            </Link>
           </p>
         </div>
       </main>
     </div>
   );
 }
+
