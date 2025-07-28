@@ -13,7 +13,7 @@ export default function Stall() {
     if (!buildingId) return;
 
     axios
-      .get(`https://fliplyn.onrender.com/stalls/building/${buildingId}`)
+      .get(`http://localhost:8000/stalls/building/${buildingId}`)
       .then((res) => {
         setStalls(res.data);
       })
@@ -49,7 +49,7 @@ export default function Stall() {
               >
                 <div className="stall-card">
                   <img
-                    src={`https://fliplyn.onrender.com/${stall.image_url}`}
+                    src={`http://localhost:8000/${stall.image_url}`}
                     alt={stall.name}
                     className="stall-image"
                   />

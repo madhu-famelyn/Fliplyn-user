@@ -12,7 +12,7 @@ export default function CategoryList({ categories, selectedCategoryId, onCategor
           onClick={() => onCategoryClick(cat.id)}
         >
           <img
-            src={`https://fliplyn.onrender.com/${cat.image_url}`}
+            src={`http://localhost:8000/${cat.image_url}`}
             alt={cat.name}
             className="category-img"
           />

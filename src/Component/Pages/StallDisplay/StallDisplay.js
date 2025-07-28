@@ -3,6 +3,7 @@ import React from 'react';
 import './StallDisplay.css';
 import '../../fonts.css';
 import { useNavigate } from 'react-router-dom';
+import { IoIosArrowBack } from 'react-icons/io';
 
 export default function StallDisplay({ name = '', description = '', imageUrl = '', categoryCount = 0, itemCount = 0 }) {
   const navigate = useNavigate();
@@ -11,15 +12,16 @@ export default function StallDisplay({ name = '', description = '', imageUrl = '
     <>
       {/* ✅ Back Button */}
       <div className="back-button-container">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          ← {name}
-        </button>
+<button className="back-button" onClick={() => navigate(-1)}>
+  <IoIosArrowBack style={{ marginRight: '8px' }} />
+  {name}
+</button>
       </div>
 
       {/* ✅ Stall Banner */}
       <div
         className="stall-banner"
-        style={{ backgroundImage: `url(https://fliplyn.onrender.com/${imageUrl})` }}
+        style={{ backgroundImage: `url(http://localhost:8000/${imageUrl})` }}
       >
         <div className="stall-banner-overlay">
           <div className="stall-info-left">

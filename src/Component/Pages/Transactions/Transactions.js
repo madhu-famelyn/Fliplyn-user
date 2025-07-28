@@ -57,7 +57,7 @@ export default function Transactions() {
                   <span>#{order.id.slice(-5)}</span>
                   <span>₹{order.total_amount}</span>
                   <span>{order.payment_method_detail || 'Wallet'}</span>
-                  <span className="status success">Success</span>
+                  <span className="status success">Successful</span>
                 </div>
               ))}
             </div>

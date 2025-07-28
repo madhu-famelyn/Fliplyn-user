@@ -26,7 +26,7 @@ export default function Category() {
   useEffect(() => {
     if (stallId) {
       axios
-        .get(`https://fliplyn.onrender.com/categories/stall/${stallId}`)
+        .get(`http://localhost:8000/categories/stall/${stallId}`)
         .then((res) => {
           setCategories(res.data);
           if (res.data.length > 0) {
@@ -36,12 +36,12 @@ export default function Category() {
         .catch((err) => console.error('Error fetching categories:', err));
 
       axios
-        .get(`https://fliplyn.onrender.com/stalls/${stallId}`)
+        .get(`http://localhost:8000/stalls/${stallId}`)
         .then((res) => setStallDetails(res.data))
         .catch((err) => console.error('Error fetching stall details:', err));
 
       axios
-        .get(`https://fliplyn.onrender.com/items/stall/${stallId}`)
+        .get(`http://localhost:8000/items/stall/${stallId}`)
         .then((res) => setItemCount(res.data.length))
         .catch((err) => console.error('Error fetching item count:', err));
     }
@@ -50,7 +50,7 @@ export default function Category() {
   useEffect(() => {
     if (selectedCategoryId) {
       axios
-        .get(`https://fliplyn.onrender.com/items/items/category/${selectedCategoryId}/availability?is_available=true`)
+        .get(`http://localhost:8000/items/items/category/${selectedCategoryId}/availability?is_available=true`)
         .then((res) => {
           setItems(res.data);
           setItemsLoaded(true);
@@ -103,4 +103,5 @@ export default function Category() {
       </div>
     </div>
   );
-}
+} 
+
