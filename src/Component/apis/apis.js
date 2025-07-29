@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const BASE_URL = 'https://fliplyn-api.onrender.com';
 
+
 export const signupUser = (userData) => {
   return axios.post(`${BASE_URL}/signup`, userData);
 };
@@ -19,7 +20,7 @@ export const verifyOtp = (data) => {
 
 export const initiateLogin = async ({ phone_number, company_email }) => {
   try {
-    const response = await axios.post(`${BASE_URL}/user/login/initiate`, {
+    const response = await axios.post(`${BASE_URL}/user/user/login/initiate`, {
       phone_number,
       company_email,
     });
