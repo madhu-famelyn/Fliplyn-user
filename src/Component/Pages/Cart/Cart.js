@@ -21,7 +21,7 @@ export default function Cart() {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get(`https://fliplyn-api.onrender.com/cart/${user.id}`, {
+      const res = await axios.get(`https://fliplyn.onrender.com/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const fetchedCart = res.data;
@@ -38,7 +38,7 @@ export default function Cart() {
 
   const fetchItemDetails = async (cartItems) => {
     const requests = cartItems.map((item) =>
-      axios.get(`https://fliplyn-api.onrender.com/items/items/${item.item_id}`)
+      axios.get(`https://fliplyn.onrender.com/items/items/${item.item_id}`)
     );
     const responses = await Promise.all(requests);
     const itemMap = {};
@@ -54,7 +54,7 @@ export default function Cart() {
 
     try {
       await axios.put(
-        'https://fliplyn-api.onrender.com/cart/update-quantity',
+        'https://fliplyn.onrender.com/cart/update-quantity',
         {
           user_id: user.id,
           item_id,
@@ -91,7 +91,7 @@ export default function Cart() {
 <div className="cart-item" key={item.id}>
   <div className="cart-item-row">
     <img
-      src={`https://fliplyn-api.onrender.com/${itemData?.image_url}`}
+      src={`https://fliplyn.onrender.com/${itemData?.image_url}`}
       alt={itemData?.name}
       className="item-image"
     />

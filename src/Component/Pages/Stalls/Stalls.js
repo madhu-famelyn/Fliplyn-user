@@ -13,7 +13,7 @@ export default function Stall() {
     if (!buildingId) return;
 
     axios
-      .get(`https://fliplyn-api.onrender.com/stalls/building/${buildingId}`)
+      .get(`https://fliplyn.onrender.com/stalls/building/${buildingId}`)
       .then((res) => {
         setStalls(res.data);
       })

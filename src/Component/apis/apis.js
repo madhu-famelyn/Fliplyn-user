@@ -1,9 +1,9 @@
 // src/api/user.js
 import axios from 'axios';
 
-const BASE_URL = 'https://fliplyn-api.onrender.com';
+const BASE_URL = 'https://fliplyn.onrender.com';
 
-// ✅ Signup a new user
+// ✅ User Signup
 export const signupUser = (userData) => {
   return axios.post(`${BASE_URL}/user/signup`, userData);
 };
@@ -18,10 +18,10 @@ export const verifyOtp = (data) => {
   return axios.post(`${BASE_URL}/user/verify-otp`, data);
 };
 
-// ✅ Login - initiate OTP (fixed path with double /user)
+// ✅ User Login - initiate OTP
 export const initiateLogin = async ({ phone_number, company_email }) => {
   try {
-    const response = await axios.post(`${BASE_URL}/user/user/login/initiate`, {
+    const response = await axios.post(`${BASE_URL}/user/login/initiate`, {
       phone_number,
       company_email,
     });
@@ -31,7 +31,7 @@ export const initiateLogin = async ({ phone_number, company_email }) => {
   }
 };
 
-// ✅ Login - verify OTP
+// ✅ User Login - verify OTP
 export const verifyLoginOTP = async ({ phone_number, company_email, otp }) => {
   try {
     const response = await axios.post(`${BASE_URL}/user/login/verify`, {
@@ -39,8 +39,28 @@ export const verifyLoginOTP = async ({ phone_number, company_email, otp }) => {
       company_email,
       otp,
     });
-    return response.data; // contains access_token and user object
+    return response.data;
   } catch (error) {
     throw error.response?.data || { detail: 'OTP verification failed' };
+  }
+};
+
+// ✅ Admin Login (OAuth2 password grant)
+export const loginAdmin = async (email, password) => {
+  try {
+    const formData = new URLSearchParams();
+    formData.append('grant_type', 'password');
+    formData.append('username', email); // FastAPI uses "username" even if it's email
+    formData.append('password', password);
+
+    const response = await axios.post(`${BASE_URL}/admin/auth/login`, formData, {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    return response.data; // { access_token, token_type, user: { id, name, email } }
+  } catch (error) {
+    throw error.response?.data || { detail: 'Admin login failed' };
   }
 };

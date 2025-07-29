@@ -21,7 +21,7 @@ export default function ItemList({ items, itemsLoaded }) {
         ],
       };
 
-      await axios.post('https://fliplyn-api.onrender.com/cart/add-multiple', payload, {
+      await axios.post('https://fliplyn.onrender.com/cart/add-multiple', payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,7 +62,7 @@ export default function ItemList({ items, itemsLoaded }) {
           {items.map((item) => (
             <div key={item.id} className="item-card">
               <img
-                src={`https://fliplyn-api.onrender.com/${item.image_url}`}
+                src={`https://fliplyn.onrender.com/${item.image_url}`}
                 alt={item.name}
                 className="item-img"
               />
