@@ -27,7 +27,7 @@ import { AuthProvider, useAuth } from './Component/AuthContext/ContextApi';
 
 function ProtectedRoute({ children }) {
   const { token } = useAuth();
-  return token ? children : <Navigate to="/signin" replace />;
+  return token ? children : <Navigate to="/" replace />;
 }
 
 function AppContent() {
@@ -40,8 +40,7 @@ function AppContent() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/" element={<Navigate to="/signin" />} />
-      <Route path="/signin" element={<SignIn />} />
+      <Route path="/" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/otp" element={<OtpVerify />} />
 

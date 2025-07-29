@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import '../Category/Category.css';
 import { useAuth } from '../../AuthContext/ContextApi';
+import "./Items.css"
 
 export default function ItemList({ items, itemsLoaded }) {
   const { user, token } = useAuth();
@@ -20,7 +21,7 @@ export default function ItemList({ items, itemsLoaded }) {
         ],
       };
 
-      await axios.post('https://fliplyn.onrender.com/cart/add-multiple', payload, {
+      await axios.post('https://fliplyn-api.onrender.com/cart/add-multiple', payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -61,7 +62,7 @@ export default function ItemList({ items, itemsLoaded }) {
           {items.map((item) => (
             <div key={item.id} className="item-card">
               <img
-                src={`https://fliplyn.onrender.com/${item.image_url}`}
+                src={`https://fliplyn-api.onrender.com/${item.image_url}`}
                 alt={item.name}
                 className="item-img"
               />

@@ -4,9 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signupUser, sendOtp, verifyOtp } from '../apis/apis';
 
 export default function SignUp() {
-  const [useEmail, setUseEmail] = useState(false);
+  const [useEmail, setUseEmail] = useState(false); // Toggle between phone and email
   const [selectedCode, setSelectedCode] = useState('+91');
+  const [otpSent, setOtpSent] = useState(false);
   const navigate = useNavigate();
+
   const [form, setForm] = useState({
     name: '',
     company_name: '',
@@ -14,8 +16,6 @@ export default function SignUp() {
     phone_number: '',
     otp: '',
   });
-
-  const [step, setStep] = useState(1); // 1 = input, 2 = otp
 
   const countryCodes = [
     { code: '+91', country: 'India' },
@@ -30,51 +30,46 @@ export default function SignUp() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Normalize the phone number before sending to backend
   const cleanedPhoneNumber = selectedCode.replace('+', '') + form.phone_number;
-
-  const handleSignup = async () => {
-    const payload = {
-      ...form,
-      phone_number: cleanedPhoneNumber,
-    };
-
-    try {
-      const res = await signupUser(payload);
-      console.log('✅ Signup Success:', res.data);
-      setStep(2); // Go to OTP verification
-    } catch (err) {
-      console.error('❌ Signup Failed:', err.response?.data?.detail);
-      alert(err.response?.data?.detail || 'Signup failed');
-    }
-  };
 
   const handleSendOtp = async () => {
     try {
-      const res = await sendOtp({
+      const payload = {
+        ...form,
+        phone_number: cleanedPhoneNumber,
+        company_email: form.company_email,
+      };
+
+      const signupRes = await signupUser(payload);
+      console.log('✅ User created:', signupRes.data);
+
+      const otpRes = await sendOtp({
         phone_number: cleanedPhoneNumber,
         company_email: form.company_email,
       });
-      console.log('✅ OTP Sent:', res.data);
-      alert('OTP sent');
+      console.log('✅ OTP Sent:', otpRes.data);
+
+      alert('OTP sent successfully!');
+      setOtpSent(true);
     } catch (err) {
-      console.error('❌ OTP Failed:', err.response?.data?.detail);
-      alert(err.response?.data?.detail || 'Failed to send OTP');
+      console.error('❌ Failed during signup or OTP:', err.response?.data?.detail);
+      alert(err.response?.data?.detail || 'Signup or OTP failed');
     }
   };
 
   const handleVerifyOtp = async () => {
     try {
-      const res = await verifyOtp({
+      const verifyRes = await verifyOtp({
         phone_number: cleanedPhoneNumber,
         company_email: form.company_email,
         otp: form.otp,
       });
-      console.log('✅ OTP Verified:', res.data);
-      alert('Account created successfully!');
-      navigate('/signin');
+
+      console.log('✅ OTP Verified:', verifyRes.data);
+      alert('Account verified successfully!');
+      navigate('/');
     } catch (err) {
-      console.error('❌ OTP Invalid:', err.response?.data?.detail);
+      console.error('❌ OTP Verification Failed:', err.response?.data?.detail);
       alert(err.response?.data?.detail || 'OTP verification failed');
     }
   };
@@ -88,86 +83,128 @@ export default function SignUp() {
       <main className="signup-main">
         <div className="signup-card">
           <h2>Create Your Account</h2>
-          <p className="signup-subtext">Enter your {useEmail ? 'email' : 'phone'} to get started.</p>
+          <p className="signup-subtext">
+            Enter your {useEmail ? 'email' : 'phone'} to get started.
+          </p>
 
-          {step === 1 ? (
+          <label className="signup-label">Name</label>
+          <input
+            className="signup-input"
+            name="name"
+            type="text"
+            onChange={handleChange}
+            value={form.name}
+          />
+
+          <label className="signup-label">Company Name</label>
+          <input
+            className="signup-input"
+            name="company_name"
+            type="text"
+            onChange={handleChange}
+            value={form.company_name}
+          />
+
+          {useEmail ? (
             <>
-              <label className="signup-label">Name</label>
-              <input className="signup-input" name="name" type="text" onChange={handleChange} />
-
-              <label className="signup-label">Company name</label>
-              <input className="signup-input" name="company_name" type="text" onChange={handleChange} />
+              {/* Phone First, then Email */}
+              <label className="signup-label">Phone Number</label>
+              <div className="signup-phone-input">
+                <select
+                  className="signup-code"
+                  value={selectedCode}
+                  onChange={(e) => setSelectedCode(e.target.value)}
+                >
+                  {countryCodes.map(({ code }) => (
+                    <option key={code} value={code}>
+                      {code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  name="phone_number"
+                  type="text"
+                  className="signup-number"
+                  placeholder="Enter number"
+                  onChange={handleChange}
+                  value={form.phone_number}
+                />
+              </div>
 
               <label className="signup-label">Company Email</label>
-              <input className="signup-input" name="company_email" type="email" onChange={handleChange} />
-
-              {!useEmail ? (
-                <>
-                  <label className="signup-label">Phone number</label>
-                  <div className="signup-phone-input">
-                    <select
-                      className="signup-code"
-                      value={selectedCode}
-                      onChange={(e) => setSelectedCode(e.target.value)}
-                    >
-                      {countryCodes.map(({ code }) => (
-                        <option key={code} value={code}>
-                          {code}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      name="phone_number"
-                      type="text"
-                      className="signup-number"
-                      placeholder="Enter number"
-                      onChange={handleChange}
-                    />
-                  </div>
-                </>
-              ) : (
-                <>
-                  <label className="signup-label">Email</label>
-                  <input
-                    name="company_email"
-                    type="email"
-                    className="signup-input"
-                    placeholder="Enter email"
-                    onChange={handleChange}
-                  />
-                </>
-              )}
-
-              <button className="signup-send-otp" onClick={handleSendOtp}>
-                Send OTP
-              </button>
-
-              <p className="signup-switch" onClick={() => setUseEmail(!useEmail)}>
-                Use {useEmail ? 'Phone Number' : 'Email'} Instead
-              </p>
-
-              <button className="signup-button" onClick={handleSignup}>
-                Create Account
-              </button>
+              <input
+                className="signup-input"
+                name="company_email"
+                type="email"
+                placeholder="Enter email"
+                onChange={handleChange}
+                value={form.company_email}
+              />
             </>
           ) : (
             <>
-              <label className="signup-label">OTP Code</label>
+              {/* Email First, then Phone */}
+              <label className="signup-label">Company Email</label>
               <input
-                name="otp"
                 className="signup-input"
-                placeholder="Enter 6-digit OTP"
+                name="company_email"
+                type="email"
+                placeholder="Enter email"
                 onChange={handleChange}
+                value={form.company_email}
               />
 
-              <button className="signup-button" onClick={handleVerifyOtp}>
-                Verify OTP
-              </button>
+              <label className="signup-label">Phone Number</label>
+              <div className="signup-phone-input">
+                <select
+                  className="signup-code"
+                  value={selectedCode}
+                  onChange={(e) => setSelectedCode(e.target.value)}
+                >
+                  {countryCodes.map(({ code }) => (
+                    <option key={code} value={code}>
+                      {code}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  name="phone_number"
+                  type="text"
+                  className="signup-number"
+                  placeholder="Enter number"
+                  onChange={handleChange}
+                  value={form.phone_number}
+                />
+              </div>
             </>
           )}
 
+          <button className="signup-send-otp" onClick={handleSendOtp}>
+            Send OTP
+          </button>
+
+          <label className="signup-label">Enter OTP</label>
+          <input
+            name="otp"
+            className="signup-input"
+            placeholder="Enter 6-digit OTP"
+            onChange={handleChange}
+            value={form.otp}
+            disabled={!otpSent}
+          />
+          <button className="signup-button" onClick={handleVerifyOtp}>
+            Create Account
+          </button>
+
+          <p className="signup-switch" onClick={() => setUseEmail(!useEmail)}>
+            Use {useEmail ? 'Phone Number' : 'Email'} Instead
+          </p>
+
           <p className="signup-footer">
-            Already have an account? <Link to="/signin" className="signup-link">Sign In</Link>
+            Already have an account?{' '}
+            <Link to="/" className="signup-link">
+              Sign In
+            </Link>
           </p>
         </div>
       </main>

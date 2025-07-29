@@ -3,8 +3,8 @@ import axios from 'axios';
 import Header from '../Header/Header';
 import { useAuth } from '../../AuthContext/ContextApi';
 import { FaTrash } from 'react-icons/fa';
-import './Cart.css';
 import { useNavigate } from 'react-router-dom';
+import "./Cart.css"
 
 export default function Cart() {
   const { user, token } = useAuth();
@@ -21,7 +21,7 @@ export default function Cart() {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get(`https://fliplyn.onrender.com/cart/${user.id}`, {
+      const res = await axios.get(`https://fliplyn-api.onrender.com/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const fetchedCart = res.data;
@@ -38,7 +38,7 @@ export default function Cart() {
 
   const fetchItemDetails = async (cartItems) => {
     const requests = cartItems.map((item) =>
-      axios.get(`https://fliplyn.onrender.com/items/items/${item.item_id}`)
+      axios.get(`https://fliplyn-api.onrender.com/items/items/${item.item_id}`)
     );
     const responses = await Promise.all(requests);
     const itemMap = {};
@@ -54,7 +54,7 @@ export default function Cart() {
 
     try {
       await axios.put(
-        'https://fliplyn.onrender.com/cart/update-quantity',
+        'https://fliplyn-api.onrender.com/cart/update-quantity',
         {
           user_id: user.id,
           item_id,
@@ -72,87 +72,76 @@ export default function Cart() {
   };
 
   return (
-    <>
-      <Header />
-      <h2 className="cart-title">Your Cart</h2>
+  <>
+    <Header />
+    <h2 className='heading'>Your Cart</h2>
 
-      {loading ? (
-        <div className="cart-container">Loading cart...</div>
-      ) : error || !cart || cart.items.length === 0 ? (
-        <div className="cart-container empty">
-          <p>Your cart is empty.</p>
+    {loading ? (
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}>Loading cart...</div>
+    ) : error || !cart || cart.items.length === 0 ? (
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}>Your cart is empty.</div>
+    ) : (
+      <div className="cart-wrapper">
+        <div className="cart-grid">
+          {cart.items.map((item) => {
+            const itemData = itemDetails[item.item_id];
+            const itemTotal = item.quantity * item.price_at_addition;
+
+            return (
+<div className="cart-item" key={item.id}>
+  <div className="cart-item-row">
+    <img
+      src={`https://fliplyn-api.onrender.com/${itemData?.image_url}`}
+      alt={itemData?.name}
+      className="item-image"
+    />
+    <div className="item-info">
+      <p className="item-name">{itemData?.name}</p>
+      <p className="item-price">₹ {item.price_at_addition}</p>
+    </div>
+    <div className="quantity-box">
+      <button onClick={() => updateQuantity(item.item_id, item.quantity - 1)}>-</button>
+      <span>{item.quantity}</span>
+      <button onClick={() => updateQuantity(item.item_id, item.quantity + 1)}>+</button>
+    </div>
+    <p className="item-total">
+  ₹ {Number.isInteger(itemTotal) ? itemTotal : itemTotal.toFixed(2)}
+</p>
+
+  </div>
+
+  <button
+    className="remove-button"
+    onClick={() => updateQuantity(item.item_id, 0)}
+    title="Remove item"
+  >
+    Remove from Cart
+  </button>
+</div>
+
+            );
+          })}
         </div>
-      ) : (
-        <div className="cart-container">
-          <div className="cart-grid">
-            {cart.items.map((item) => {
-              const itemData = itemDetails[item.item_id];
-              const itemTotal = item.quantity * item.price_at_addition;
 
-              return (
-                <div key={item.id} className="cart-item-card">
-                  <div className="cart-item-left">
-                    <img
-                      src={`https://fliplyn.onrender.com/${itemData?.image_url}`}
-                      alt={itemData?.name}
-                      className="cart-item-image"
-                    />
-                    <div>
-                      <h3 className="item-name">{itemData?.name}</h3>
-                      <p className="item-price">₹ {item.price_at_addition}</p>
-                      <input
-                        className="note-input"
-                        placeholder="Order Note..."
-                        disabled
-                      />
-                    </div>
-                  </div>
-
-
-                  <div className="cart-item-right">
-                    <div className="quantity-total-row">
-                      <div className="quantity-box">
-                        <button onClick={() => updateQuantity(item.item_id, item.quantity - 1)}>-</button>
-                        <span>{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.item_id, item.quantity + 1)}>+</button>
-                      </div>
-                      <p className="item-total">₹ {itemTotal.toFixed(2)}</p>
-                    </div>
-
-                    <button
-                      className="delete-btn"
-                      onClick={() => updateQuantity(item.item_id, 0)}
-                      title="Remove item"
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="cart-summary">
-            <p>{cart.items.length} items</p>
-            <p className="grand-total">
-              Total: ₹{' '}
-              {cart.items
-                .reduce(
-                  (total, item) => total + item.quantity * item.price_at_addition,
-                  0
-                )
-                .toFixed(2)}
-            </p>
-          </div>
-
-          <div className="cart-actions">
-            <button className="cancel-btn">Cancel</button>
-            <button className="pay-btn" onClick={() => navigate('/wallet')}>
-              Continue to Payment
-            </button>
-          </div>
+        <div className="cart-summary">
+          <p>{cart.items.length} items</p>
+          <p>
+            Total: ₹{' '}
+            {cart.items
+              .reduce((total, item) => total + item.quantity * item.price_at_addition, 0)
+              .toFixed(2)}
+          </p>
         </div>
-      )}
-    </>
-  );
+
+        <div className="cart-actions">
+          <button className="cancel-button" onClick={() => navigate(-1)}>Cancel</button>
+          <button className="proceed-button" onClick={() => navigate('/wallet')}>
+            Continue to Payment
+          </button>
+        </div>
+      </div>
+    )}
+  </>
+);
+
 }

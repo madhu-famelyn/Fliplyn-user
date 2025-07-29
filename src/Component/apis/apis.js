@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 
-const BASE_URL = 'https://fliplyn.onrender.com';
+const BASE_URL = 'https://fliplyn-api.onrender.com';
 
 export const signupUser = (userData) => {
   return axios.post(`${BASE_URL}/signup`, userData);

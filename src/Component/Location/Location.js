@@ -22,7 +22,7 @@ export default function ConfirmLocation() {
   useEffect(() => {
     if (cityCode) {
       axios
-        .get(`https://fliplyn.onrender.com/buildings/by-city-identifier/${cityCode}`)
+        .get(`https://fliplyn-api.onrender.com/buildings/by-city-identifier/${cityCode}`)
         .then((res) => {
           setBuildingList(res.data);
         })
