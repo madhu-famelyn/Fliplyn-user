@@ -49,7 +49,7 @@ export default function Stall() {
               >
                 <div className="stall-card">
             <img
-              src={`https://fliplyn-api.onrender.com${stall.image_url}`}  // ✅ removed extra slash
+              src={`https://fliplyn-api.onrender.com${stall.image_url}`}
               alt={stall.name}
               className="stall-image"
             />
