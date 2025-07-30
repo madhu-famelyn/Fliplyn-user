@@ -48,14 +48,11 @@ export default function Stall() {
                 onClick={() => handleStallClick(stall.id)}
               >
                 <div className="stall-card">
-           <img
-              src={`https://fliplyn.onrender.com${stall.image_url}`} // no slash after domain
-              alt={stall.name}
-              className="stall-image"
-            />
-
-
-
+                  <img
+                    src={`https://fliplyn.onrender.com/${stall.image_url}`}
+                    alt={stall.name}
+                    className="stall-image"
+                  />
                   <div className="view-menu-overlay">View Menu</div>
                 </div>
               </div>

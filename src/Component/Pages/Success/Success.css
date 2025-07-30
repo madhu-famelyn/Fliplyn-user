@@ -95,7 +95,7 @@ body {
   content: "";
   display: block;
   margin: 14px auto 0;
-  width: 420px;
+  width: 350px;
   border-top: 1.5px dashed #000000;
 }
 
@@ -117,7 +117,7 @@ body {
 
 /* Repeating separator lines */
 .separator {
-  width: 420px;
+  width: 350px;
   border-top: 1.5px dashed #000000;
   margin: 20px auto;
 }
@@ -152,7 +152,7 @@ body {
 }
 
 /* Download Button */
-.download-btn {
+/* .download-btn {
   margin-top: 24px;
   background-color: #ff6b00;
   color: white;
@@ -168,7 +168,7 @@ body {
 
 .download-btn:hover {
   background-color: #e55e00;
-}
+} */
 
 /* Loading State */
 .loading-text {
@@ -218,7 +218,7 @@ body {
   font-size: 15px;
   transition: background 0.3s ease;
 
-  width: 100%;
+  width: 35%;
   max-width: 490px;   /* ✅ matches token/separator width */
   text-align: center;
 }
