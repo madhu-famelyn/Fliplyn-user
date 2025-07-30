@@ -1,27 +1,26 @@
 // src/api/user.js
 import axios from 'axios';
 
+// Corrected BASE_URL to avoid '/user'
 const BASE_URL = 'https://fliplyn.onrender.com';
 
 // ✅ User Signup
-// ✅ After — matches your FastAPI route
 export const signupUser = (userData) => {
-  return axios.post(`${BASE_URL}/signup`, userData);
+  return axios.post(`${BASE_URL}/signup`, userData);  // Correctly points to /signup
 };
 
 export const sendOtp = (data) => {
-  return axios.post(`${BASE_URL}/send-otp`, data);
+  return axios.post(`${BASE_URL}/send-otp`, data);  // Correctly points to /send-otp
 };
 
 export const verifyOtp = (data) => {
-  return axios.post(`${BASE_URL}/verify-otp`, data);
+  return axios.post(`${BASE_URL}/verify-otp`, data);  // Correctly points to /verify-otp
 };
-
 
 // ✅ User Login - initiate OTP
 export const initiateLogin = async ({ phone_number, company_email }) => {
   try {
-    const response = await axios.post(`${BASE_URL}/user/login/initiate`, {
+    const response = await axios.post(`${BASE_URL}/user/login/initiate`, {  // Updated URL for login
       phone_number,
       company_email,
     });
@@ -34,7 +33,7 @@ export const initiateLogin = async ({ phone_number, company_email }) => {
 // ✅ User Login - verify OTP
 export const verifyLoginOTP = async ({ phone_number, company_email, otp }) => {
   try {
-    const response = await axios.post(`${BASE_URL}/user/login/verify`, {
+    const response = await axios.post(`${BASE_URL}/user/login/verify`, {  // Updated URL for login
       phone_number,
       company_email,
       otp,
@@ -53,7 +52,7 @@ export const loginAdmin = async (email, password) => {
     formData.append('username', email); // FastAPI uses "username" even if it's email
     formData.append('password', password);
 
-    const response = await axios.post(`${BASE_URL}/admin/auth/login`, formData, {
+    const response = await axios.post(`${BASE_URL}/admin/auth/login`, formData, {  // Corrected URL for admin login
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
