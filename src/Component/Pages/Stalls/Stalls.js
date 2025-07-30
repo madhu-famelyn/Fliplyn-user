@@ -49,7 +49,8 @@ export default function Stall() {
               >
                 <div className="stall-card">
             <img
-              src={`https://fliplyn.onrender.com${stall.image_url}`}  // stall.image_url should start with /uploaded_images/...
+              src={`https://fliplyn.onrender.com${stall.image_url}`}
+  // stall.image_url should start with /uploaded_images/...
               alt={stall.name}
               className="stall-image"
             />
