@@ -54,6 +54,18 @@ export default function Stall() {
               className="stall-image"
             />
 
+
+
+
+
+
+
+
+
+
+
+
+
                   <div className="view-menu-overlay">View Menu</div>
                 </div>
               </div>
