@@ -4,19 +4,19 @@ import axios from 'axios';
 const BASE_URL = 'https://fliplyn.onrender.com';
 
 // ✅ User Signup
+// ✅ After — matches your FastAPI route
 export const signupUser = (userData) => {
-  return axios.post(`${BASE_URL}/user/signup`, userData);
+  return axios.post(`${BASE_URL}/signup`, userData);
 };
 
-// ✅ Send OTP for signup
 export const sendOtp = (data) => {
-  return axios.post(`${BASE_URL}/user/send-otp`, data);
+  return axios.post(`${BASE_URL}/send-otp`, data);
 };
 
-// ✅ Verify OTP for signup
 export const verifyOtp = (data) => {
-  return axios.post(`${BASE_URL}/user/verify-otp`, data);
+  return axios.post(`${BASE_URL}/verify-otp`, data);
 };
+
 
 // ✅ User Login - initiate OTP
 export const initiateLogin = async ({ phone_number, company_email }) => {
