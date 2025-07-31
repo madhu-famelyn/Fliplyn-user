@@ -8,47 +8,75 @@
   background-color: #ffffff;
   padding: 16px 24px;
   border-bottom: 1px solid #D0D0D0;
+  font-family: 'Inter', sans-serif;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: 'Inter', sans-serif;
+  position: relative;
 }
 
-/* ✅ Left: User Icon */
-.user-link {
-  color: black;
-  text-decoration: none;
-}
-.user-icon {
-  font-size: 24px;
-}
-
-/* ✅ Center: Logo */
+/* ✅ Centered logo for mobile */
 .stall-logo {
   font-weight: 700;
   font-size: 24px;
-  color: #000;
-  text-align: center;
+  color: #000000;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
 }
 
-/* ✅ Right: Hamburger */
+/* ✅ User Icon */
+.user-icon {
+  font-size: 24px;
+  color: #000;
+  z-index: 10001;
+}
+
+/* ✅ Hamburger Icon */
 .hamburger {
   font-size: 24px;
   color: #000;
   cursor: pointer;
   z-index: 10001;
+  margin-left: 16px;
 }
 
-/* ✅ Navigation Links - Hidden on Desktop */
-.stall-links {
+/* ✅ Desktop Nav (hidden on mobile) */
+.stall-links.desktop {
   display: none;
 }
 
-/* ✅ Mobile Nav (visible when menuOpen is true) */
-.stall-links.open {
+/* ✅ Link styling */
+.stall-links a {
+  font-size: 18px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 400;
+  transition: all 0.3s ease;
+  position: relative;
+  margin-left: 24px;
+}
+
+.stall-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background-color: #ffffff;
+  transition: width 0.3s ease-in-out;
+}
+.stall-links a:hover::after {
+  width: 100%;
+}
+
+/* ✅ Mobile Dropdown Menu */
+.stall-links.mobile-dropdown {
+  display: none;
+}
+
+.stall-links.mobile-dropdown.open {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -58,32 +86,53 @@
   width: 100%;
   height: calc(100vh - 64px);
   padding: 32px 24px;
-  background-color: #ffffff;
+  background-color: #F17F1C; /* 🔶 Only slide has orange */
   z-index: 10000;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
   overflow-y: auto;
 }
 
-.stall-links a {
-  font-size: 18px;
-  color: #000;
-  text-decoration: none;
-  font-weight: 400;
-  transition: all 0.3s ease;
-  position: relative;
+/* ✅ Layout wrappers (left/right on mobile) */
+.mobile-left,
+.mobile-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* ✅ Hover underline */
-.stall-links a::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background-color: #000;
-  transition: width 0.3s ease-in-out;
-}
-.stall-links a:hover::after {
-  width: 100%;
+/* ✅ Desktop View */
+@media (min-width: 768px) {
+  .stall-navbar {
+    justify-content: space-between;
+  }
+
+  .stall-logo {
+    position: static;
+    transform: none;
+    color: #000;
+  }
+
+  .stall-links.desktop {
+    display: flex;
+    align-items: center;
+  }
+
+  .hamburger,
+  .mobile-dropdown,
+  .mobile-left,
+  .mobile-right {
+    display: none !important;
+  }
+
+  .stall-links a {
+    color: #000;
+  }
+
+  .stall-links a::after {
+    background-color: #000;
+  }
+
+  .user-icon {
+    color: #000;
+  }
 }

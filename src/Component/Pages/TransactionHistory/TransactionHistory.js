@@ -14,6 +14,7 @@ export default function TransactionHistory() {
   useEffect(() => {
     if (!user?.id) return;
 
+    
     async function fetchWalletData() {
       try {
         const walletRes = await axios.get(`/wallets/${user.id}`);

@@ -4,9 +4,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signupUser, sendOtp, verifyOtp } from '../apis/apis';
 
 export default function SignUp() {
-  const [useEmail, setUseEmail] = useState(false); // Toggle between phone and email
+  const [useEmail, setUseEmail] = useState(false);
   const [selectedCode, setSelectedCode] = useState('+91');
   const [otpSent, setOtpSent] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('');
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -33,6 +35,7 @@ export default function SignUp() {
   const cleanedPhoneNumber = selectedCode.replace('+', '') + form.phone_number;
 
   const handleSendOtp = async () => {
+    setLoading(true);
     try {
       const payload = {
         ...form,
@@ -49,15 +52,20 @@ export default function SignUp() {
       });
       console.log('✅ OTP Sent:', otpRes.data);
 
-      alert('OTP sent successfully!');
       setOtpSent(true);
+      const target = useEmail ? 'email' : 'mobile';
+      setPopupMessage(`OTP sent to your ${target}`);
+      setTimeout(() => setPopupMessage(''), 3000); // Hide after 3 seconds
     } catch (err) {
       console.error('❌ Failed during signup or OTP:', err.response?.data?.detail);
       alert(err.response?.data?.detail || 'Signup or OTP failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
+    setLoading(true);
     try {
       const verifyRes = await verifyOtp({
         phone_number: cleanedPhoneNumber,
@@ -66,16 +74,29 @@ export default function SignUp() {
       });
 
       console.log('✅ OTP Verified:', verifyRes.data);
-      alert('Account verified successfully!');
       navigate('/');
     } catch (err) {
       console.error('❌ OTP Verification Failed:', err.response?.data?.detail);
       alert(err.response?.data?.detail || 'OTP verification failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="signup-wrapper">
+      {loading && (
+        <div className="loading-overlay">
+          <div className="spinner"></div>
+        </div>
+      )}
+
+      {popupMessage && (
+        <div className="popup-message">
+          {popupMessage}
+        </div>
+      )}
+
       <div className="signup-header-container">
         <header className="signup-header">Fliplyne</header>
       </div>
@@ -107,7 +128,6 @@ export default function SignUp() {
 
           {useEmail ? (
             <>
-              {/* Phone First, then Email */}
               <label className="signup-label">Phone Number</label>
               <div className="signup-phone-input">
                 <select
@@ -143,7 +163,6 @@ export default function SignUp() {
             </>
           ) : (
             <>
-              {/* Email First, then Phone */}
               <label className="signup-label">Company Email</label>
               <input
                 className="signup-input"
@@ -179,7 +198,7 @@ export default function SignUp() {
             </>
           )}
 
-          <button className="signup-send-otp" onClick={handleSendOtp}>
+          <button className="signup-send-otp" onClick={handleSendOtp} disabled={loading}>
             Send OTP
           </button>
 
@@ -192,7 +211,7 @@ export default function SignUp() {
             value={form.otp}
             disabled={!otpSent}
           />
-          <button className="signup-button" onClick={handleVerifyOtp}>
+          <button className="signup-button" onClick={handleVerifyOtp} disabled={!otpSent || loading}>
             Create Account
           </button>
 

@@ -205,6 +205,16 @@ export default function SignIn() {
           </p>
         </div>
       </main>
+
+      {/* ✅ Loader Overlay */}
+      {loading && (
+        <div className="signin-loader-overlay">
+          <div className="signin-loader-box">
+            <div className="spinner" />
+            <p className="signin-loader-text">Please wait, logging you in...</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

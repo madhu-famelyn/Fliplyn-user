@@ -4,7 +4,8 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate
+  Navigate,
+  useLocation
 } from 'react-router-dom';
 
 import LoadingScreen from './Component/LoadingScreen/LoadingScreen';
@@ -30,6 +31,16 @@ function ProtectedRoute({ children }) {
   return token ? children : <Navigate to="/" replace />;
 }
 
+// ✅ Redirect to /select-country if already logged in and trying to access "/"
+function PublicRoute({ children }) {
+  const { token } = useAuth();
+  const location = useLocation();
+  if (token && location.pathname === "/") {
+    return <Navigate to="/select-country" replace />;
+  }
+  return children;
+}
+
 function AppContent() {
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +51,14 @@ function AppContent() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/" element={<SignIn />} />
+      <Route
+        path="/"
+        element={
+          <PublicRoute>
+            <SignIn />
+          </PublicRoute>
+        }
+      />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/otp" element={<OtpVerify />} />
 
