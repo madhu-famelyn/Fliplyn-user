@@ -78,11 +78,12 @@ export default function ItemList({ items, itemsLoaded }) {
         <div className="item-grid">
           {items.map((item) => (
             <div key={item.id} className="item-card">
-              <img
-                src={`https://fliplyn.onrender.com/${item.image_url}`}
-                alt={item.name}
-                className="item-img"
-              />
+            <img
+              src={`https://fliplyn.onrender.com/${item.image_url}`}
+              alt={item.name}
+              className="item-img"
+            />
+
               <h4 className="item-name">{item.name}</h4>
               <p className="item-price">₹{item.price}</p>
               <button
