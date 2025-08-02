@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './Success.css';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { BsCheck } from 'react-icons/bs';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export default function PaymentSuccess() {
   const location = useLocation();
   const [orderDetails, setOrderDetails] = useState(null);
+  const receiptRef = useRef(null);
 
   useEffect(() => {
     const order = location.state?.order;
@@ -24,24 +27,31 @@ export default function PaymentSuccess() {
     }
   };
 
-  if (!orderDetails) {
-    return <p className="loading-text">Loading...</p>;
-  }
+  const downloadPDF = () => {
+    const input = receiptRef.current;
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgProps = pdf.getImageProperties(imgData);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`receipt_${orderDetails.id.slice(0, 6)}.pdf`);
+    });
+  };
 
-  // Convert UTC to IST (add 5 hours and 30 minutes)
-  const utcDate = new Date(orderDetails.created_datetime);
-  const istDate = new Date(utcDate.getTime() + (5.5 * 60 * 60 * 1000));
-  const createdAt = istDate.toLocaleString('en-IN', {
+  if (!orderDetails) return <p className="loading-text">Loading...</p>;
+
+  const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4); // fallback
+  const createdAt = new Date(orderDetails.created_datetime).toLocaleString('en-IN', {
     hour12: true,
-    timeZone: 'Asia/Kolkata'
+    timeZone: 'Asia/Kolkata',
   });
-
-  const item = orderDetails.order_details[0]; // assuming 1 item per order
-  const tokenNo = orderDetails.id.slice(0, 4); // simulate a token
 
   const CGST = 0.13;
   const SGST = 0.13;
   const taxTotal = CGST + SGST;
+
   const roundedTotal = Math.round(orderDetails.total_amount);
   const roundOff = (roundedTotal - orderDetails.total_amount).toFixed(2);
 
@@ -53,9 +63,9 @@ export default function PaymentSuccess() {
         </p>
       </div>
 
-      <div className="receipt-card">
-        <h2 className="stall-name">{item.stall_name}</h2>
-        <p className="token-no">Token No.: {tokenNo}</p>
+      <div className="receipt-card" ref={receiptRef}>
+        <h2 className="stall-name">{orderDetails.order_details[0]?.stall_name}</h2>
+        <p className="token-no">Token No.: <strong>{tokenNo}</strong></p>
         <p className="order-date">Date: {createdAt}</p>
 
         <hr className="separator" />
@@ -69,11 +79,13 @@ export default function PaymentSuccess() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>{item.name}</td>
-              <td>{item.quantity}</td>
-              <td>{item.price.toFixed(2)}</td>
-            </tr>
+            {orderDetails.order_details.map((item, index) => (
+              <tr key={index}>
+                <td>{item.name}</td>
+                <td>{item.quantity}</td>
+                <td>{item.price.toFixed(2)}</td>
+              </tr>
+            ))}
             <tr>
               <td>CGST</td>
               <td></td>
@@ -87,7 +99,7 @@ export default function PaymentSuccess() {
             <tr>
               <td>Total (Rs)</td>
               <td></td>
-              <td>{(item.total + taxTotal).toFixed(2)}</td>
+              <td>{(orderDetails.total_amount + taxTotal).toFixed(2)}</td>
             </tr>
             <tr>
               <td>Round Off (Rs)</td>
@@ -103,7 +115,7 @@ export default function PaymentSuccess() {
         </table>
       </div>
 
-      <button className="download-btn">Download Receipt</button>
+      <button className="download-btn" onClick={downloadPDF}>Download Receipt</button>
     </div>
   );
 }

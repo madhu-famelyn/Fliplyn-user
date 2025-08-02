@@ -45,21 +45,27 @@ export default function Transactions() {
                 <span>Status</span>
               </div>
 
-              {orders.map((order) => (
-                <div key={order.id} className="transaction-row">
-                  <span>
-                    {new Date(order.created_datetime).toLocaleDateString('en-GB', {
-                      day: '2-digit',
-                      month: 'short',
-                      year: 'numeric',
-                    })}
-                  </span>
-                  <span>#{order.id.slice(-5)}</span>
-                  <span>₹{order.total_amount}</span>
-                  <span>{order.payment_method_detail || 'Wallet'}</span>
-                  <span className="status success">Successful</span>
-                </div>
-              ))}
+              {orders.map((order) => {
+                const isFailed = order.total_amount === 0;
+
+                return (
+                  <div key={order.id} className="transaction-row">
+                    <span>
+                      {new Date(order.created_datetime).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </span>
+                    <span>#{order.id.slice(-5)}</span>
+                    <span>₹{order.total_amount}</span>
+                    <span>{order.payment_method_detail || 'Wallet'}</span>
+                    <span className={`status ${isFailed ? 'failed' : 'success'}`}>
+                      {isFailed ? 'Failed' : 'Successful'}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

@@ -37,6 +37,7 @@ export default function Header() {
           <FaUserCircle className="user-icon" />
         </Link>
       </div>
+     
 
       {/* ✅ Mobile Dropdown Nav */}
       <div className={`stall-links mobile-dropdown ${menuOpen ? 'open' : ''}`}>
