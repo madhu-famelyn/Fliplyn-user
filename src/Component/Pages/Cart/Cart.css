@@ -85,7 +85,6 @@
   justify-content: center;
   font-size: 13px;
   flex-grow: 1;
-  margin-left: -20px; /* 🛠️ Further reduced from 4px to 2px */
   max-width: 100px;  /* 🛠️ Added to limit width and prevent overflow */
   overflow: hidden;  /* 🛠️ Ensures content doesn't break layout */
 }
@@ -351,16 +350,19 @@
   }
   
 
- .item-info {
+.item-info {
   display: flex;
   flex-direction: column;
   justify-content: center;
   font-size: 13px;
   flex-grow: 1;
-  margin-left: -0px; 
-  max-width: 100px;  /* 🛠️ Added to limit width and prevent overflow */
-  overflow: hidden;  /* 🛠️ Ensures content doesn't break layout */
+  margin-left: 0; /* cleaner and effective than -0px */
+  overflow: hidden;
+  white-space: normal;       /* ✅ allows wrapping */
+  word-wrap: break-word;     /* ✅ breaks long words */
+  line-height: 1.3;
 }
+
 /* === Cart Wrapper === */
  .cart-wrapper {
     border: none;

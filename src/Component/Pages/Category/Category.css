@@ -246,7 +246,7 @@
 
 /* ✅ Add to Cart Button - improved */
 .add-to-cart-btn {
-  width: 127px;
+  width: 100px;
   height: 34px;
   padding: 0 12px;
   border-radius: 8px;
@@ -299,12 +299,30 @@
     padding: 0 12px;
   }
 
-  .add-to-cart-btn {
-    width: 120px;
-    height: 36px;
-    font-size: 13px;
-    margin-bottom: 14px;
-  }
+ .add-to-cart-btn {
+  width: 127px;
+  height: 26.63px;
+  gap: 6px; /* Optional – can be used in flex layout if needed */
+  border-radius: 8px;
+  border: 1px solid #6A6A6A;
+  padding: 0 10px;
+  background-color: #fff;
+  color: #000;
+  font-size: 13px;
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #f2f2f2;
+}
+
 
   .menu-header {
     display: flex;
@@ -327,6 +345,8 @@
     white-space: nowrap;
   }
 }
+
+
 
 /* ✅ Cart Popup */
 .cart-popup {
