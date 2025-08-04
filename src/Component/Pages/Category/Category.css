@@ -179,10 +179,7 @@
 
 
 
-
-/* ✅ Wrapper for item cards */
-
-/* ✅ Wrapper for item cards */
+/* ✅ Item Grid Layout */
 .item-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 items per row */
@@ -194,11 +191,11 @@
   justify-content: center;
 }
 
-/* ✅ Item Card - Reduced */
+/* ✅ Item Card */
 .item-card {
   position: relative;
-  width: 172px; /* reduced from 192px */
-  height: 225px; /* reduced from 250px */
+  width: 172px;
+  height: 245px;
   background-color: #F6F6F6;
   border-radius: 14px;
   border: 1px solid #E0E0E0;
@@ -206,55 +203,71 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 72px; /* adjusted for smaller image */
+  padding-top: 72px;
   box-sizing: border-box;
   text-align: center;
   overflow: visible;
   margin: 0 auto;
 }
 
-/* ✅ Item Image - Smaller */
+/* ✅ Item Image */
 .item-card img {
-  width: 120px;  /* reduced from 132px */
-  height: 120px; /* reduced from 132px */
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   position: absolute;
-  top: -60px;  /* half of height */
+  top: -60px;
   left: 50%;
   transform: translateX(-50%);
   border-radius: 50%;
   background-color: #fff;
 }
 
-/* ✅ Item Title - same */
-.item-title {
-  font-weight: 300;
+/* ✅ Item Name - allows multiline */
+.item-name {
+  font-weight: 500;
   font-size: 13.5px;
   line-height: 130%;
-  margin: 8px 0;
+  margin: 8px 0 4px;
+  padding: 0 10px;
   color: #333;
+  word-break: break-word;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
-/* ✅ Add to Cart Button - Slightly smaller */
-/* ✅ Add to Cart Button - Alignment Polished */
+/* ✅ Item Price */
+.item-price {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+/* ✅ Add to Cart Button - improved */
 .add-to-cart-btn {
-  width: 115px;
-  height: 32px;
-  padding: 0;
+  width: 127px;
+  height: 34px;
+  padding: 0 12px;
   border-radius: 8px;
   border: 1px solid #888;
-  background-color: #fff;
+  background-color: #ffffff;
   font-size: 13px;
   font-weight: 500;
   font-family: 'Helvetica Neue', sans-serif;
   cursor: pointer;
   margin-top: auto;
-  align-self: center;
-  margin-bottom: 12px; /* ✅ Adds space below the button */
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
 }
 
+.add-to-cart-btn:hover {
+  background-color: #f0f0f0;
+  border-color: #555;
+}
+
+/* ✅ Mobile Responsive */
 @media (max-width: 600px) {
-  /* ✅ Mobile item grid */
   .item-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
@@ -262,13 +275,10 @@
     justify-content: center;
   }
 
-  /* ✅ Mobile item card */
   .item-card {
     width: 100%;
-    height: 240px;
+    height: 260px;
     padding-top: 80px;
-    position: relative;
-    overflow: visible;
     border-radius: 16px;
     margin: 20px 0;
   }
@@ -277,33 +287,25 @@
     width: 100px;
     height: 100px;
     top: -50px;
-    position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    object-fit: cover;
-    background-color: #fff;
     border-radius: 50%;
-    z-index: 1;
+    background-color: #fff;
   }
 
-  .item-title {
+  .item-name {
     font-size: 14px;
-    margin: 10px 0 6px;
-    z-index: 2;
-    position: relative;
+    margin: 10px 8px 6px;
+    padding: 0 12px;
   }
 
   .add-to-cart-btn {
-    width: 110px;
-    height: 34px;
+    width: 120px;
+    height: 36px;
     font-size: 13px;
-    margin-top: auto;
     margin-bottom: 14px;
-    position: relative;
-    z-index: 2;
   }
 
-  /* ✅ Fix for menu + view staying in same row */
   .menu-header {
     display: flex;
     flex-direction: row;
@@ -318,11 +320,24 @@
     font-size: 18px;
   }
 
-  /* ✅ DON'T resize the button */
   .view-cart-btn {
     font-size: 14px;
     padding: 6px 12px;
     height: auto;
-    white-space: nowrap; /* Prevent wrapping */
+    white-space: nowrap;
   }
+}
+
+/* ✅ Cart Popup */
+.cart-popup {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 9999;
 }
