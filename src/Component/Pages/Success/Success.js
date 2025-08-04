@@ -116,6 +116,7 @@ export default function PaymentSuccess() {
       </div>
 
       <button className="download-btn" onClick={downloadPDF}>Download Receipt</button>
+      <button className="download-btn" onClick={downloadPDF}>Back to Home</button>
     </div>
   );
 }

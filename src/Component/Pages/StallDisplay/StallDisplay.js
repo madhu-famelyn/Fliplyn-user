@@ -5,23 +5,29 @@ import '../../fonts.css';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 
-export default function StallDisplay({ name = '', description = '', imageUrl = '', categoryCount = 0, itemCount = 0 }) {
+export default function StallDisplay({
+  name = '',
+  description = '',
+  imageUrl = '',
+  categoryCount = 0,
+  itemCount = 0
+}) {
   const navigate = useNavigate();
 
   return (
     <>
       {/* ✅ Back Button */}
       <div className="back-button-container">
-<button className="back-button" onClick={() => navigate(-1)}>
-  <IoIosArrowBack style={{ marginRight: '8px' }} />
-  {name}
-</button>
+        <button className="back-button" onClick={() => navigate(-1)}>
+          <IoIosArrowBack style={{ marginRight: '8px' }} />
+          {name}
+        </button>
       </div>
 
       {/* ✅ Stall Banner */}
       <div
         className="stall-banner"
-        style={{ backgroundImage: `url(https://fliplyn.onrender.com/${imageUrl})` }}
+        style={{ backgroundImage: `url(${imageUrl})` }} // ✅ use full S3 URL directly
       >
         <div className="stall-banner-overlay">
           <div className="stall-info-left">

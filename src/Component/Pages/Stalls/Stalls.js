@@ -1,3 +1,4 @@
+// src/pages/stalls/stall.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Stalls.css';
@@ -13,7 +14,7 @@ export default function Stall() {
     if (!buildingId) return;
 
     axios
-      .get(`https://fliplyn.onrender.com/stalls/building/${buildingId}`)
+      .get(`https://fliplyn.onrender.com/stalls/building/${buildingId}`) // ✅ replace with your backend URL
       .then((res) => {
         setStalls(res.data);
       })
@@ -28,39 +29,39 @@ export default function Stall() {
 
   return (
     <>
-     <Header />
+      <Header />
 
-    <div className="stall-wrapper">
-
-      <div className="stall-content">
-            <div className="stall-heading-wrapper"> {/* ✅ Wrap heading + subtext */}
-              <h2 className="stall-heading">Explore Outlets</h2>
-              <p className="stall-subtext">Browse menus and order your favorite meals.</p>
-            </div>
-        {stalls.length === 0 ? (
-          <p className="stall-empty">No stalls available in this building.</p>
-        ) : (
-          <div className="stall-grid">
-            {stalls.map((stall) => (
-              <div
-                className="stall-card-wrapper"
-                key={stall.id}
-                onClick={() => handleStallClick(stall.id)}
-              >
-                <div className="stall-card">
-                  <img
-                    src={`https://fliplyn.onrender.com/${stall.image_url}`}
-                    alt={stall.name}
-                    className="stall-image"
-                  />
-                  <div className="view-menu-overlay">View Menu</div>
-                </div>
-              </div>
-            ))}
+      <div className="stall-wrapper">
+        <div className="stall-content">
+          <div className="stall-heading-wrapper">
+            <h2 className="stall-heading">Explore Outlets</h2>
+            <p className="stall-subtext">Browse menus and order your favorite meals.</p>
           </div>
-        )}
+
+          {stalls.length === 0 ? (
+            <p className="stall-empty">No stalls available in this building.</p>
+          ) : (
+            <div className="stall-grid">
+              {stalls.map((stall) => (
+                <div
+                  className="stall-card-wrapper"
+                  key={stall.id}
+                  onClick={() => handleStallClick(stall.id)}
+                >
+                  <div className="stall-card">
+                    <img
+                      src={stall.image_url} // ✅ USE AWS URL directly
+                      alt={stall.name}
+                      className="stall-image"
+                    />
+                    <div className="view-menu-overlay">View Menu</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 }
