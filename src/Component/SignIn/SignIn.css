@@ -167,7 +167,7 @@
   min-height: calc(100vh - 60px);
 
   justify-content: flex-start; /* 🔄 Align to top */
-  padding-top: 90px;           /* 🆕 Add space from top as needed */
+  padding-top: 110px;           /* 🆕 Add space from top as needed */
 }
 
 
