@@ -56,12 +56,20 @@
 
 
 
+.item-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* horizontally center contents */
+  justify-content: center;
+  padding-top: 10px;
+}
 
-
-
-
-
-
+.item-names,
+.item-price {
+  margin: 4px 0;
+  text-align: center;
+  width: 100%;
+}
 
 
 
