@@ -2,7 +2,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
-/* ✅ Base Styles */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
+  overflow-y: auto; /* ✅ Allows vertical scroll */
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: left;
+  border: none;
+  overflow-y: auto;      /* enable vertical scroll */
+  max-height: 100%;      /* restrict height inside .signup-main */
+}
 
 * {
   font-family: 'Inter', sans-serif;
@@ -10,20 +28,18 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-/* ✅ Wrapper */
 .signup-wrapper {
   background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow-y: auto; /* ✅ Enable vertical scrolling */
 }
 
-/* ✅ Header */
+/* ✅ Header Styles */
 .signup-header-container {
-  width: 100%;
-  height: auto;
+  width: 1940px;
+  height: 78px;
   padding: 24px 30px;
   border-bottom: 1px solid #ddd;
   display: flex;
@@ -32,8 +48,10 @@
 }
 
 .signup-header {
+  font-family: 'Inter', sans-serif;
   font-weight: 700;
   font-size: 30px;
+  line-height: 100%;
   color: #000000;
 }
 
@@ -41,23 +59,22 @@
 .signup-main {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 2rem 1rem 1rem;
-  overflow-y: auto;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
 }
+
+
 
 /* ✅ Signup Card */
 .signup-card {
+  
   width: 100%;
   max-width: 500px;
   padding: 1.5rem;
   border-radius: 8px;
   text-align: left;
   border: none;
-  overflow-y: auto;
-  max-height: 100%;
-  margin-top: 4rem;
 }
 
 @media screen and (min-width: 768px) {
@@ -66,15 +83,17 @@
   }
 }
 
-/* ✅ Typography */
+/* ✅ "Create Your Account" heading */
 .signup-card h2 {
   font-family: 'Helvetica Neue', sans-serif;
   font-weight: 700;
   font-size: 26px;
+
   text-align: center;
   margin-bottom: 0.25rem;
 }
 
+/* ✅ Subtext */
 .signup-subtext {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
@@ -85,41 +104,54 @@
   margin-bottom: 1rem;
 }
 
-/* ✅ Labels & Inputs */
+/* ✅ Label */
 .signup-label {
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 12px;
+  line-height: 14.26px;
   color: #333;
   display: block;
   margin-bottom: 0.25rem;
   margin-left: 3vh;
 }
 
+/* ✅ Input Fields */
 .signup-input {
   width: 90%;
-  padding: 0.7rem;
+  padding: 0.70rem;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  margin-bottom: 20px;
+}
+.signup-input {
   display: block;
-  margin: 0 auto 20px;
+  margin: 0 auto 20px auto; /* top: 0, bottom: 20px, auto left/right to center */
 }
 
-/* ✅ Phone Input */
+
 .signup-phone-input {
   display: flex;
   align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.signup-phone-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
   width: 90%;
-  margin: 0 auto 0.75rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .signup-code {
   padding: 0.45rem;
   border: 1px solid #ccc;
   font-size: 14px;
-  border-right: none;
-  border-radius: 4px 0 0 4px;
+  border-right: none; /* remove border between the two */
+  border-radius: 4px 0 0 4px; /* rounded left side only */
   flex: 0 0 75px;
   background-color: #fff;
 }
@@ -129,37 +161,40 @@
   padding: 0.45rem;
   font-size: 14px;
   border: 1px solid #ccc;
-  border-left: none;
-  border-radius: 0 4px 4px 0;
+  border-left: none; /* remove border between the two */
+  border-radius: 0 4px 4px 0; /* rounded right side only */
+  max-width: 100%;
 }
 
-/* ✅ Links */
-.signup-send-otp,
-.signup-switch {
-  font-size: 13px;
-  font-weight: 500;
-  color: #f57c00;
+
+/* ✅ Send OTP Link */
+.signup-send-otp {
   background: none;
   border: none;
-  cursor: pointer;
+  color: #f57c00;
   margin-left: 3vh;
-}
-
-.signup-send-otp {
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
   margin-bottom: 1rem;
   padding-left: 0;
 }
 
+/* ✅ Switch method link */
 .signup-switch {
+  color: #f57c00;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
   text-align: left;
   margin-top: -0.25rem;
   margin-bottom: 1.25rem;
+  margin-left:3vh ;
 }
 
-/* ✅ Button */
+/* ✅ Main Button */
 .signup-button {
-  width: 100%;
-  max-width: 400px;
+  width: 400.4px;
   height: 38.6px;
   padding: 14px 36px;
   gap: 8px;
@@ -171,17 +206,13 @@
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
+  margin-bottom: 0.75rem;
+}
+.signup-button {
   display: block;
-  margin: 0 auto 0.75rem;
-  text-align: center;
+  margin: 0 auto 0.75rem auto; /* top: 0, bottom: 0.75rem, left/right: auto */
 }
 
-.signup-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-  opacity: 0.6;
-  box-shadow: none;
-}
 
 /* ✅ Footer */
 .signup-footer {
@@ -197,7 +228,83 @@
   text-decoration: none;
 }
 
-/* ✅ Spinner */
+
+/* ✅ Mobile Screen Media Queries */
+@media screen and (max-width: 767px) {
+  .signup-header-container {
+    width: 100%;
+    height: auto;
+    padding: 16px 20px;
+    flex-direction: row;
+    justify-content: left;
+  }
+  .signup-main {
+  padding: 0.5rem;
+  margin-top: 0;        /* Remove any top margin */
+  padding-top: 0;       /* Remove top padding */
+}
+
+
+  .signup-header {
+    font-size: 24px;
+    text-align: left;
+  }
+.signup-main {
+  padding: 0.5rem;
+  margin-top: 0;        /* Remove any top margin */
+  padding-top: 0;       /* Remove top padding */
+}
+
+
+  .signup-card {
+    width: 100%;
+    max-width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 0;
+  }
+
+  .signup-card h2 {
+    font-size: 22px;
+    /* line-height: 30px; */
+  }
+
+  .signup-subtext {
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  .signup-label {
+    font-size: 11px;
+    line-height: 13px;
+  }
+
+  .signup-input,
+  .signup-code,
+  .signup-number {
+    font-size: 13px;
+    padding: 0.4rem;
+  }
+
+  .signup-send-otp,
+  .signup-switch {
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .signup-button {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+
+  .signup-footer {
+    font-size: 12px;
+  }
+}
+
+
+/* Spinner + Overlay */
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -225,7 +332,6 @@
   100% { transform: rotate(360deg); }
 }
 
-/* ✅ Popup Message */
 .popup-message {
   position: fixed;
   top: 10%;
@@ -247,72 +353,171 @@
   100% { opacity: 0; transform: translate(-50%, -20%); }
 }
 
-/* ✅ Mobile Screens */
-@media screen and (max-width: 767px) {
-  .signup-header-container {
-    padding: 16px 20px;
-    flex-direction: row;
-    justify-content: flex-start;
-  }
 
-  .signup-header {
-    font-size: 24px;
-    text-align: left;
+.signup-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+  outline: none;
+}
+
+
+.signup-button {
+  text-align: center;
+  
+}
+
+@media screen and (max-width: 767px) {
+  .signup-main {
+    height: calc(100vh - 60px); /* adjust based on mobile header */
   }
 
   .signup-main {
-    padding: 1rem;
-    height: calc(100vh - 60px);
+  padding: 0.5rem;
+  margin-top: 0;        /* Remove any top margin */
+  padding-top: 0;       /* Remove top padding */
+}
+
+  .signup-card {
+    max-height: 90%;
+    overflow-y: auto;
+  }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
+}
+
+
+@media screen and (max-width: 390px) and (max-height: 844px) {
+  .signup-main {
+    padding-top: 30px !important;  /* 🔽 Reduced top padding */
+    margin-top: 0 !important;
   }
 
   .signup-card {
-    width: 100%;
-    max-width: 100%;
-    padding: 1rem;
-    border-radius: 0;
-    margin-top: 4rem;
-    max-height: 90vh;
+    padding-top: 1rem !important;  /* Optional: reduce padding inside card */
+    margin-top: 0 !important;
   }
 
-  .signup-card h2 {
-    font-size: 22px;
-  }
-
-  .signup-subtext,
-  .signup-label,
-  .signup-send-otp,
-  .signup-switch,
-  .signup-footer {
-    font-size: 12px;
-  }
-
-  .signup-input,
-  .signup-code,
-  .signup-number {
-    font-size: 13px;
-    padding: 0.4rem;
-  }
-
-  .signup-button {
-    font-size: 13px;
-    padding: 12px 20px;
+  .signup-card h2,
+  .signup-card h1 {
+    margin-top: 0 !important;      /* Remove header margin */
   }
 }
 
-/* ✅ Specific Devices */
-@media screen and (max-width: 393px) and (max-height: 850px),
-       screen and (max-width: 390px) and (max-height: 844px),
-       screen and (max-width: 1080px) and (max-height: 2400px) {
+
+
+/* ✅ Responsive: tablets & below */
+@media screen and (max-width: 767px) {
   .signup-main {
-    padding-top: 1rem;
+    padding: 0 1rem;         /* Horizontal padding only */
+    margin-top: 0;
+  }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
+
+  .signup-card {
+    padding: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ✅ Specific: Realme 8 & Vivo V23 5G (390 x 844) */
+@media screen and (max-width: 390px) and (max-height: 844px) {
+  .signup-main {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
   }
 
   .signup-card {
-    margin-top: 6rem;
+    padding-top: 1rem !important;
+    margin-top: 0 !important;
   }
 
   .signup-card h1,
   .signup-card h2 {
+    margin-top: 0 !important;
+  }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 8rem;
+}
+}
+
+/* ✅ Specific: OPPO F17 Pro (393 x 850) */
+@media screen and (max-width: 393px) and (max-height: 850px) {
+  .signup-main {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .signup-card {
+    padding-top: 1rem !important;
+    margin-top: 0 !important;
+  }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 10rem;
+}
+}
+
+/* ✅ Specific: Motorola Edge 50 Fusion (~1080 x 2400) */
+@media screen and (max-width: 1080px) and (max-height: 2400px) {
+  .signup-main {
+    padding-top: 0;
     margin-top: 0;
   }
+
+  .signup-card {
+    padding-top: 1rem;
+  }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
 }
