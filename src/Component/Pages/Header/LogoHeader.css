@@ -6,7 +6,6 @@
   position: absolute; /* Stick to top */
   top: 0;
   right: 0;
-  padding: 16px 24px; /* Optional: control spacing from top-right edge */
 }
 
 .signin-header {

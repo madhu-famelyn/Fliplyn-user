@@ -11,8 +11,9 @@
   font-family: 'Helvetica', 'Helvetica Neue', sans-serif;
   font-weight: 400;
   font-size: 26px;
-  line-height: 33.27px;
+  line-height: 30.27px;
 }
+
 .signin-card h2 {
   font-size: 22px;
 }
@@ -23,14 +24,12 @@
   line-height: 33.27px;
   letter-spacing: 0;
   text-align: center;
-  margin-bottom: 8px; /* optional spacing below title */
 }
 
 
 
 /* ==== Header ==== */
 .signin-header-container {
-  border: 1px solid #d3d3d3;
   padding: 0.5rem 2rem;
 }
 
@@ -169,14 +168,13 @@
 
 @media screen and (max-width: 767px) {
   .signin-header-container {
-    padding: 0.75rem 1rem;
     border-width: 1px 0;
   }
 
   .signin-header {
     font-size: 24px;
-    padding: 0.75rem 1rem;
     text-align: left;
+    margin-left: 1px;
   }
 
   .signin-main {

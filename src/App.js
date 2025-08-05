@@ -64,7 +64,7 @@ function AppContent() {
         }
       />
       <Route path="/verify-otp" element={<VerifyOTP />} />
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/signup-page" element={<SignUp />} />
       <Route path="/otp" element={<OtpVerify />} />
 
       {/* All Routes (no ProtectedRoute anymore) */}

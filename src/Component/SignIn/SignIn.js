@@ -115,7 +115,7 @@ export default function PhoneNumberLogin() {
             {loading ? 'Sending OTP...' : 'Send OTP'}
           </button>
           <p className="signin-footer">
-            New here? <a href="/signup" className="signup-link">Sign Up</a>
+            New here? <a href="/signup-page" className="signup-link">Sign Up</a>
           </p>
         </div>
       </main>
