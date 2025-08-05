@@ -2,6 +2,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* top align the card */
+  padding: 1rem;
+  overflow: hidden; /* prevent full page scroll */
+  height: calc(100vh - 78px); /* subtract header height */
+}
+
+.signup-card {
+  width: 100%;
+  max-width: 500px;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: left;
+  border: none;
+  overflow-y: auto;      /* enable vertical scroll */
+  max-height: 100%;      /* restrict height inside .signup-main */
+}
+
 * {
   font-family: 'Inter', sans-serif;
   margin: 0;
@@ -18,7 +39,7 @@
 
 /* ✅ Header Styles */
 .signup-header-container {
-  width: 1440px;
+  width: 1940px;
   height: 78px;
   padding: 24px 30px;
   border-bottom: 1px solid #ddd;
@@ -46,8 +67,9 @@
 
 /* ✅ Signup Card */
 .signup-card {
-  width: 92%;
-  max-width: 340px;
+  margin-top: 5vh;
+  width: 100%;
+  max-width: 500px;
   padding: 1.5rem;
   border-radius: 8px;
   text-align: left;
@@ -90,46 +112,66 @@
   color: #333;
   display: block;
   margin-bottom: 0.25rem;
+  margin-left: 3vh;
 }
 
 /* ✅ Input Fields */
 .signup-input {
-  width: 100%;
-  padding: 0.45rem;
+  width: 90%;
+  padding: 0.70rem;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  margin-bottom: 20px;
+}
+.signup-input {
+  display: block;
+  margin: 0 auto 20px auto; /* top: 0, bottom: 20px, auto left/right to center */
+}
+
+
+.signup-phone-input {
+  display: flex;
+  align-items: center;
   margin-bottom: 0.75rem;
 }
 
 .signup-phone-input {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   margin-bottom: 0.75rem;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .signup-code {
   padding: 0.45rem;
-  border-radius: 4px;
   border: 1px solid #ccc;
-  flex: 0 0 75px;
   font-size: 14px;
+  border-right: none; /* remove border between the two */
+  border-radius: 4px 0 0 4px; /* rounded left side only */
+  flex: 0 0 75px;
+  background-color: #fff;
 }
 
 .signup-number {
   flex: 1;
   padding: 0.45rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
   font-size: 14px;
+  border: 1px solid #ccc;
+  border-left: none; /* remove border between the two */
+  border-radius: 0 4px 4px 0; /* rounded right side only */
+  max-width: 100%;
 }
+
 
 /* ✅ Send OTP Link */
 .signup-send-otp {
   background: none;
   border: none;
   color: #f57c00;
+  margin-left: 3vh;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -146,11 +188,12 @@
   text-align: left;
   margin-top: -0.25rem;
   margin-bottom: 1.25rem;
+  margin-left:3vh ;
 }
 
 /* ✅ Main Button */
 .signup-button {
-  width: 290.4px;
+  width: 400.4px;
   height: 38.6px;
   padding: 14px 36px;
   gap: 8px;
@@ -164,6 +207,11 @@
   cursor: pointer;
   margin-bottom: 0.75rem;
 }
+.signup-button {
+  display: block;
+  margin: 0 auto 0.75rem auto; /* top: 0, bottom: 0.75rem, left/right: auto */
+}
+
 
 /* ✅ Footer */
 .signup-footer {
@@ -302,4 +350,23 @@
   background-color: #ccc;
   cursor: not-allowed;
   opacity: 0.6;
+  box-shadow: none;
+  outline: none;
+}
+
+
+.signup-button {
+  text-align: center;
+  
+}
+
+@media screen and (max-width: 767px) {
+  .signup-main {
+    height: calc(100vh - 60px); /* adjust based on mobile header */
+  }
+
+  .signup-card {
+    max-height: 100%;
+    overflow-y: auto;
+  }
 }
