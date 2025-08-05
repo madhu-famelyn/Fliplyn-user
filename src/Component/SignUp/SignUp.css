@@ -9,7 +9,6 @@
   align-items: flex-start; /* top align the card */
   padding: 1rem;
   overflow: hidden; /* prevent full page scroll */
-  height: calc(100vh - 78px); /* subtract header height */
 }
 
 .signup-card {
@@ -237,15 +236,23 @@
     flex-direction: row;
     justify-content: left;
   }
+  .signup-main {
+  padding: 0.5rem;
+  margin-top: 0;        /* Remove any top margin */
+  padding-top: 0;       /* Remove top padding */
+}
+
 
   .signup-header {
     font-size: 24px;
     text-align: left;
   }
+.signup-main {
+  padding: 0.5rem;
+  margin-top: 0;        /* Remove any top margin */
+  padding-top: 0;       /* Remove top padding */
+}
 
-  .signup-main {
-    padding: 0.5rem;
-  }
 
   .signup-card {
     width: 100%;
@@ -364,8 +371,32 @@
     height: calc(100vh - 60px); /* adjust based on mobile header */
   }
 
+  .signup-main {
+  padding: 0.5rem;
+  margin-top: 0;        /* Remove any top margin */
+  padding-top: 0;       /* Remove top padding */
+}
+
   .signup-card {
     max-height: 90%;
     overflow-y: auto;
+  }
+}
+
+
+@media screen and (max-width: 390px) and (max-height: 844px) {
+  .signup-main {
+    padding-top: 30px !important;  /* 🔽 Reduced top padding */
+    margin-top: 0 !important;
+  }
+
+  .signup-card {
+    padding-top: 1rem !important;  /* Optional: reduce padding inside card */
+    margin-top: 0 !important;
+  }
+
+  .signup-card h2,
+  .signup-card h1 {
+    margin-top: 0 !important;      /* Remove header margin */
   }
 }
