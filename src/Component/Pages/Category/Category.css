@@ -195,7 +195,7 @@
   margin: 0 auto;
   box-sizing: border-box;
   justify-content: center;
-  margin-bottom: 10vh;
+  margin-bottom: 20vh;
 }
 
 /* ✅ Item Card */
@@ -282,6 +282,7 @@
     gap: 24px;
     padding: 0 16px;
     justify-content: center;
+    
   }
 
   .item-card {
@@ -403,7 +404,7 @@
   color: #211b15;
   font-size: 14px;
   font-weight: 500;
-  margin-top: 5vh;
+  
   cursor: pointer;
   transition: background-color 0.4s ease, color 0.4s ease, transform 0.2s;
 }
