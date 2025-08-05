@@ -6,9 +6,9 @@
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* top align the card */
+  align-items: flex-start;
   padding: 1rem;
-  overflow: hidden; /* prevent full page scroll */
+  overflow-y: auto; /* ✅ Allows vertical scroll */
 }
 
 .signup-card {
@@ -59,10 +59,16 @@
 .signup-main {
   flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1rem;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
 }
+
+.signup-card {
+  margin-top: 4rem;
+}
+
+
 
 /* ✅ Signup Card */
 .signup-card {
@@ -381,6 +387,18 @@
     max-height: 90%;
     overflow-y: auto;
   }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
 }
 
 
@@ -409,6 +427,18 @@
     padding: 0 1rem;         /* Horizontal padding only */
     margin-top: 0;
   }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
 
   .signup-card {
     padding: 1rem;
@@ -433,6 +463,18 @@
   .signup-card h2 {
     margin-top: 0 !important;
   }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
 }
 
 /* ✅ Specific: OPPO F17 Pro (393 x 850) */
@@ -446,6 +488,18 @@
     padding-top: 1rem !important;
     margin-top: 0 !important;
   }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
 }
 
 /* ✅ Specific: Motorola Edge 50 Fusion (~1080 x 2400) */
@@ -458,4 +512,16 @@
   .signup-card {
     padding-top: 1rem;
   }
+  /* ✅ Main Layout */
+.signup-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;     /* horizontally center */
+  align-items: flex-start;     /* align from top */
+  padding: 2rem 1rem 1rem 1rem; /* top, right, bottom, left */
+}
+
+.signup-card {
+  margin-top: 4rem;
+}
 }
