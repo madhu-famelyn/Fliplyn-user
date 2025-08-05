@@ -67,7 +67,7 @@
 
 /* ✅ Signup Card */
 .signup-card {
-  margin-top: 5vh;
+  
   width: 100%;
   max-width: 500px;
   padding: 1.5rem;
@@ -87,7 +87,7 @@
   font-family: 'Helvetica Neue', sans-serif;
   font-weight: 700;
   font-size: 26px;
-  line-height: 33.27px;
+
   text-align: center;
   margin-bottom: 0.25rem;
 }
@@ -257,7 +257,7 @@
 
   .signup-card h2 {
     font-size: 22px;
-    line-height: 30px;
+    /* line-height: 30px; */
   }
 
   .signup-subtext {
@@ -365,7 +365,7 @@
   }
 
   .signup-card {
-    max-height: 100%;
+    max-height: 90%;
     overflow-y: auto;
   }
 }
