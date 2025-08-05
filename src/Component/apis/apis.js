@@ -17,6 +17,7 @@ export const verifyOtp = (data) => {
   return axios.post(`${BASE_URL}/verify-otp`, data);  // Correctly points to /verify-otp
 };
 
+
 // ✅ User Login - initiate OTP
 export const initiateLogin = async ({ phone_number, company_email }) => {
   try {
@@ -31,18 +32,25 @@ export const initiateLogin = async ({ phone_number, company_email }) => {
 };
 
 // ✅ User Login - verify OTP
-export const verifyLoginOTP = async ({ phone_number, company_email, otp }) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/user/login/verify`, {  // Updated URL for login
-      phone_number,
-      company_email,
-      otp,
+
+export const verifyLoginOTP = (data) => {
+  return axios
+    .post(`${BASE_URL}/user/login/verify`, data)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err.response?.data || { detail: 'Unknown error' };
     });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { detail: 'OTP verification failed' };
-  }
 };
+
+export const initiateLoginOTP = (data) => {
+  return axios
+    .post(`${BASE_URL}/user/login/initiate`, data)
+    .then((res) => res.data)
+    .catch((err) => {
+      throw err.response?.data || { detail: 'Unknown error' };
+    });
+};
+
 
 // ✅ Admin Login (OAuth2 password grant)
 export const loginAdmin = async (email, password) => {

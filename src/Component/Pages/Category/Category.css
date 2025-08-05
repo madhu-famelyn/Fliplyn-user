@@ -1,4 +1,10 @@
 /* Scroll container */
+.category-wrapper {
+  max-height: 100vh;
+  overflow-y: auto;
+  padding-bottom: 2rem; /* Optional: To give breathing room at the end */
+}
+
 .category-scroll {
   display: flex;
   flex-direction: row;
@@ -189,13 +195,14 @@
   margin: 0 auto;
   box-sizing: border-box;
   justify-content: center;
+  margin-bottom: 10vh;
 }
 
 /* ✅ Item Card */
 .item-card {
   position: relative;
   width: 172px;
-  height: 245px;
+  height: 210px;
   background-color: #F6F6F6;
   border-radius: 14px;
   border: 1px solid #E0E0E0;
@@ -216,19 +223,21 @@
   height: 120px;
   object-fit: cover;
   position: absolute;
-  top: -60px;
+  top: -50px; /* ⬇️ Less negative = moves image downward */
   left: 50%;
   transform: translateX(-50%);
   border-radius: 50%;
   background-color: #fff;
 }
 
+
 /* ✅ Item Name - allows multiline */
 .item-name {
   font-weight: 500;
   font-size: 13.5px;
   line-height: 130%;
-  margin: 8px 0 4px;
+  margin: 10px 0 4px;
+  margin-top: 4vh;
   padding: 0 10px;
   color: #333;
   word-break: break-word;
@@ -277,7 +286,7 @@
 
   .item-card {
     width: 100%;
-    height: 260px;
+    height: 190px;
     padding-top: 80px;
     border-radius: 16px;
     margin: 20px 0;
@@ -300,7 +309,7 @@
   }
 
  .add-to-cart-btn {
-  width: 127px;
+  width: 100px;
   height: 26.63px;
   gap: 6px; /* Optional – can be used in flex layout if needed */
   border-radius: 8px;
@@ -361,3 +370,49 @@
   font-size: 14px;
   z-index: 9999;
 }
+
+
+
+/* ✅ Animation class for added-to-cart effect */
+.add-to-cart-btn.added-to-cart {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+  animation: cartPulse 0.3s ease;
+}
+
+@keyframes cartPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+.add-to-cart-btn {
+  width: 100px;
+  height: 26.6px;
+  border-radius: 8px;
+  border: 1px solid #0f0f0e;
+  background-color: #ffffff;
+  color: #211b15;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.4s ease, color 0.4s ease, transform 0.2s;
+}
+
+
+/* 🔄 When item is added to cart */
+.add-to-cart-btn.added {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #000000;
+}
+
+

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './Success.css';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom'; // ⬅️ import useNavigate
 import axios from 'axios';
 import { BsCheck } from 'react-icons/bs';
 import html2canvas from 'html2canvas';
@@ -8,6 +8,7 @@ import jsPDF from 'jspdf';
 
 export default function PaymentSuccess() {
   const location = useLocation();
+  const navigate = useNavigate(); // ⬅️ initialize navigate
   const [orderDetails, setOrderDetails] = useState(null);
   const receiptRef = useRef(null);
 
@@ -36,13 +37,18 @@ export default function PaymentSuccess() {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+
+      // Save the PDF and navigate after it's saved
       pdf.save(`receipt_${orderDetails.id.slice(0, 6)}.pdf`);
+      setTimeout(() => {
+        navigate('/stalls');
+      }, 1000); // slight delay to ensure download starts
     });
   };
 
   if (!orderDetails) return <p className="loading-text">Loading...</p>;
 
-  const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4); // fallback
+  const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4);
   const createdAt = new Date(orderDetails.created_datetime).toLocaleString('en-IN', {
     hour12: true,
     timeZone: 'Asia/Kolkata',
@@ -116,7 +122,6 @@ export default function PaymentSuccess() {
       </div>
 
       <button className="download-btn" onClick={downloadPDF}>Download Receipt</button>
-      <button className="download-btn" onClick={downloadPDF}>Back to Home</button>
     </div>
   );
 }

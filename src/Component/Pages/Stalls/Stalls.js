@@ -28,13 +28,13 @@ export default function Stall() {
   };
 
   return (
-    <>
+    <>       
       <Header />
 
       <div className="stall-wrapper">
         <div className="stall-content">
-          <div className="stall-heading-wrapper">
-            <h2 className="stall-heading">Explore Outlets</h2>
+          <div className="stall-head-wrapper">
+            <h2 className="stall-headings">Explore Outlets</h2>
             <p className="stall-subtext">Browse menus and order your favorite meals.</p>
           </div>
 
@@ -48,14 +48,17 @@ export default function Stall() {
                   key={stall.id}
                   onClick={() => handleStallClick(stall.id)}
                 >
-                  <div className="stall-card">
-                    <img
-                      src={stall.image_url} // ✅ USE AWS URL directly
-                      alt={stall.name}
-                      className="stall-image"
-                    />
-                    <div className="view-menu-overlay">View Menu</div>
+                <div className="stall-card">
+                    <div className="image-container">
+                      <img
+                        src={stall.image_url}
+                        alt={stall.name}
+                        className="stall-image"
+                      />
+                      <div className="view-menu-layout">View Menu</div>
+                    </div>
                   </div>
+
                 </div>
               ))}
             </div>

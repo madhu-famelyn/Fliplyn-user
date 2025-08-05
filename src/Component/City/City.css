@@ -1,10 +1,39 @@
 /* src/pages/SelectCity.css */
+/* src/pages/SelectCity.css */
 
 .select-city-wrapper {
   font-family: 'Segoe UI', sans-serif;
   background: #fff;
   min-height: 100vh;
+  max-height: 100vh;      /* ✅ ensures max height */
+  overflow-y: auto;       /* ✅ enables vertical scrolling */
+  display: flex;
+  flex-direction: column;
 }
+.city-showmore {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px; /* spacing between text and icon */
+  padding: 8px 16px;
+  font-size: 16px;
+  font-weight: 500;
+  background-color: #f1f1f1;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.city-showmore:hover {
+  background-color: #e0e0e0;
+}
+
+.city-showmore svg {
+  font-size: 16px;
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+}
+
 
 .city-header {
   font-size: 24px;

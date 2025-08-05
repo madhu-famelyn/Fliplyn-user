@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import './City.css';
 import { useNavigate } from 'react-router-dom';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+
 
 const cityCodeMap = {
   "Hyderabad": "00001", "Mumbai": "00002", "Delhi": "00003", "Bengaluru": "00004", "Chennai": "00005",
@@ -89,8 +91,17 @@ export default function SelectCity() {
 
             {filteredOther.length > 15 && (
               <button className="city-showmore" onClick={() => setShowMore(!showMore)}>
-                {showMore ? 'Show less ⌃' : 'Show more ⌄'}
-              </button>
+              {showMore ? (
+                <>
+                  Show less <FaChevronUp />
+                </>
+              ) : (
+                <>
+                  Show more <FaChevronDown />
+                </>
+              )}
+            </button>
+
             )}
           </div>
         </section>

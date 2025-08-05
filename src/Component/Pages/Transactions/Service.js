@@ -1,4 +1,3 @@
-// src/pages/transactionsService.js
 import axios from 'axios';
 
 export const getOrderDetailsByUserId = async (userId) => {

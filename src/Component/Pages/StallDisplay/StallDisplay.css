@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@700&display=swap');
 
+
 .stall-banner {
   width: 850px;
   height: 167px;
@@ -66,7 +67,7 @@
 
 .stall-subtitle {
   font-family: 'Roboto', sans-serif;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 18px;
   line-height: 100%;
   color: #ffebce;
@@ -208,4 +209,42 @@
 
 .back-button:hover {
   text-decoration: underline;
+}
+
+
+
+.back-button-container {
+  padding: 25px 24px;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  color: #000;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 100%;
+  cursor: pointer;
+}
+
+.dots {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: #F17F1C;
+  border-radius: 50%;
+  margin: 0 20px;
+  vertical-align: middle;
+}
+
+.store-text {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 100%;
+  color: #AAACAE;
+;
 }

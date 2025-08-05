@@ -1,0 +1,205 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&family=Roboto:wght@400;500&display=swap');
+
+html, body {
+  height: 100%;
+  overflow: hidden; /* Prevent body scroll */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.signin-header-container {
+  border: 1px solid #d3d3d3;
+  padding: 0.5rem 2rem;
+  width: 100%;
+}
+
+.signin-header {
+  padding: 1rem 2rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.verify-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  background-color: #fff;
+}
+
+.verify-card {
+  width: 100%;
+  max-width: 598px;
+  padding: 60px 20px;
+  border: 1px solid #b5b5b5;
+  border-radius: 8px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.verify-title {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 33px;
+  text-align: center;
+  color: #000;
+}
+
+.verify-subtext {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 14px;
+  color: #404040;
+  margin-top: -12px;
+  text-align: center;
+}
+
+.verify-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #344054;
+  align-self: flex-start;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 1vh;
+}
+
+.otp-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 366px;
+  height: 44px;
+  gap: 8px;
+}
+
+.otp-box {
+  flex: 1;
+  min-width: 42px;
+  max-width: 52px;
+  height: 44px;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  background-color: #ffffff;
+  box-shadow: 0px 1px 2px 0px #1018280d;
+  text-align: center;
+  font-size: 18px;
+}
+
+.resend-text {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 14px;
+  color: #000000;
+  width: 100%;
+  text-align: left;
+  margin-top: 2vh;
+}
+
+.resend-link {
+  color: #f17f1c;
+  cursor: pointer;
+}
+
+.verify-button {
+  width: 100%;
+  max-width: 366px;
+  height: 39px;
+  padding: 0 36px; /* Remove vertical padding */
+  border-radius: 8px;
+  border: 1px solid #ffa455;
+  background-color: #f17f1c;
+  color: #ffffff;
+  font-weight: 500;
+  box-shadow: 0px 8px 24px 0px #f17f1c4d;
+  cursor: pointer;
+  font-size: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.resend-link.disabled {
+  pointer-events: none;
+  color: #aaa;
+}
+
+
+.change-number {
+  font-family: 'Roboto', sans-serif;
+  font-size: 13px;
+  margin-top: -10px;
+  color: #000000;
+  text-align: center;
+}
+
+.change-link {
+  color: #344054;
+  cursor: pointer;
+}
+
+/* 🔁 Responsive Design */
+@media (max-width: 768px) {
+  .verify-card {
+    padding: 32px 16px; /* reduced padding from 40px to 32px */
+    gap: 20px;
+    border: none;
+  }
+
+  .signin-header {
+    font-size: 24px;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .verify-title {
+    font-size: 22px;
+  }
+
+  .otp-container {
+    max-width: 100%;
+  }
+
+  .verify-label {
+    padding-left: 10px;
+    margin-left: 0;
+  }
+
+  .resend-text {
+    padding: 0 10px;
+  }
+
+  .verify-button {
+    max-width: 100%;
+  }
+
+  .verify-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80dvh; /* ✅ Dynamic height: fixes excess top spacing */
+    overflow: hidden;
+    background-color: #fff;
+    padding: 0 16px;
+  }
+}

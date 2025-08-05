@@ -33,3 +33,35 @@
     transform: translateX(-50%) translateY(-10px);
   }
 }
+
+
+.item-names {
+  font-family: "Helvetica Neue", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 130%;
+  letter-spacing: 0;
+  text-align: center;
+  color: #000000;
+  margin: 0 0 10px 0; /* 4px space below the item name */
+}
+
+.item-price {
+  font-size: 14px;
+  text-align: center;
+  margin: 0; /* reset default margin */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

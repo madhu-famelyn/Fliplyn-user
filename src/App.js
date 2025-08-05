@@ -1,11 +1,11 @@
 // src/App.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
-  useLocation
+  useLocation,
 } from 'react-router-dom';
 
 import LoadingScreen from './Component/LoadingScreen/LoadingScreen';
@@ -23,26 +23,30 @@ import TransactionHistory from './Component/Pages/TransactionHistory/Transaction
 import PaymentSuccess from './Component/Pages/Success/Success';
 import Profile from './Component/Pages/Profile/Profile';
 import Transactions from './Component/Pages/Transactions/Transactions';
-
+import VerifyOTP from './Component/SignIn/VerifyOTP';
 import { AuthProvider, useAuth } from './Component/AuthContext/ContextApi';
 
-function ProtectedRoute({ children }) {
-  const { token } = useAuth();
-  return token ? children : <Navigate to="/" replace />;
-}
-
-// ✅ Redirect to /select-country if already logged in and trying to access "/"
 function PublicRoute({ children }) {
   const { token } = useAuth();
   const location = useLocation();
+
   if (token && location.pathname === "/") {
     return <Navigate to="/select-country" replace />;
   }
+
   return children;
 }
 
 function AppContent() {
   const [loading, setLoading] = useState(true);
+  const { token } = useAuth();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!loading && token && location.pathname === "/") {
+      window.location.replace("/select-country");
+    }
+  }, [loading, token, location.pathname]);
 
   if (loading) {
     return <LoadingScreen onFinish={() => setLoading(false)} />;
@@ -59,98 +63,25 @@ function AppContent() {
           </PublicRoute>
         }
       />
+      <Route path="/verify-otp" element={<VerifyOTP />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/otp" element={<OtpVerify />} />
 
-      {/* Protected Routes */}
-      <Route
-        path="/select-country"
-        element={
-          <ProtectedRoute>
-            <SelectCountry />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/select-city"
-        element={
-          <ProtectedRoute>
-            <SelectCity />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/confirm-location"
-        element={
-          <ProtectedRoute>
-            <ConfirmLocation />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/stalls"
-        element={
-          <ProtectedRoute>
-            <Stall />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/categories/:stallId"
-        element={
-          <ProtectedRoute>
-            <Category />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute>
-            <Cart />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/wallet"
-        element={
-          <ProtectedRoute>
-            <PaymentMethodPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/transactions-wallet"
-        element={
-          <ProtectedRoute>
-            <TransactionHistory />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/success"
-        element={
-          <ProtectedRoute>
-            <PaymentSuccess />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <Profile />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/trans"
-        element={
-          <ProtectedRoute>
-            <Transactions />
-          </ProtectedRoute>
-        }
-      />
+      {/* All Routes (no ProtectedRoute anymore) */}
+      <Route path="/select-country" element={<SelectCountry />} />
+      <Route path="/select-city" element={<SelectCity />} />
+      <Route path="/confirm-location" element={<ConfirmLocation />} />
+      <Route path="/stalls" element={<Stall />} />
+      <Route path="/categories/:stallId" element={<Category />} />
+      <Route path="/cart" element={<Cart />} />
+      <Route path="/wallet" element={<PaymentMethodPage />} />
+      <Route path="/transactions-wallet" element={<TransactionHistory />} />
+      <Route path="/success" element={<PaymentSuccess />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/trans" element={<Transactions />} />
+
+      {/* Fallback Route */}
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

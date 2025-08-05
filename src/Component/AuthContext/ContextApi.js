@@ -18,11 +18,14 @@ export const AuthProvider = ({ children }) => {
     }
   });
 
-  const login = (token, user) => {
-    setToken(token);
-    setUser(user);
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
+  // ✅ Add derived auth state
+  const isAuthenticated = !!token;
+
+  const login = (newToken, newUser) => {
+    setToken(newToken);
+    setUser(newUser);
+    localStorage.setItem('token', newToken);
+    localStorage.setItem('user', JSON.stringify(newUser));
   };
 
   const logout = () => {
@@ -33,7 +36,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

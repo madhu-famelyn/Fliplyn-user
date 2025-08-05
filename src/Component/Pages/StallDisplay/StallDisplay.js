@@ -17,12 +17,15 @@ export default function StallDisplay({
   return (
     <>
       {/* ✅ Back Button */}
-      <div className="back-button-container">
-        <button className="back-button" onClick={() => navigate(-1)}>
-          <IoIosArrowBack style={{ marginRight: '8px' }} />
-          {name}
-        </button>
-      </div>
+     <div className="back-button-container">
+  <button className="back-button" onClick={() => navigate(-1)}>
+    <IoIosArrowBack style={{ marginRight: '8px' }} />
+    <span>{name}</span>
+    <span className="dots" /> 
+    <span className="store-text">store</span>
+  </button>
+</div>
+
 
       {/* ✅ Stall Banner */}
       <div

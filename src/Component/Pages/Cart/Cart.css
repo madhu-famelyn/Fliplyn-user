@@ -15,12 +15,35 @@
   font-weight: 700;
   line-height: 140%;
   letter-spacing: 0;
-  color: #000; /* Or as per your theme */
-  
+  color: #000; 
   padding-left: 184px;  /* 🧱 More breathing space from left */
   margin-top: 50px;    /* ✅ Creates gap from header above */
   margin-bottom: 16px;
   text-align: left;
+}
+.cart-summary {
+  padding: 10px 16px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* ensures left alignment */
+}
+
+.item-name,
+.item-price {
+  margin: 0; /* remove default margin */
+  padding-left: 0; /* remove left padding if any */
 }
 
 
@@ -200,16 +223,6 @@
 
 
 /* === Summary Section === */
-.cart-summary {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-top: 1px solid #ddd;
-  margin-top: 20px;
-  font-weight: 500;
-  font-size: 16px;
-}
 
 /* === Action Buttons === */
 .cart-actions {

@@ -31,13 +31,15 @@ export default function PaymentMethodPage() {
 
     const fetchWalletAndUser = async () => {
       try {
-        const walletRes = await axios.get(`https://fliplyn.onrender.com/wallets/${userId}`);
-        setWalletBalance(walletRes.data.balance_amount);
+        const [walletRes, userRes] = await Promise.all([
+          axios.get(`https://fliplyn.onrender.com/wallets/${userId}`),
+          axios.get(`https://fliplyn.onrender.com/user/${userId}`),
+        ]);
 
-        const userRes = await axios.get(`https://fliplyn.onrender.com/user/${userId}`);
+        setWalletBalance(walletRes.data.balance_amount || 0);
         setUserDetails({
-          phone_number: userRes.data.phone_number,
-          company_email: userRes.data.company_email,
+          phone_number: userRes.data.phone_number || '',
+          company_email: userRes.data.company_email || '',
         });
       } catch (err) {
         console.error('Failed to fetch wallet or user info', err);
@@ -49,7 +51,7 @@ export default function PaymentMethodPage() {
         const res = await axios.get(`https://fliplyn.onrender.com/cart/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setCartItems(res.data.items);
+        setCartItems(res.data.items || []);
       } catch (err) {
         console.error('Failed to fetch cart items:', err);
       }
@@ -59,43 +61,40 @@ export default function PaymentMethodPage() {
     fetchCartItems();
   }, [userId, token]);
 
-const handleConfirmPayment = async () => {
-  const itemsPayload = cartItems.map((item) => ({
-    item_id: item.item_id,
-    quantity: item.quantity,
-  }));
+  const handleConfirmPayment = async () => {
+    const itemsPayload = cartItems.map((item) => ({
+      item_id: item.item_id,
+      quantity: item.quantity,
+    }));
 
-  const requestBody = {
-    user_id: userId,
-    user_phone: userDetails.phone_number,
-    user_email: userDetails.company_email,
-    items: itemsPayload,
-    pay_with_wallet: selectedMethod === 'Wallet',
+    const requestBody = {
+      user_id: userId,
+      user_phone: userDetails.phone_number,
+      user_email: userDetails.company_email,
+      items: itemsPayload,
+      pay_with_wallet: selectedMethod === 'Wallet',
+    };
+
+    try {
+      const res = await axios.post('https://fliplyn.onrender.com/orders/place', requestBody);
+      console.log('Order placed:', res.data);
+
+      await axios.delete(`https://fliplyn.onrender.com/cart/clear/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      navigate('/success', { state: { order: res.data } });
+    } catch (err) {
+      console.error('Order failed:', err);
+    }
   };
-
-  try {
-    const res = await axios.post('https://fliplyn.onrender.com/orders/place', requestBody);
-    console.log('Order placed:', res.data);
-
-    // ✅ Clear the cart after order success
-    await axios.delete(`https://fliplyn.onrender.com/cart/clear/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    // ✅ Navigate to success page
-    navigate('/success', { state: { order: res.data } });
-  } catch (err) {
-    console.error('Order failed:', err);
-  }
-};
-
 
   return (
     <>
       <Header />
       <div className="payment-page-container">
         <h2 className="payment-title">Payment</h2>
-        <p className="payment-subtitle">5 payment methods available</p>
+        <p className="payment-subtitle">{paymentMethods.length} payment methods available</p>
 
         <div className="method-label">Payment Method</div>
         <div className="payment-methods">
@@ -110,26 +109,26 @@ const handleConfirmPayment = async () => {
           ))}
         </div>
 
-        <div className="wallet-section">
-          <p className="wallet-label">Wallet Balance</p>
-          <p className="wallet-amount">₹{walletBalance}</p>
-          <p className="insufficient-text">
-            You have insufficient balance. Please add funds to your wallet to complete the payment.
-          </p>
-      <button
-        className="go-to-wallet-btn"
-        onClick={() => navigate('/transactions-wallet')}
-      >
-        Go to Wallet
-      </button>
-        </div>
-
+        {selectedMethod === 'Wallet' && (
+          <div className="wallet-section">
+            <p className="wallet-label">Wallet Balance</p>
+            <p className="wallet-amount">₹{walletBalance}</p>
+           
+            <button
+              className="go-to-wallet-btn"
+              onClick={() => navigate('/transactions-wallet')}
+            >
+              Go to Wallet
+            </button>
+          </div>
+        )}
 
         <div className="payment-buttons">
-          <button className="continue-btn">Cancel</button>
-          <button className="confirm-btn" onClick={handleConfirmPayment}>
+           <button className="confirm-btn" onClick={handleConfirmPayment}>
             Confirm Payment
           </button>
+          <button className="continue-btn" onClick={() => navigate(-1)}>Cancel</button>
+         
         </div>
       </div>
     </>

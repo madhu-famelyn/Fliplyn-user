@@ -5,6 +5,12 @@
   padding: 40px 20px;
   background-color: #ffffff;
 }
+.stall-wrapper {
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
 
 /* ✅ Wrap to align heading and subtext to the left */
 .stall-heading-wrapper {
@@ -14,7 +20,7 @@
 }
 
 .stall-heading {
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 8px;
 }
@@ -22,7 +28,7 @@
 .stall-subtext {
   font-size: 18px;
   color: #888;
-  margin-bottom: 32px;
+  margin-bottom: 52px;
 }
 
 .stall-content {
@@ -50,20 +56,8 @@
   cursor: pointer;
 }
 
-.stall-card {
-  position: relative;
-  background-color: #f2f2f2;
-  border-radius: 16px;
-  width: 220px;
-  height: 160px;
-  overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  transition: transform 0.25s ease;
-}
 
-.stall-card:hover {
-  transform: scale(1.03);
-}
+
 
 .stall-image {
   width: 100%;
@@ -115,13 +109,6 @@
     padding: 0 16px;
   }
 
-  .stall-card {
-    width: 160px;
-    height: 120px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
   .stall-image {
     border-radius: 12px;
   }
@@ -159,12 +146,7 @@
     gap: 16px;
   }
 
-  .stall-card {
-    width: 160px;
-    height: 120px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* ✅ Mobile shadow */
-  }
+
 
   .stall-image {
     border-radius: 12px;
@@ -187,6 +169,44 @@
 
   .stall-card:hover .view-menu-overlay {
     opacity: 1; /* ✅ Keep this to ensure hover doesn't conflict */
+  }
+}
+
+/* === Mobile: ≤ 767px === */
+@media (max-width: 767px) {
+  .stall-heading {
+    font-size: 20px;
+  }
+
+  .stall-subtext {
+    font-size: 13px;
+  }
+
+  .stall-empty {
+    font-size: 14px;
+  }
+
+  .view-menu-overlay {
+    font-size: 13px;
+  }
+}
+
+/* === 13-inch screen (usually ≤ 1280px wide) === */
+@media (max-width: 1280px) {
+  .stall-heading {
+    font-size: 24px;
+  }
+
+  .stall-subtext {
+    font-size: 15px;
+  }
+
+  .stall-empty {
+    font-size: 16px;
+  }
+
+  .view-menu-overlay {
+    font-size: 15px;
   }
 }
 
@@ -226,16 +246,6 @@
   cursor: pointer;
 }
 
-.stall-card {
-  position: relative;
-  background-color: #f2f2f2;
-  border-radius: 16px;
-  width: 220px;
-  height: 160px;
-  overflow: hidden;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  transition: transform 0.25s ease;
-}
 
 .stall-card:hover {
   transform: scale(1.03);
@@ -268,4 +278,336 @@
 /* Show overlay only on hover */
 .stall-card:hover .view-menu-overlay {
   opacity: 1;
+}
+
+
+
+/* === Mobile: Phones (up to 767px) === */
+@media (max-width: 767px) {
+  .stall-wrapper {
+    padding: 24px 12px;
+  }
+
+  .stall-heading-wrapper {
+    margin-left: 16px;
+    margin-right: 16px;
+    text-align: left;
+  }
+
+  .stall-heading {
+    font-size: 24px;
+  }
+
+  .stall-subtext {
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+
+  .stall-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 0 12px;
+  }
+
+  .stall-card {
+    width: 160px;
+    height: 120px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .stall-image {
+    border-radius: 12px;
+  }
+
+  .view-menu-overlay {
+    font-size: 14px;
+    padding: 8px 0;
+    opacity: 1;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+}
+
+/* === Tablet: 768px to 1024px === */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .stall-heading-wrapper {
+    margin-left: 32px;
+    margin-right: 32px;
+    text-align: left;
+  }
+
+  .stall-heading {
+    font-size: 28px;
+  }
+
+  .stall-subtext {
+    font-size: 16px;
+    margin-bottom: 28px;
+  }
+
+  .stall-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 0 24px;
+  }
+
+
+}
+
+/* === Small Desktop: 1025px to 1280px === */
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .stall-heading-wrapper {
+    margin-left: 120px;
+  }
+
+  .stall-heading {
+    font-size: 30px;
+  }
+
+  .stall-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+}
+
+/* === Large Desktop: 1281px and up === */
+@media (min-width: 1281px) {
+  .stall-heading-wrapper {
+    margin-left: 240px;
+  }
+
+  .stall-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+  }
+}
+
+
+/* === Mobile: ≤ 767px === */
+/* === Default styles (larger screens) === */
+.stall-heading {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000;
+  text-align: left;
+  padding-left: 16px; /* Not too left */
+}
+
+.stall-subtext {
+  font-size: 18px;
+  font-weight: 400;
+  color: #555;
+  text-align: left;
+  padding-left: 16px;
+}
+
+.stall-empty {
+  font-size: 18px;
+  font-weight: 500;
+  color: #999;
+  text-align: left;
+  padding-left: 16px;
+}
+
+.view-menu-overlay {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 6px 12px;
+  border-radius: 6px;
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+}
+
+
+/* === Mobile: ≤ 767px === */
+@media (max-width: 767px) {
+  .stall-heading {
+    font-size: 20px;
+    padding-left: 12px;
+  }
+
+  .stall-subtext {
+    font-size: 13px;
+    padding-left: 12px;
+  }
+
+  .stall-empty {
+    font-size: 14px;
+    padding-left: 12px;
+  }
+
+  .view-menu-overlay {
+    font-size: 13px;
+  }
+}
+
+
+/* === 13-inch screens: 1024px–1280px === */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .stall-heading {
+    font-size: 24px;
+    padding-left: 14px;
+  }
+
+  .stall-subtext {
+    font-size: 15px;
+  }
+
+  .stall-empty {
+    font-size: 16px;
+    padding-left: 14px;
+  }
+
+  .view-menu-overlay {
+    font-size: 15px;
+  }
+}
+
+
+
+
+
+
+
+
+
+.stall-headings {
+  font-family: "Helvetica Neue", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 26px;
+  line-height: 33.27px;
+  vertical-align: middle;
+  color: #000000;
+  text-align: left;
+  padding-left: 15px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+.stall-subtext {
+  margin-top: 0;
+}
+
+.stall-head-wrapper {
+  margin-top: 30px;
+  margin-left: 140px;
+  margin-bottom: 65px;
+}
+
+/* === Mobile: ≤ 767px === */
+@media (max-width: 767px) {
+  .stall-headings {
+    font-size: 20px;
+    line-height: 28px;
+  }
+}
+
+/* === 13-inch screens: 1024px–1280px === */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .stall-headings {
+    font-size: 24px;
+    line-height: 31px;
+  }
+}
+
+.stall-head-wrapper {
+  margin-top: 30px;
+  margin-left: 140px;
+  margin-bottom: 65px;
+}
+
+
+
+
+.stall-head-wrapper {
+  margin-top: 30px;
+  margin-left: 140px;
+  margin-bottom: 65px;
+}
+
+/* === Mobile: ≤ 767px === */
+@media (max-width: 767px) {
+  .stall-head-wrapper {
+    margin-left: 12px;
+    margin-right: 12px;
+  }
+
+  .stall-headings {
+    font-size: 20px;
+    line-height: 28px;
+    padding-left: 10px;
+  }
+}
+
+/* === Laptop: 1024px–1280px === */
+@media (min-width: 1024px) and (max-width: 1280px) {
+  .stall-headings {
+    font-size: 24px;
+    line-height: 31px;
+  }
+
+  .stall-head-wrapper {
+    margin-left: 100px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 🔲 Stall Card Background */
+.stall-card {
+  width: 277px;
+  height: 183px;
+  padding: 98px 10px 20px 10px; /* top, right, bottom, left */
+  gap: 26px;
+  background-color: #EBEBEB;
+  border: 1px solid #ABABAB;
+  border-radius: 8px;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-shadow: 0px 4px 25.8px 0px #39393966; /* ✅ Drop shadow */
+}
+
+
+/* 🖼️ Stall Image Centered Inside Card */
+.stall-image {
+  width: 216px;
+  height: 144px;
+  object-fit: cover;
+  border-radius: 8px;
+  position: absolute;
+  top: 20px; /* ⬅️ Adjusted from -46px to positive value */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+
+
+.stall-card:hover .view-menu-layout {
+  opacity: 1;
+  transform: translateY(0);
 }

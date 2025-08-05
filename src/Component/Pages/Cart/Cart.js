@@ -132,15 +132,18 @@ export default function Cart() {
             })}
           </div>
 
-          <div className="cart-summary">
-            <p>{cart.items.length} items</p>
-            <p>
-              Total: ₹{' '}
-              {cart.items
-                .reduce((total, item) => total + item.quantity * item.price_at_addition, 0)
-                .toFixed(2)}
-            </p>
-          </div>
+         <div className="cart-summary">
+  <div className="summary-line">
+    <span>{cart.items.length} items</span>
+    <span>
+      Total: ₹{' '}
+      {cart.items
+        .reduce((total, item) => total + item.quantity * item.price_at_addition, 0)
+        .toFixed(2)}
+    </span>
+  </div>
+</div>
+
 
           <div className="cart-actions">
             <button className="cancel-button" onClick={() => navigate(-1)}>Cancel</button>

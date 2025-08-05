@@ -1,11 +1,16 @@
 /* src/pages/SelectCountry.css */
 
+/* src/pages/SelectCountry.css */
+
 .country-wrapper {
   background-color: #fff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;   /* ✅ Enables vertical scroll */
+  max-height: 100vh;  /* ✅ Prevents overflow from being hidden */
 }
+
 
 .country-header {
   border-bottom: 1px solid #ddd;

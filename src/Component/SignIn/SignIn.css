@@ -17,18 +17,15 @@
   font-size: 22px;
 }
 .signin-title {
-  font-family: "Helvetica Neue", sans-serif;
+  font-family: "SF Pro Display", sans-serif;
   font-weight: 700;
-  font-style: bold; /* Note: This will be ignored if font-weight is already 700 */
   font-size: 26px;
   line-height: 33.27px;
-  letter-spacing: 0%;
-  vertical-align: middle;
+  letter-spacing: 0;
   text-align: center;
-
-  /* leading-trim is not widely supported in CSS */
-  /* You can remove it or simulate spacing control manually if needed */
+  margin-bottom: 8px; /* optional spacing below title */
 }
+
 
 
 /* ==== Header ==== */
@@ -42,7 +39,7 @@
   font-family: 'Inter', sans-serif;
   font-weight: 700;
   font-size: 30px;
-  line-height: 100%;
+  line-height: 50%;
   letter-spacing: 0%;
   font-style: normal;
 }
@@ -56,14 +53,19 @@
 }
 
 .signin-card {
-  width: 90%;
-  max-width: 400px;
+  width: 500px;
   padding: 2rem;
   border-radius: 10px;
   text-align: center;
   border: none;
   background-color: #fff;
+
+  /* Optional: prevent resizing on smaller screens */
+  max-width: 598px;
+  max-height: 495.2px;
+  box-sizing: border-box; /* Ensures padding is included inside width/height */
 }
+
 
 /* Medium+ screens show border */
 @media screen and (min-width: 768px) {
@@ -73,7 +75,7 @@
 }
 
 .signin-subtext {
-  font-size: 14px;
+  font-size: 12px;
   color: #555;
   margin-bottom: 1.5rem;
   font-weight: 400;
@@ -102,7 +104,7 @@
   padding: 0.5rem;
   border: none;
   background: #f9f9f9;
-  width: 80px;
+  width: 60px;
   font-size: 14px;
   border-right: 1px solid #ccc;
   font-weight: 400;
@@ -127,7 +129,6 @@
   font-weight: 400;
 }
 
-/* ==== Toggle Text (Email/Phone) ==== */
 .signin-switch {
   color: #f57c00;
   font-weight: 700;
@@ -139,8 +140,8 @@
 
 /* ==== Button ==== */
 .signin-button {
-  background: #F17F1C; /* ✅ Updated orange background */
-  border: 1px solid #FFA455; /* ✅ Updated border */
+  background: #F17F1C; 
+  border: 1px solid #FFA455;
   padding: 0.7rem;
   width: 100%;
   color: #fff;
@@ -166,7 +167,6 @@
   text-decoration: none;
 }
 
-/* ✅ Mobile Screen Media Queries for SignIn with top spacing + center alignment */
 @media screen and (max-width: 767px) {
   .signin-header-container {
     padding: 0.75rem 1rem;
@@ -180,26 +180,29 @@
   }
 
   .signin-main {
-    padding: 1rem;
-    margin-top: 1rem; /* space below header */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;       /* ✅ Horizontal center */
-    justify-content: center;   /* ✅ Vertical center */
-    min-height: calc(100vh - 100px); /* Adjust height dynamically */
+    justify-content: center;     /* ✅ Vertically center */
+    align-items: center;         /* ✅ Horizontally center */
+    padding: 1rem;
+    min-height: calc(100vh - 60px); /* ✅ Adjust height: remove header height */
+    margin: 0;                    /* ✅ Remove extra top margin */
   }
 
   .signin-card {
     width: 100%;
-    max-width: 380px; /* Optional max width for better layout */
-    padding: 1.25rem;
+    max-width: 380px;
+    padding: 1rem;
     border: none;
-    border-radius: 0;
+    border-radius: 8px;
+    box-shadow: none;
     text-align: left;
+    margin: 0 auto;              /* ✅ Center card without scroll */
   }
 
   .signin-subtext {
-    font-size: 12px;
+    font-size: 10px;
     margin-bottom: 1rem;
     text-align: center;
   }
@@ -210,9 +213,11 @@
   }
 
   .signin-code {
-    width: 70px;
+    width: 60px;
     font-size: 13px;
   }
+
+
 
   .signin-number,
   .signin-email {
@@ -222,7 +227,7 @@
 
   .signin-switch {
     font-size: 13px;
-    text-align: center;
+    text-align: left;
     margin-bottom: 1.25rem;
   }
 
@@ -235,38 +240,6 @@
     font-size: 13px;
     text-align: center;
   }
-}
-
-
-.signin-loader-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.75);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.signin-loader-box {
-  text-align: center;
-  background: #fff;
-  padding: 1.5rem 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 4px solid #ccc;
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
 }
 
 @keyframes spin {
