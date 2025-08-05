@@ -3,6 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap');
 
 /* ✅ Base Styles */
+
 * {
   font-family: 'Inter', sans-serif;
   margin: 0;
@@ -303,11 +304,11 @@
        screen and (max-width: 390px) and (max-height: 844px),
        screen and (max-width: 1080px) and (max-height: 2400px) {
   .signup-main {
-    padding-top: 0.75rem;
+    padding-top: 1rem;
   }
 
   .signup-card {
-    margin-top: 5rem;
+    margin-top: 6rem;
   }
 
   .signup-card h1,
