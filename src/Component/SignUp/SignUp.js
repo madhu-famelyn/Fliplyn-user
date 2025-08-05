@@ -211,9 +211,13 @@ export default function SignUp() {
             value={form.otp}
             disabled={!otpSent}
           />
-          <button className="signup-button" onClick={handleVerifyOtp} disabled={!otpSent || loading}>
-            Create Account
-          </button>
+                  <button
+          className="signup-button"
+          onClick={handleVerifyOtp}
+          disabled={!otpSent || !form.otp || loading}
+        >
+          Create Account
+        </button>
 
           <p className="signup-switch" onClick={() => setUseEmail(!useEmail)}>
             Use {useEmail ? 'Phone Number' : 'Email'} Instead

@@ -56,7 +56,7 @@
 
 
 
-.item-info {
+.item-infermation {
   display: flex;
   flex-direction: column;
   align-items: center; /* horizontally center contents */
@@ -65,7 +65,7 @@
 }
 
 .item-names,
-.item-price {
+.item-prices {
   margin: 4px 0;
   text-align: center;
   width: 100%;

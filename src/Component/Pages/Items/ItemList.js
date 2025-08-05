@@ -114,9 +114,10 @@ export default function ItemList({ items, itemsLoaded }) {
                     e.target.src = '/fallback-image.jpg';
                   }}
                 />
-                <div className="item-info">
+                <div className="item-infermation">
                   <h4 className="item-names">{item.name}</h4>
-                  <p className="item-price">₹{item.price}</p>
+                  <p className="item-prices">₹{item.price}</p>
+
                   <button
                     className={`add-to-cart-btn ${isInCart ? 'added' : ''}`}
                     onClick={() => handleAddToCart(item.id)}

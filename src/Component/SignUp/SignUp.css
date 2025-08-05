@@ -8,12 +8,12 @@
   padding: 0;
   box-sizing: border-box;
 }
-
 .signup-wrapper {
   background-color: #ffffff;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-y: auto; /* ✅ Enable vertical scrolling */
 }
 
 /* ✅ Header Styles */
@@ -295,4 +295,11 @@
   10% { opacity: 1; transform: translate(-50%, 0); }
   90% { opacity: 1; }
   100% { opacity: 0; transform: translate(-50%, -20%); }
+}
+
+
+.signup-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
