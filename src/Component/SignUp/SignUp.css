@@ -400,3 +400,62 @@
     margin-top: 0 !important;      /* Remove header margin */
   }
 }
+
+
+
+/* ✅ Responsive: tablets & below */
+@media screen and (max-width: 767px) {
+  .signup-main {
+    padding: 0 1rem;         /* Horizontal padding only */
+    margin-top: 0;
+  }
+
+  .signup-card {
+    padding: 1rem;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ✅ Specific: Realme 8 & Vivo V23 5G (390 x 844) */
+@media screen and (max-width: 390px) and (max-height: 844px) {
+  .signup-main {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .signup-card {
+    padding-top: 1rem !important;
+    margin-top: 0 !important;
+  }
+
+  .signup-card h1,
+  .signup-card h2 {
+    margin-top: 0 !important;
+  }
+}
+
+/* ✅ Specific: OPPO F17 Pro (393 x 850) */
+@media screen and (max-width: 393px) and (max-height: 850px) {
+  .signup-main {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .signup-card {
+    padding-top: 1rem !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* ✅ Specific: Motorola Edge 50 Fusion (~1080 x 2400) */
+@media screen and (max-width: 1080px) and (max-height: 2400px) {
+  .signup-main {
+    padding-top: 0;
+    margin-top: 0;
+  }
+
+  .signup-card {
+    padding-top: 1rem;
+  }
+}
