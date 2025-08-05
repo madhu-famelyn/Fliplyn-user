@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { initiateLogin } from '../apis/apis';
 import { useAuth } from '../AuthContext/ContextApi';
+import { Link } from 'react-router-dom';
 import './SignIn.css';
 export default function PhoneNumberLogin() {
   const [useEmail, setUseEmail] = useState(false);
@@ -114,9 +115,9 @@ export default function PhoneNumberLogin() {
           >
             {loading ? 'Sending OTP...' : 'Send OTP'}
           </button>
-          <p className="signin-footer">
-            New here? <a href="/signup-page" className="signup-link">Sign Up</a>
-          </p>
+<p className="signin-footer">
+  New here? <Link to="/signup-page" className="signup-link">Sign Up</Link>
+</p>
         </div>
       </main>
     </div>
