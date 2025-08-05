@@ -1,17 +1,3 @@
 /* LogoHeader.css */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@700&display=swap');
-
-.signin-header-container {
-  position: absolute; /* Stick to top */
-  top: 0;
-  right: 0;
-}
-
-.signin-header {
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 30px;
-  line-height: 100%;
-  margin: 0; /* Remove any default margin */
-}
+/* 

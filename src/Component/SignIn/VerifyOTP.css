@@ -17,7 +17,24 @@ body {
   color: #000000;
 }
 
+
 .signin-header-container {
+  border: 1px solid #d3d3d3;
+  padding: 0;           /* ✅ Remove horizontal padding */
+  width: 100%;
+}
+
+.signin-header {
+  padding: 1rem 0 1rem 2rem;  /* ✅ Only left padding for spacing from edge */
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.5;
+  text-align: left;          /* ✅ Ensure text is aligned left */
+}
+
+
+/* .signin-header-container {
   border: 1px solid #d3d3d3;
   padding: 0.5rem 2rem;
   width: 100%;
@@ -29,7 +46,7 @@ body {
   font-weight: 700;
   font-size: 30px;
   line-height: 1;
-}
+} */
 
 .verify-wrapper {
   display: flex;
@@ -83,26 +100,34 @@ body {
   text-align: left;
   margin-bottom: 1vh;
 }
+.otp-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* center horizontally */
+  justify-content: center;  /* center vertically if in a tall parent */
+  text-align: center;
+  width: 100%;
+  margin: 20px auto;
+}
 
 .otp-container {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 366px;
-  height: 44px;
+  justify-content: center;   /* ✅ center the input boxes as a group */
+  align-items: center;
   gap: 8px;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 320px;          /* ✅ optional: to avoid stretching on large screens */
 }
 
 .otp-box {
-  flex: 1;
-  min-width: 42px;
-  max-width: 52px;
+  width: 46px;               /* ✅ fixed width for consistent spacing */
   height: 44px;
   border-radius: 8px;
   border: 1px solid #d0d5dd;
   background-color: #ffffff;
   box-shadow: 0px 1px 2px 0px #1018280d;
-  text-align: center;
+  text-align: center;        /* ✅ center the digit */
   font-size: 18px;
 }
 
@@ -115,7 +140,10 @@ body {
   width: 100%;
   text-align: left;
   margin-top: 2vh;
+  margin-left: 0;
+  align-self: flex-start; /* ✅ ignore parent's center alignment */
 }
+
 
 .resend-link {
   color: #f17f1c;
@@ -180,11 +208,7 @@ body {
     max-width: 100%;
   }
 
-  .verify-label {
-    padding-left: 10px;
-    margin-left: 0;
-  }
-
+  
   .resend-text {
     padding: 0 10px;
   }

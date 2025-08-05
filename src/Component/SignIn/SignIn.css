@@ -30,19 +30,6 @@
 
 
 /* ==== Header ==== */
-.signin-header-container {
-  padding: 0.5rem 2rem;
-}
-
-.signin-header {
-  padding: 1rem 2rem;
-  font-family: 'Inter', sans-serif;
-  font-weight: 700;
-  font-size: 30px;
-  line-height: 50%;
-  letter-spacing: 0%;
-  font-style: normal;
-}
 
 /* ==== Main ==== */
 .signin-main {
@@ -168,15 +155,7 @@
 }
 
 @media screen and (max-width: 767px) {
-  .signin-header-container {
-    border-width: 1px 0;
-  }
 
-  .signin-header {
-    font-size: 24px;
-    text-align: left;
-    margin-left: 1px;
-  }
 
   .signin-main {
     flex: 1;
