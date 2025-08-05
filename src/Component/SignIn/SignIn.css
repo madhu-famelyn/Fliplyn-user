@@ -157,16 +157,19 @@
 @media screen and (max-width: 767px) {
 
 
-  .signin-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;     /* ✅ Vertically center */
-    align-items: center;         /* ✅ Horizontally center */
-    padding: 1rem;
-    min-height: calc(100vh - 60px); /* ✅ Adjust height: remove header height */
-    margin: 0;                    /* ✅ Remove extra top margin */
-  }
+.signin-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;         /* Horizontally center */
+  padding: 1rem;
+  margin: 0;
+  min-height: calc(100vh - 60px);
+
+  justify-content: flex-start; /* 🔄 Align to top */
+  padding-top: 90px;           /* 🆕 Add space from top as needed */
+}
+
 
   .signin-card {
     width: 100%;
@@ -232,4 +235,91 @@
 .signin-loader-text {
   font-size: 16px;
   color: #333;
+}
+
+
+
+
+
+
+/* ✅ Default large screens and desktops */
+@media only screen and (min-width: 1200px) {
+  .signin-card {
+    max-width: 500px;
+    padding: 2rem;
+    font-size: 26px;
+  }
+}
+
+/* ✅ Laptops & tablets (768px - 1199px) */
+@media screen and (min-width: 768px) and (max-width: 1199px) {
+  .signin-card {
+    max-width: 480px;
+    padding: 1.5rem;
+  }
+
+  .signin-title {
+    font-size: 24px;
+  }
+}
+
+/* ✅ Motorola Edge 50 Fusion (FHD+, ~2400x1080) */
+@media screen and (max-width: 1080px) and (max-height: 2400px) {
+  .signin-main {
+    padding-top: 80px;
+  }
+
+  .signin-card {
+    max-width: 400px;
+    padding: 1.2rem;
+  }
+
+  .signin-title {
+    font-size: 22px;
+  }
+}
+
+/* ✅ Realme 8 & Vivo V23 5G (~390x844) */
+@media screen and (max-width: 390px) and (max-height: 844px) {
+  .signin-main {
+    padding-top: 70px;
+  }
+
+  .signin-card {
+    max-width: 360px;
+    padding: 1rem;
+  }
+
+  .signin-title {
+    font-size: 21px;
+  }
+
+  .signin-button {
+    font-size: 13px;
+  }
+}
+
+/* ✅ OPPO F17 Pro (~393x850) */
+@media screen and (max-width: 393px) and (max-height: 850px) {
+  .signin-main {
+    padding-top: 70px;
+  }
+
+  .signin-card {
+    max-width: 370px;
+    padding: 1rem;
+  }
+
+  .signin-title {
+    font-size: 21px;
+  }
+
+  .signin-subtext {
+    font-size: 11px;
+  }
+
+  .signin-button {
+    font-size: 13px;
+    padding: 0.6rem;
+  }
 }
