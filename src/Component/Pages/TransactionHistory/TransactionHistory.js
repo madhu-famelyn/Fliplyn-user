@@ -4,7 +4,7 @@ import Header from '../Header/Header';
 import axios from 'axios';
 import { useAuth } from '../../AuthContext/ContextApi';
 
-axios.defaults.baseURL = 'https://fliplyn.onrender.com'; // ✅ API base URL
+axios.defaults.baseURL = 'http://127.0.0.1:8000'; // ✅ API base URL
 
 export default function TransactionHistory() {
   const { user } = useAuth();

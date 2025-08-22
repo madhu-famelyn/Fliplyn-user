@@ -9,6 +9,7 @@ export default function Profile() {
   const { user, logout } = useAuth();
   const navigate = useNavigate(); // ✅ Initialize navigate
   const [fullUser, setFullUser] = useState(null);
+  const [noUserFound, setNoUserFound] = useState(false); // ✅ New state
   const [showEditModal, setShowEditModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -19,8 +20,12 @@ export default function Profile() {
 
   useEffect(() => {
     if (user?.id) {
-      axios.get(`https://fliplyn.onrender.com/user/${user.id}`)
+      axios.get(`http://127.0.0.1:8000/user/${user.id}`)
         .then(res => {
+          if (!res.data || Object.keys(res.data).length === 0) {
+            setNoUserFound(true); // ✅ No user data
+            return;
+          }
           setFullUser(res.data);
           setFormData({
             name: res.data.name || '',
@@ -31,7 +36,10 @@ export default function Profile() {
         })
         .catch(err => {
           console.error("Error fetching user details:", err);
+          setNoUserFound(true); // ✅ On error, mark as not found
         });
+    } else {
+      setNoUserFound(true); // ✅ No user in context
     }
   }, [user]);
 
@@ -43,7 +51,7 @@ export default function Profile() {
   };
 
   const handleUpdateSubmit = () => {
-    axios.put(`https://fliplyn.onrender.com/user/${user.id}`, formData)
+    axios.put(`http://127.0.0.1:8000/user/${user.id}`, formData)
       .then(res => {
         setFullUser(res.data);
         setShowEditModal(false);
@@ -58,6 +66,15 @@ export default function Profile() {
     logout();              // Clear token + user
     navigate('/');  // ✅ Redirect to SignIn page
   };
+
+  if (noUserFound) {
+    return (
+      <div className="profile-container" style={{ textAlign: 'center', padding: '20px' }}>
+        <p>No user found</p>
+        <button onClick={() => navigate('/')}>Login</button>
+      </div>
+    );
+  }
 
   if (!fullUser) {
     return <p className="profile-loading">Loading...</p>;

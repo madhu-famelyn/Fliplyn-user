@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Corrected BASE_URL to avoid '/user'
-const BASE_URL = 'https://fliplyn.onrender.com';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 // ✅ User Signup
 export const signupUser = (userData) => {
@@ -19,16 +19,18 @@ export const verifyOtp = (data) => {
 
 
 // ✅ User Login - initiate OTP
-export const initiateLogin = async ({ phone_number, company_email }) => {
-  try {
-    const response = await axios.post(`${BASE_URL}/user/login/initiate`, {  // Updated URL for login
-      phone_number,
-      company_email,
-    });
-    return response.data;
-  } catch (error) {
-    throw error.response?.data || { detail: 'Login initiation failed' };
-  }
+export const initiateLogin = async ({ company_email, password }) => {
+  const response = await axios.post(
+    'http://127.0.0.1:8000/user/login',
+    { company_email, password }, // ✅ JSON body
+    {
+      headers: {
+        'Content-Type': 'application/json', // ✅ Required for FastAPI to parse correctly
+      },
+    }
+  );
+
+  return response.data;
 };
 
 // ✅ User Login - verify OTP

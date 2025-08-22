@@ -7,7 +7,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;   /* ✅ Enables vertical scroll */
+  /* overflow-y: auto;   */
   max-height: 100vh;  /* ✅ Prevents overflow from being hidden */
 }
 

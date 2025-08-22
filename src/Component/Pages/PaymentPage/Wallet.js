@@ -32,8 +32,8 @@ export default function PaymentMethodPage() {
     const fetchWalletAndUser = async () => {
       try {
         const [walletRes, userRes] = await Promise.all([
-          axios.get(`https://fliplyn.onrender.com/wallets/${userId}`),
-          axios.get(`https://fliplyn.onrender.com/user/${userId}`),
+          axios.get(`http://127.0.0.1:8000/wallets/${userId}`),
+          axios.get(`http://127.0.0.1:8000/user/${userId}`),
         ]);
 
         setWalletBalance(walletRes.data.balance_amount || 0);
@@ -48,7 +48,7 @@ export default function PaymentMethodPage() {
 
     const fetchCartItems = async () => {
       try {
-        const res = await axios.get(`https://fliplyn.onrender.com/cart/${userId}`, {
+        const res = await axios.get(`http://127.0.0.1:8000/cart/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCartItems(res.data.items || []);
@@ -76,13 +76,14 @@ export default function PaymentMethodPage() {
     };
 
     try {
-      const res = await axios.post('https://fliplyn.onrender.com/orders/place', requestBody);
-      console.log('Order placed:', res.data);
+      const res = await axios.post('http://127.0.0.1:8000/orders/place', requestBody);
 
-      await axios.delete(`https://fliplyn.onrender.com/cart/clear/${userId}`, {
+      // Clear cart after successful order
+      await axios.delete(`http://127.0.0.1:8000/cart/clear/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
+      // Navigate to success page with full order data including GST
       navigate('/success', { state: { order: res.data } });
     } catch (err) {
       console.error('Order failed:', err);
@@ -113,7 +114,6 @@ export default function PaymentMethodPage() {
           <div className="wallet-section">
             <p className="wallet-label">Wallet Balance</p>
             <p className="wallet-amount">₹{walletBalance}</p>
-           
             <button
               className="go-to-wallet-btn"
               onClick={() => navigate('/transactions-wallet')}
@@ -124,11 +124,10 @@ export default function PaymentMethodPage() {
         )}
 
         <div className="payment-buttons">
-           <button className="confirm-btn" onClick={handleConfirmPayment}>
+          <button className="confirm-btn" onClick={handleConfirmPayment}>
             Confirm Payment
           </button>
           <button className="continue-btn" onClick={() => navigate(-1)}>Cancel</button>
-         
         </div>
       </div>
     </>

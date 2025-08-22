@@ -57,7 +57,7 @@ export default function Cart() {
 
     try {
       await axios.put(
-        'https://fliplyn.onrender.com/cart/update-quantity',
+        'http://127.0.0.1:8000/cart/update-quantity',
         {
           user_id: user.id,
           item_id,

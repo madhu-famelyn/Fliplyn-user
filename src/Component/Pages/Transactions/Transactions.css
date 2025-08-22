@@ -1,91 +1,387 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap'); /* Optional backup */
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Segoe+UI:wght@400;600&family=Helvetica+Neue:wght@400;700&display=swap');
 
+/* Base */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: white;
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  color: #000000;
+}
 
-.transactions-wrapper {
-  background-color: #ffffff;
-  min-height: 100vh;
-  padding: 80px 292px; /* Matches Figma: top, right, bottom, left */
+/* Wrapper */
+.txn-receipt-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 28px; /* Matches the vertical gap between elements */
+  padding: 40px 16px 16px;
+  background-color: white;
 }
 
-.transactions-container {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 36px;
+/* Status */
+.txn-status-wrapper {
+  margin-bottom: 16px;
   width: 100%;
-  max-width: 856px; /* 1440px - 292*2 (padding left + right) */
-  box-sizing: border-box;
+  max-width: 420px;
 }
 
-
-
-.transaction-title {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 500;             /* Matches Medium */
-  font-style: normal;
-  font-size: 20px;
-  line-height: 140%;            /* 1.4 or 28px */
-  letter-spacing: 0;
-  margin-bottom: 24px;
-  color: black;
+.txn-success-status {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  font-size: 16px;
+  color: #000000;
 }
 
-.transaction-table {
+.txn-success-icon {
+  background-color: #0FBB0F;
+  border-radius: 50%;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px;
+  width: 10px;
+  height: 10px;
+}
+
+.txn-success-icon svg {
+  color: white;
+  width: 12px;
+  height: 12px;
+}
+
+.txn-dot {
+  height: 10px;
+  width: 10px;
+  background-color: #16c784;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Receipt Card */
+.txn-receipt-card {
+  background-color: white;
+  border: 1px solid #CFCFCF;
+  border-radius: 8px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+}
+
+/* Title */
+.txn-stall-name {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 8px;
+}
+
+/* Token Number */
+.txn-token-no {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #686868;
+  margin-bottom: 14px;
+  position: relative;
+}
+
+.txn-token-no::after {
+  content: "";
+  display: block;
+  margin: 14px auto 0;
+  width: 350px;
+  border-top: 1.5px dashed #000000;
+}
+
+.txn-token-separator {
+  width: 420px;
+  border-top: 1.5px dashed #000000;
+  margin: 20px auto;
+}
+
+/* Date + Time */
+.txn-order-date {
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  color: #000000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Repeating separator lines */
+.txn-separator {
+  width: 350px;
+  border-top: 1.5px dashed #000000;
+  margin: 20px auto;
+}
+
+/* Receipt Table */
+.txn-receipt-table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  color: #000000;
+  text-align: left;
+}
+
+.txn-receipt-table thead th {
+  padding: 10px 0 8px;
+  border-bottom: 1.5px dashed #000000;
+  font-weight: 600;
+}
+
+.txn-receipt-table tbody td {
+  padding: 10px 0;
+  border-bottom: 1.5px dashed #000000;
+}
+
+/* Totals */
+.txn-grand-total-row td {
+  font-weight: 600;
+  padding-top: 12px;
+  border-top: 2px solid #000000;
+}
+
+/* Loading State */
+.txn-loading-text {
+  font-size: 16px;
+  color: #666666;
+  margin-top: 80px;
+  text-align: center;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 480px) {
+  .txn-receipt-card {
+    padding: 20px;
+  }
+
+  .txn-stall-name {
+    font-size: 26px;
+  }
+
+  .txn-token-no {
+    font-size: 22px;
+  }
+
+  .txn-download-btn {
+    font-size: 13px;
+    padding: 10px;
+  }
+
+  .txn-token-no::after,
+  .txn-token-separator,
+  .txn-separator {
+    width: 100%;
+  }
+}
+
+/* External Download Button */
+.txn-download-btn {
+  display: block;
+  margin: 24px auto 0;
+  background-color: #ff6b00;
+  color: white;
+  padding: 12px 32px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: background 0.3s ease;
+  width: 35%;
+  max-width: 490px;
+  text-align: center;
+}
+
+.txn-download-btn:hover {
+  background-color: #e55e00;
+}
+
+@media screen and (max-width: 480px) {
+  .txn-download-btn {
+    width: 100%;
+    font-size: 14px;
+    padding: 12px 0;
+  }
+}
+
+/* Transactions Page */
+.txn-wrapper {
+  padding: 20px;
+  background-color: #f9fafb;
+  min-height: 100vh;
+  font-family: "Inter", sans-serif;
+}
+
+.txn-loading,
+.txn-empty {
+  text-align: center;
+  font-size: 16px;
+  color: #6b7280;
+  margin-top: 50px;
+}
+
+.txn-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+}
+
+.txn-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+/* Table Header */
+.txn-table {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.txn-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.2fr 1fr 1fr;
+  padding: 12px 16px;
+  background: #f3f4f6;
+  font-weight: 600;
+  font-size: 14px;
+  color: #374151;
+  border-radius: 8px;
+}
+
+/* Table Rows */
+.txn-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.2fr 1fr 1fr;
+  padding: 12px 16px;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+  color: #4b5563;
+  transition: background 0.2s ease;
+}
+
+.txn-row:hover {
+  background: #f9fafb;
+}
+
+/* Status */
+.txn-status {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 13px;
+  width: 12vh;
+}
+
+.txn-status.success {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.txn-status.failed {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Download Button */
+.txn-download-button {
+  background: #eb7e25;
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  margin-left: 0;
+}
+
+.txn-download-button:hover {
+  background: #922101;
+}
+
+.txn-no-download {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* Receipt Card for PDF */
+.txn-pdf-receipt-card {
+  width: 300px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+}
+
+.txn-pdf-receipt-card h2.txn-stall-name {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.txn-pdf-token-no,
+.txn-pdf-order-date {
+  font-size: 14px;
+  margin: 4px 0;
+}
+
+.txn-pdf-receipt-card hr {
+  margin: 10px 0;
+}
+
+.txn-pdf-receipt-card table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.transaction-header,
-.transaction-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1.5fr 1fr;
-  align-items: center;
-  padding: 12px 0;
-}
-
-.transaction-header {
-  font-weight: 600;
-  font-size: 14px;
-  color: #888;
-  border-bottom: 1px solid #ccc;
-}
-
-.transaction-row {
-  font-size: 15px;
-  color: #333;
-  border-bottom: 1px solid #eee;
-}
-
-.transaction-row:last-child {
-  border-bottom: none;
-}
-
-.status {
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-weight: 500;
+.txn-pdf-receipt-card th,
+.txn-pdf-receipt-card td {
+  padding: 6px;
+  text-align: left;
   font-size: 13px;
-  width: fit-content;
 }
 
-.status.success {
-  background-color: #d4f5d4;
-  color: #0f8a0f;
+.txn-pdf-receipt-card th {
+  background: #f9fafb;
 }
 
-.status.failed {
-  background-color: #ffe1e1;
-  color: #c00;
+.txn-pdf-receipt-card tr.txn-grand-total-row td {
+  font-size: 14px;
+  font-weight: 600;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 8px;
 }
 
-.transactions-loading,
-.transactions-empty {
-  font-size: 16px;
-  color: #999;
-  text-align: center;
-  padding-top: 40px;
+/* Responsive */
+@media (max-width: 768px) {
+  .txn-header,
+  .txn-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-row-gap: 8px;
+  }
+
+  .txn-header span:nth-child(n+4),
+  .txn-row span:nth-child(n+4) {
+    display: none;
+  }
 }

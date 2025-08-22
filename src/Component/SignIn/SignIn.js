@@ -1,47 +1,57 @@
-// PhoneNumberLogin.jsx
+// EmailLogin.js
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { initiateLogin } from '../apis/apis';
 import { useAuth } from '../AuthContext/ContextApi';
-import { Link } from 'react-router-dom';
 import './SignIn.css';
-export default function PhoneNumberLogin() {
-  const [useEmail, setUseEmail] = useState(false);
-  const [selectedCode, setSelectedCode] = useState('+91');
-  const [phoneNumber, setPhoneNumber] = useState('');
+
+export default function EmailLogin() {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const countryCodes = [
-    { code: '+91', country: 'India' },
-    { code: '+1', country: 'USA' },
-    { code: '+44', country: 'UK' },
-    { code: '+81', country: 'Japan' },
-    { code: '+61', country: 'Australia' },
-    { code: '+971', country: 'UAE' },
+  const publicDomains = [
+    'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
+    'rediffmail.com', 'aol.com', 'protonmail.com', 'icloud.com', 'zoho.com'
   ];
 
-  const handleSendOTP = async () => {
+  const isPublicEmail = (email) => {
+    const parts = email.split('@');
+    if (parts.length !== 2) return true;
+    const domain = parts[1].toLowerCase();
+    return publicDomains.includes(domain);
+  };
+
+  const handleLogin = async () => {
     setError('');
     setLoading(true);
+
     try {
-      if (useEmail) {
-        if (!email) throw new Error('Please enter your email');
-        await initiateLogin({ company_email: email });
-        navigate('/verify-otp', { state: { email } });
-      } else {
-        if (!phoneNumber || phoneNumber.length !== 10) {
-          throw new Error('Please enter a valid 10-digit phone number');
-        }
-        const fullPhone = selectedCode.replace('+', '') + phoneNumber;
-        await initiateLogin({ phone_number: fullPhone });
-        navigate('/verify-otp', { state: { phone_number: fullPhone } });
+      if (!email || !password) {
+        throw new Error('Please enter email and password');
       }
+
+      if (isPublicEmail(email)) {
+        alert('Please enter your office email ID');
+        return;
+      }
+
+      const response = await initiateLogin({ company_email: email, password });
+
+      const token = response.access_token;
+      const user = response.user;
+
+      // ✅ Store token & user in context
+      login(token, user);
+
+      // ✅ Navigate to select-country instead of dashboard
+      navigate('/select-country');
+
     } catch (err) {
-      setError(err.detail || err.message || 'Failed to send OTP');
+      setError(err?.response?.data?.detail || err?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -52,72 +62,51 @@ export default function PhoneNumberLogin() {
       <div className="signin-header-container">
         <header className="signin-header">Fliplyne</header>
       </div>
+
       <main className="signin-main">
         <div className="signin-card">
           <h2 className="signin-title">Welcome Back</h2>
           <p className="signin-subtext">
-            Sign in to continue ordering from your favorite spots.
+            Sign in with your company email to continue.
           </p>
-          {error && <p style={{ color: 'red', fontSize: '14px' }}>{error}</p>}
-          {!useEmail ? (
-            <>
-              <label className="signin-label">Phone Number</label>
-              <div className="signin-phone-input">
-                <select
-                  className="signin-code"
-                  value={selectedCode}
-                  onChange={(e) => setSelectedCode(e.target.value)}
-                >
-                  {countryCodes.map(({ code }) => (
-                    <option key={code} value={code}>
-                      {code}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="text"
-                  className="signin-number"
-                  placeholder="Enter 10-digit mobile number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  maxLength={10}
-                />
-              </div>
-              <p
-                className="signin-switch"
-                onClick={() => setUseEmail(true)}
-              >
-                Use Email Instead
-              </p>
-            </>
-          ) : (
-            <>
-              <label className="signin-label">Email</label>
-              <input
-                type="email"
-                className="signin-email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <p
-                className="signin-switch"
-                onClick={() => setUseEmail(false)}
-              >
-                Use Phone Number Instead
-              </p>
-            </>
-          )}
+
+          {error && <p className="signin-error">{error}</p>}
+
+          <label className="signin-label">Company Email</label>
+          <input
+            type="email"
+            className="signin-email"
+            placeholder="Enter your company email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <label className="signin-label">Password</label>
+          <input
+            type="password"
+            className="signin-email"
+            placeholder="Enter your password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
           <button
             className="signin-button"
-            onClick={handleSendOTP}
+            onClick={handleLogin}
             disabled={loading}
           >
-            {loading ? 'Sending OTP...' : 'Send OTP'}
+            {loading ? 'Logging in...' : 'Login'}
           </button>
-<p className="signin-footer">
-  New here? <Link to="/signup-page" className="signup-link">Sign Up</Link>
-</p>
+
+          <p className="signin-footer">
+            <span className="left">
+              New here?{' '}
+              <Link to="/signup-page" className="signup-link">Sign Up</Link>
+            </span>
+            <span className="right">
+              <Link to="/forgot-password" className="forgot-password-link">Forgot Password</Link>
+            </span>
+          </p>
         </div>
       </main>
     </div>

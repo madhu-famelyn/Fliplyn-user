@@ -14,7 +14,7 @@ export default function Stall() {
     if (!buildingId) return;
 
     axios
-      .get(`https://fliplyn.onrender.com/stalls/building/${buildingId}`) // ✅ replace with your backend URL
+      .get(`http://127.0.0.1:8000/stalls/building/${buildingId}`) // ✅ replace with your backend URL
       .then((res) => {
         setStalls(res.data);
       })

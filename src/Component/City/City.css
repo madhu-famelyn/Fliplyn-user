@@ -6,7 +6,7 @@
   background: #fff;
   min-height: 100vh;
   max-height: 100vh;      /* ✅ ensures max height */
-  overflow-y: auto;       /* ✅ enables vertical scrolling */
+  /* overflow-y: auto;       ✅ enables vertical scrolling */
   display: flex;
   flex-direction: column;
 }

@@ -587,7 +587,7 @@
   border-radius: 8px;
   position: relative;
   box-sizing: border-box;
-  overflow: hidden;
+  /* overflow: hidden; */
   display: flex;
   justify-content: center;
   align-items: flex-start;

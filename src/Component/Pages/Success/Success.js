@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './Success.css';
-import { useLocation, useNavigate } from 'react-router-dom'; // ⬅️ import useNavigate
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { BsCheck } from 'react-icons/bs';
 import html2canvas from 'html2canvas';
@@ -8,7 +8,7 @@ import jsPDF from 'jspdf';
 
 export default function PaymentSuccess() {
   const location = useLocation();
-  const navigate = useNavigate(); // ⬅️ initialize navigate
+  const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(null);
   const receiptRef = useRef(null);
 
@@ -21,7 +21,7 @@ export default function PaymentSuccess() {
 
   const fetchOrderDetails = async (orderId) => {
     try {
-      const res = await axios.get(`https://fliplyn.onrender.com/orders/${orderId}`);
+      const res = await axios.get(`http://127.0.0.1:8000/orders/${orderId}`);
       setOrderDetails(res.data);
     } catch (err) {
       console.error('Failed to fetch order details:', err);
@@ -33,16 +33,14 @@ export default function PaymentSuccess() {
     html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-
-      // Save the PDF and navigate after it's saved
       pdf.save(`receipt_${orderDetails.id.slice(0, 6)}.pdf`);
+
       setTimeout(() => {
         navigate('/stalls');
-      }, 1000); // slight delay to ensure download starts
+      }, 1000);
     });
   };
 
@@ -54,12 +52,15 @@ export default function PaymentSuccess() {
     timeZone: 'Asia/Kolkata',
   });
 
-  const CGST = 0.13;
-  const SGST = 0.13;
-  const taxTotal = CGST + SGST;
+  const {
+    cgst = 0,
+    sgst = 0,
+    total_gst = 0,
+    round_off = 0,
+    total_amount = 0
+  } = orderDetails;
 
-  const roundedTotal = Math.round(orderDetails.total_amount);
-  const roundOff = (roundedTotal - orderDetails.total_amount).toFixed(2);
+  const roundedTotal = Math.round(total_amount + round_off);
 
   return (
     <div className="receipt-wrapper">
@@ -70,7 +71,7 @@ export default function PaymentSuccess() {
       </div>
 
       <div className="receipt-card" ref={receiptRef}>
-        <h2 className="stall-name">{orderDetails.order_details[0]?.stall_name}</h2>
+        <h2 className="stall-name">{orderDetails.order_details[0]?.stall_name || 'Stall Name'}</h2>
         <p className="token-no">Token No.: <strong>{tokenNo}</strong></p>
         <p className="order-date">Date: {createdAt}</p>
 
@@ -95,22 +96,31 @@ export default function PaymentSuccess() {
             <tr>
               <td>CGST</td>
               <td></td>
-              <td>{CGST.toFixed(2)}</td>
+              <td>{cgst.toFixed(2)}</td>
             </tr>
             <tr>
               <td>SGST</td>
               <td></td>
-              <td>{SGST.toFixed(2)}</td>
+              <td>{sgst.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>Total GST</td>
+              <td></td>
+              <td>{total_gst.toFixed(2)}</td>
             </tr>
             <tr>
               <td>Total (Rs)</td>
               <td></td>
-              <td>{(orderDetails.total_amount + taxTotal).toFixed(2)}</td>
+              <td>{total_amount.toFixed(2)}</td>
             </tr>
             <tr>
               <td>Round Off (Rs)</td>
               <td></td>
-              <td>{roundOff > 0 ? `+ ${roundOff}` : `( - ) ${Math.abs(roundOff)}`}</td>
+              <td>
+                {round_off >= 0
+                  ? `+ ${round_off.toFixed(2)}`
+                  : `- ${Math.abs(round_off).toFixed(2)}`}
+              </td>
             </tr>
             <tr className="grand-total-row">
               <td><strong>Grand Total (Rs)</strong></td>

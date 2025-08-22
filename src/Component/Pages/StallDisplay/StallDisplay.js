@@ -35,7 +35,7 @@ export default function StallDisplay({
         <div className="stall-banner-overlay">
           <div className="stall-info-left">
             <h1 className="stall-title">{name}</h1>
-            <p className="stall-subtitle">{description}</p>
+            {/* <p className="stall-subtitle">{description}</p> */}
           </div>
           <div className="stall-info-right">
             <div className="stall-count-group">

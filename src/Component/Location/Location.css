@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start; /* Align content towards the top */
-  padding-top: 13rem;        /* Add some spacing from the top */
+  padding-top: 9rem;        /* Add some spacing from the top */
   font-family: 'Segoe UI', sans-serif;
   background-color: #f9f9f9;
   min-height: 100vh;

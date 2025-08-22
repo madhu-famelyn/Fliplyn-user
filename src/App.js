@@ -25,28 +25,17 @@ import Profile from './Component/Pages/Profile/Profile';
 import Transactions from './Component/Pages/Transactions/Transactions';
 import VerifyOTP from './Component/SignIn/VerifyOTP';
 import { AuthProvider, useAuth } from './Component/AuthContext/ContextApi';
+import ForgotPassword from './Component/SignIn/ForgotPassword';
+import VerifyOTPPassword from './Component/SignIn/VerifyOTPPassword';
+import ChangePassword from './Component/SignIn/ChangePassword';
 
 function PublicRoute({ children }) {
-  const { token } = useAuth();
-  const location = useLocation();
-
-  if (token && location.pathname === "/") {
-    return <Navigate to="/select-country" replace />;
-  }
-
+  // ✅ Removed token-based redirect logic so `/` always shows SignIn
   return children;
 }
 
 function AppContent() {
   const [loading, setLoading] = useState(true);
-  const { token } = useAuth();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!loading && token && location.pathname === "/") {
-      window.location.replace("/select-country");
-    }
-  }, [loading, token, location.pathname]);
 
   if (loading) {
     return <LoadingScreen onFinish={() => setLoading(false)} />;
@@ -66,8 +55,6 @@ function AppContent() {
       <Route path="/verify-otp" element={<VerifyOTP />} />
       <Route path="/signup-page" element={<SignUp />} />
       <Route path="/otp" element={<OtpVerify />} />
-
-      {/* All Routes (no ProtectedRoute anymore) */}
       <Route path="/select-country" element={<SelectCountry />} />
       <Route path="/select-city" element={<SelectCity />} />
       <Route path="/confirm-location" element={<ConfirmLocation />} />
@@ -79,7 +66,10 @@ function AppContent() {
       <Route path="/success" element={<PaymentSuccess />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/trans" element={<Transactions />} />
-
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-otp-password" element={<VerifyOTPPassword />} />
+      <Route path="/change-password" element={<ChangePassword />} />
+      
       {/* Fallback Route */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
