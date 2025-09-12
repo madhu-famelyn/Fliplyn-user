@@ -1,6 +1,9 @@
 name = "fliplynuser"
 compatibility_date = "2025-09-12"
 
-# This tells Cloudflare where your built site is
+# This tells Wrangler it's a static site
+type = "javascript"
+
 [site]
-bucket = "./build"
+bucket = "./build"   
+entry-point = ""  
