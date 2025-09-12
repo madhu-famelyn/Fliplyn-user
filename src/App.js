@@ -23,7 +23,7 @@ import PaymentSuccess from './Component/Pages/Success/Success';
 import Profile from './Component/Pages/Profile/Profile';
 import Transactions from './Component/Pages/Transactions/Transactions';
 import VerifyOTP from './Component/SignIn/VerifyOTP';
-import { AuthProvider, useAuth } from './Component/AuthContext/ContextApi';
+import { AuthProvider } from './Component/AuthContext/ContextApi';
 import ForgotPassword from './Component/SignIn/ForgotPassword';
 import VerifyOTPPassword from './Component/SignIn/VerifyOTPPassword';
 import ChangePassword from './Component/SignIn/ChangePassword';
