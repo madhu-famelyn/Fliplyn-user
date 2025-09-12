@@ -1,9 +1,6 @@
-name = "fliplynuser"
+name = "customer"
+main = "build/index.js"   # if you want to deploy React via Workers Sites, see below
 compatibility_date = "2025-09-12"
 
-# This tells Wrangler it's a static site
-type = "javascript"
-
 [site]
-bucket = "./build"   
-entry-point = ""  
+bucket = "./build"
