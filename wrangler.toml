@@ -1,0 +1,6 @@
+name = "fliplynuser"
+compatibility_date = "2025-09-12"
+
+# This tells Cloudflare where your built site is
+[site]
+bucket = "./build"
