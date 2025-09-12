@@ -1,9 +1,8 @@
-// src/pages/Cart.js or wherever this file is
-import React, { useEffect, useState } from 'react';
+// src/pages/Cart.js
+import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Header from '../Header/Header';
 import { useAuth } from '../../AuthContext/ContextApi';
-import { FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import "./Cart.css";
 
@@ -17,12 +16,24 @@ export default function Cart() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!user) return;
-    fetchCart();
-  }, [user, token]);
+  // fetch item details
+  const fetchItemDetails = useCallback(async (cartItems) => {
+    if (!cartItems || cartItems.length === 0) return {};
+    const requests = cartItems.map((item) =>
+      axios.get(`/items/items/${item.item_id}`)
+    );
+    const responses = await Promise.all(requests);
+    const itemMap = {};
+    responses.forEach((res) => {
+      const item = res.data;
+      itemMap[item.id] = item;
+    });
+    return itemMap;
+  }, []);
 
-  const fetchCart = async () => {
+  // fetch cart
+  const fetchCart = useCallback(async () => {
+    if (!user) return;
     try {
       const res = await axios.get(`/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -37,24 +48,15 @@ export default function Cart() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, token, fetchItemDetails]);
 
-  const fetchItemDetails = async (cartItems) => {
-    const requests = cartItems.map((item) =>
-      axios.get(`/items/items/${item.item_id}`)
-    );
-    const responses = await Promise.all(requests);
-    const itemMap = {};
-    responses.forEach((res) => {
-      const item = res.data;
-      itemMap[item.id] = item;
-    });
-    return itemMap;
-  };
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
+  // update quantity
   const updateQuantity = async (item_id, quantity) => {
     if (quantity < 0) return;
-
     try {
       await axios.put(
         'http://127.0.0.1:8000/cart/update-quantity',
@@ -103,7 +105,7 @@ export default function Cart() {
                       className="item-image"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = '/fallback-item.jpg'; // optional fallback
+                        e.target.src = '/fallback-item.jpg'; // fallback if image fails
                       }}
                     />
                     <div className="item-info">
@@ -132,18 +134,17 @@ export default function Cart() {
             })}
           </div>
 
-         <div className="cart-summary">
-  <div className="summary-line">
-    <span>{cart.items.length} items</span>
-    <span>
-      Total: ₹{' '}
-      {cart.items
-        .reduce((total, item) => total + item.quantity * item.price_at_addition, 0)
-        .toFixed(2)}
-    </span>
-  </div>
-</div>
-
+          <div className="cart-summary">
+            <div className="summary-line">
+              <span>{cart.items.length} items</span>
+              <span>
+                Total: ₹{' '}
+                {cart.items
+                  .reduce((total, item) => total + item.quantity * item.price_at_addition, 0)
+                  .toFixed(2)}
+              </span>
+            </div>
+          </div>
 
           <div className="cart-actions">
             <button className="cancel-button" onClick={() => navigate(-1)}>Cancel</button>
