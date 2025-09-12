@@ -6,6 +6,7 @@ import './Transactions.css';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import axios from 'axios';
+import { QRCodeCanvas } from 'qrcode.react';
 
 export default function Transactions() {
   const { user } = useAuth();
@@ -15,6 +16,9 @@ export default function Transactions() {
   const [loading, setLoading] = useState(true);
   const receiptRef = useRef(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
+
+  // ✅ For QR Modal
+  const [qrModal, setQrModal] = useState({ open: false, orderId: null });
 
   useEffect(() => {
     if (userId) {
@@ -52,6 +56,14 @@ export default function Transactions() {
     });
   };
 
+  // ✅ Check if QR should be expired (1 hour rule)
+  const isQRExpired = (createdAt) => {
+    const createdTime = new Date(createdAt).getTime();
+    const now = new Date().getTime();
+    const diffMinutes = (now - createdTime) / (1000 * 60);
+    return diffMinutes > 60; // expired after 1 hour
+  };
+
   return (
     <>
       <Header />
@@ -71,25 +83,34 @@ export default function Transactions() {
                 <span>Payment Method</span>
                 <span>Status</span>
                 <span>Download</span>
+                <span>QR</span>
               </div>
 
               {orders.map((order) => {
                 const isFailed = order.total_amount === 0;
+                const qrExpired = isQRExpired(order.created_datetime);
 
                 return (
                   <div key={order.id} className="txn-row">
                     <span>
-                      {new Date(order.created_datetime).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {new Date(order.created_datetime).toLocaleDateString(
+                        'en-GB',
+                        {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        }
+                      )}
                     </span>
                     <span>#{order.id.slice(-5)}</span>
                     <span>₹{order.total_amount}</span>
                     <span>{order.payment_method_detail || 'Wallet'}</span>
-                    <span className={`txn-status ${isFailed ? 'failed' : 'success'}`}>
-                      {isFailed ? 'Failed' : 'Successful'}
+                    <span
+                      className={`txn-status ${
+                        isFailed ? 'failed' : 'success'
+                      }`}
+                    >
+                      {isFailed ? 'Failed' : 'Success'}
                     </span>
                     <span>
                       {!isFailed ? (
@@ -103,6 +124,27 @@ export default function Transactions() {
                         <span className="txn-no-download">—</span>
                       )}
                     </span>
+                    <span className="txn-qr">
+                      {!isFailed ? (
+                        qrExpired ? (
+                          <p className="qr-expired">QR Expired</p>
+                        ) : (
+                          <div
+                            onClick={() =>
+                              setQrModal({ open: true, orderId: order.id })
+                            }
+                            style={{ cursor: 'pointer' }}
+                          >
+                            <QRCodeCanvas
+                              value={`http://localhost:3000/receipt/${order.id}`}
+                              size={60}
+                            />
+                          </div>
+                        )
+                      ) : (
+                        <span className="txn-no-download">—</span>
+                      )}
+                    </span>
                   </div>
                 );
               })}
@@ -110,6 +152,21 @@ export default function Transactions() {
           </div>
         )}
       </div>
+
+      {/* ✅ QR Modal */}
+      {qrModal.open && (
+        <div className="qr-modal-overlay" onClick={() => setQrModal({ open: false, orderId: null })}>
+          <div className="qr-modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Order QR Code</h3>
+            <QRCodeCanvas
+              value={`http://localhost:3000/receipt/${qrModal.orderId}`}
+              size={250}
+            />
+           
+          </div>
+        
+        </div>
+      )}
 
       {selectedOrder && (
         <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
@@ -125,10 +182,13 @@ export default function Transactions() {
             </p>
             <p className="txn-pdf-order-date">
               Date:{' '}
-              {new Date(selectedOrder.created_datetime).toLocaleString('en-IN', {
-                hour12: true,
-                timeZone: 'Asia/Kolkata',
-              })}
+              {new Date(selectedOrder.created_datetime).toLocaleString(
+                'en-IN',
+                {
+                  hour12: true,
+                  timeZone: 'Asia/Kolkata',
+                }
+              )}
             </p>
             <hr />
             <table>

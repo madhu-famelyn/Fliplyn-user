@@ -216,3 +216,44 @@ body {
     padding: 12px 0;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.toggle-btns {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.toggle-btn {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1px solid #cfcfcf;
+  background: white;
+  cursor: pointer;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn.active {
+  background: #ff6b00;
+  color: white;
+  border-color: #ff6b00;
+}
+
+.toggle-btn:hover {
+  background: #e55e00;
+  color: white;
+}

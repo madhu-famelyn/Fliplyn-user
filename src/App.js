@@ -28,6 +28,8 @@ import { AuthProvider, useAuth } from './Component/AuthContext/ContextApi';
 import ForgotPassword from './Component/SignIn/ForgotPassword';
 import VerifyOTPPassword from './Component/SignIn/VerifyOTPPassword';
 import ChangePassword from './Component/SignIn/ChangePassword';
+import ReceiptPage from './Component/Pages/Success/RecepitPage';
+import QRScannerPage from './Component/Pages/ScanQR/ScanQR';
 
 function PublicRoute({ children }) {
   // ✅ Removed token-based redirect logic so `/` always shows SignIn
@@ -69,8 +71,12 @@ function AppContent() {
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/verify-otp-password" element={<VerifyOTPPassword />} />
       <Route path="/change-password" element={<ChangePassword />} />
-      
+      <Route path="/receipt/:id" element={<ReceiptPage />} />
       {/* Fallback Route */}
+
+
+
+      <Route path='/qr-scanner' element={<QRScannerPage/>}/>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
