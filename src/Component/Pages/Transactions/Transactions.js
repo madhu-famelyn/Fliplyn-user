@@ -136,7 +136,7 @@ export default function Transactions() {
                             style={{ cursor: 'pointer' }}
                           >
                             <QRCodeCanvas
-                              value={`http://localhost:3000/receipt/${order.id}`}
+                              value={`https://admin-aged-field-2794.fly.dev/receipt/${order.id}`}
                               size={60}
                             />
                           </div>
@@ -159,7 +159,7 @@ export default function Transactions() {
           <div className="qr-modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Order QR Code</h3>
             <QRCodeCanvas
-              value={`http://localhost:3000/receipt/${qrModal.orderId}`}
+              value={`https://admin-aged-field-2794.fly.dev/receipt/${qrModal.orderId}`}
               size={250}
             />
            

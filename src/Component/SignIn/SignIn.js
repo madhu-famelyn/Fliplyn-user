@@ -1,10 +1,17 @@
-// EmailLogin.js
+// src/pages/EmailLogin.js
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { initiateLogin } from '../apis/apis';
 import { useAuth } from '../AuthContext/ContextApi';
 import axios from 'axios';
 import './SignIn.css';
+
+// ✅ Use env var if available, otherwise fallback
+const BASE_URL =
+  (import.meta.env.VITE_API_URL || 'https://admin-aged-field-2794.fly.dev').replace(
+    /^http:/,
+    'https:'
+  );
 
 export default function EmailLogin() {
   const [email, setEmail] = useState('');
@@ -16,7 +23,7 @@ export default function EmailLogin() {
 
   const publicDomains = [
     'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
-    'rediffmail.com', 'aol.com', 'protonmail.com', 'icloud.com', 'zoho.com'
+    'rediffmail.com', 'aol.com', 'protonmail.com', 'icloud.com', 'zoho.com',
   ];
 
   const isPublicEmail = (email) => {
@@ -50,23 +57,24 @@ export default function EmailLogin() {
       // ✅ Store token & user in context
       login(token, user);
 
-      // 🔹 Step 2: Check if user has any orders
+      // 🔹 Step 2: Fetch orders
       const ordersRes = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/orders/user/${user.id}`,
+        `${BASE_URL}/orders/user/${user.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       const orders = ordersRes.data;
 
       // 🔹 Step 3: Navigate based on orders
-      if (orders && orders.length > 0) {
+      if (Array.isArray(orders) && orders.length > 0) {
         navigate('/stalls'); // User already has orders
       } else {
         navigate('/select-country'); // No orders yet
       }
-
     } catch (err) {
-      setError(err?.response?.data?.detail || err?.message || 'Login failed');
+      console.error('Login Error:', err);
+      // ✅ Show backend error if available, otherwise generic
+      setError(err?.response?.data?.detail || err.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -119,7 +127,9 @@ export default function EmailLogin() {
               <Link to="/signup-page" className="signup-link">Sign Up</Link>
             </span>
             <span className="right">
-              <Link to="/forgot-password" className="forgot-password-link">Forgot Password</Link>
+              <Link to="/forgot-password" className="forgot-password-link">
+                Forgot Password
+              </Link>
             </span>
           </p>
         </div>
