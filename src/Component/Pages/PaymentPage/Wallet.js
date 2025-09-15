@@ -32,8 +32,8 @@ export default function PaymentMethodPage() {
     const fetchWalletAndUser = async () => {
       try {
         const [walletRes, userRes] = await Promise.all([
-          axios.get(`http://127.0.0.1:8000/wallets/${userId}`),
-          axios.get(`http://127.0.0.1:8000/user/${userId}`),
+          axios.get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`),
+          axios.get(`https://admin-aged-field-2794.fly.dev/user/${userId}`),
         ]);
 
         setWalletBalance(walletRes.data.balance_amount || 0);
@@ -48,7 +48,7 @@ export default function PaymentMethodPage() {
 
     const fetchCartItems = async () => {
       try {
-        const res = await axios.get(`http://127.0.0.1:8000/cart/${userId}`, {
+        const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCartItems(res.data.items || []);
@@ -76,10 +76,10 @@ export default function PaymentMethodPage() {
     };
 
     try {
-      const res = await axios.post('http://127.0.0.1:8000/orders/place', requestBody);
+      const res = await axios.post('https://admin-aged-field-2794.fly.dev/orders/place', requestBody);
 
       // Clear cart after successful order
-      await axios.delete(`http://127.0.0.1:8000/cart/clear/${userId}`, {
+      await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

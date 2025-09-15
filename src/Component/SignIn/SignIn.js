@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { initiateLogin } from '../apis/apis';
 import { useAuth } from '../AuthContext/ContextApi';
+import axios from 'axios';
 import './SignIn.css';
 
 export default function EmailLogin() {
@@ -36,9 +37,11 @@ export default function EmailLogin() {
 
       if (isPublicEmail(email)) {
         alert('Please enter your office email ID');
+        setLoading(false);
         return;
       }
 
+      // 🔹 Step 1: Login
       const response = await initiateLogin({ company_email: email, password });
 
       const token = response.access_token;
@@ -47,8 +50,20 @@ export default function EmailLogin() {
       // ✅ Store token & user in context
       login(token, user);
 
-      // ✅ Navigate to select-country instead of dashboard
-      navigate('/select-country');
+      // 🔹 Step 2: Check if user has any orders
+      const ordersRes = await axios.get(
+        `https://admin-aged-field-2794.fly.dev/orders/user/${user.id}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const orders = ordersRes.data;
+
+      // 🔹 Step 3: Navigate based on orders
+      if (orders && orders.length > 0) {
+        navigate('/stalls'); // User already has orders
+      } else {
+        navigate('/select-country'); // No orders yet
+      }
 
     } catch (err) {
       setError(err?.response?.data?.detail || err?.message || 'Login failed');

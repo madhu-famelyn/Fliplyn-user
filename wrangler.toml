@@ -1,5 +1,4 @@
-name = "customer"
-main = "build/index.js"   # if you want to deploy React via Workers Sites, see below
+name = "fliplynuser"
 compatibility_date = "2025-09-12"
 
 [site]

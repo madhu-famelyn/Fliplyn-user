@@ -6,14 +6,14 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  background-color: white;
+  background: white;
   min-height: 100vh;
   box-sizing: border-box;
 }
 
 .view-card {
-  background-color: white;
-  border: 1px solid #CFCFCF;
+  background: white;
+  border: 1px solid #cfcfcf;
   border-radius: 8px;
   padding: 24px;
   width: 100%;
@@ -43,7 +43,6 @@
   margin-top: 8px;
   border-collapse: collapse;
   font-size: 14px;
-  text-align: left;
 }
 
 .view-table thead th {
@@ -69,11 +68,12 @@
   body {
     margin: 0;
     padding: 0;
+    background: #fff;
   }
 
   .print-wrapper {
-    width: 80mm !important; /* ✅ thermal receipt width */
-    margin: 0 auto;
+    width: 80mm !important; /* ✅ exact thermal width */
+    margin: 0 auto !important;
     font-family: "Courier New", monospace;
     font-size: 12px;
     line-height: 1.4;
@@ -83,7 +83,7 @@
   .print-card {
     border: none;
     padding: 0;
-    margin: 0;
+    margin: 0 auto;
     width: 100%;
   }
 
@@ -105,6 +105,7 @@
     width: 100%;
     font-size: 12px;
     border-collapse: collapse;
+    text-align: left;
   }
 
   .print-table thead th {
@@ -123,10 +124,43 @@
     padding-top: 4px;
   }
 
+  /* ✅ Thermal print margins */
+  @page {
+    size: 80mm auto;
+    margin: 4mm 0; /* small margin top/bottom */
+  }
+
+  .print-wrapper,
+  .print-card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ✅ Centered footer message */
+  .row-valid-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 0;
+    margin: 0;
+    text-align: center;
+  }
+
+  .valid-message {
+    font-size: 13px;
+    font-weight: 700;
+    color: black;
+    text-align: center;
+    margin: 0;
+    padding: 4px 0;
+  }
+}
+
+
   /* ✅ Prevent top/bottom extra blank space */
   @page {
-    margin-top: 6mm;   /* keep small top margin */
-    margin-bottom: 0mm; /* remove bottom margin */
+    margin-top: 6mm;
+    margin-bottom: 0mm;
     margin-left: 0mm;
     margin-right: 2mm;
   }
@@ -136,33 +170,54 @@
     page-break-inside: avoid;
     break-inside: avoid;
   }
-  /* Container to center the message */
-.row-valid-message {
-  display: flex;
-  justify-content: center;   
-  align-items: center;
-  width: 100%;                
-  padding: 8px 0;  
-  margin-left: 3vh;           
+
+  /* Centered valid message */
+  .row-valid-message {
+    display: flex;
+    justify-content: center;   
+    align-items: center;
+    width: 100%;                
+    padding: 8px 0;  
+    margin: 0;           
+  }
+
+  .valid-message {
+    font-size: 1rem;        
+    font-weight: 600;         
+    color: black;              
+    padding: 8px 16px;  
+    border-radius: 8px;       
+    text-align: center;       
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;               
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .valid-message:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+
+/* Hide receipt on screen */
+.print-receipt {
+  display: none;
 }
 
-.valid-message {
-  font-size: 1rem;        
-  font-weight: 600;         
-  color: black;              
-  padding: 8px 16px;  
-  margin-left: 30vh;         
-  border-radius: 8px;          /* rounded corners */
-  text-align: center;          /* center text */
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* modern font */
-  margin: 0;                   /* remove default margin */
-  transition: transform 0.2s ease, box-shadow 0.2s ease; /* optional hover effect */
-}
-
-/* Optional hover effect */
-.valid-message:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
+/* Show only while printing */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-receipt,
+  .print-receipt * {
+    visibility: visible;
+  }
+  .print-receipt {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
 }

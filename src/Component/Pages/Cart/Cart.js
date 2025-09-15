@@ -59,7 +59,7 @@ export default function Cart() {
     if (quantity < 0) return;
     try {
       await axios.put(
-        'http://127.0.0.1:8000/cart/update-quantity',
+        'https://admin-aged-field-2794.fly.dev/cart/update-quantity',
         {
           user_id: user.id,
           item_id,

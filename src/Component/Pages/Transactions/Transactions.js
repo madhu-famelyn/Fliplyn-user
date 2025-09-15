@@ -36,7 +36,7 @@ export default function Transactions() {
 
   const fetchAndDownload = async (orderId) => {
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/orders/${orderId}`);
+      const res = await axios.get(`https://admin-aged-field-2794.fly.dev/orders/${orderId}`);
       setSelectedOrder(res.data);
       setTimeout(() => downloadPDF(res.data.id), 300);
     } catch (err) {
