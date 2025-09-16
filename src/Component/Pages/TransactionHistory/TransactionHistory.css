@@ -99,3 +99,65 @@
   color: #888;
   font-size: 14px;
 }
+
+
+
+
+/* ===== Mobile Responsive (up to 768px) ===== */
+@media (max-width: 768px) {
+  .transaction-container {
+    padding: 20px; /* Reduce side padding for smaller screen */
+  }
+
+  .wallet-title {
+    font-size: 20px;
+  }
+
+  .wallet-balance {
+    font-size: 18px;
+  }
+
+  .add-money-btn {
+    width: 100%; /* Full-width button */
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .transaction-title {
+    font-size: 16px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .transaction-item {
+    flex-direction: column; /* Stack content vertically */
+    align-items: flex-start;
+    padding: 12px 0;
+  }
+
+  .transaction-info {
+    margin-bottom: 8px;
+  }
+
+  .transaction-label {
+    font-size: 14px;
+  }
+
+  .transaction-date {
+    font-size: 12px;
+  }
+
+  .transaction-amount {
+    font-size: 14px;
+    text-align: left; /* Align under info */
+  }
+
+  .transaction-type-text {
+    font-size: 12px;
+  }
+
+  .no-history {
+    text-align: center;
+    font-size: 13px;
+  }
+}
