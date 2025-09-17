@@ -1,41 +1,98 @@
-// src/pages/Stalls.js
-import React, { useEffect } from "react";
-import { useAuth } from "../AuthContex/ContextAPI";
-import { useNavigate } from "react-router-dom";
+// src/pages/stalls/stall.js
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import './Stalls.css';
+import Header from '../Header/Header';
+import { useNavigate } from 'react-router-dom';
 
-export default function Stalls() {
-  const { adminId, token } = useAuth();
+export default function Stall() {
+  const [stalls, setStalls] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const buildingId = localStorage.getItem('selectedBuildingId');
   const navigate = useNavigate();
 
-  // ✅ fallback to localStorage if context is not ready yet
-  const effectiveAdminId = adminId || localStorage.getItem("adminId");
-  const effectiveToken = token || localStorage.getItem("token");
-  const buildingId = localStorage.getItem("buildingId"); // ✅ check this
-
   useEffect(() => {
-    // 🚨 redirect if buildingId is missing
     if (!buildingId) {
-      console.warn("⚠️ No buildingId found → redirecting to /select-country");
-      navigate("/select-country");
+      navigate('/select-country');
       return;
     }
 
-    if (!effectiveAdminId || !effectiveToken) {
-      console.warn("⚠️ No adminId/token found", {
-        adminId: effectiveAdminId,
-        token: effectiveToken,
+    axios
+      .get(`https://admin-aged-field-2794.fly.dev/stalls/building/${buildingId}`)
+      .then((res) => {
+        if (!res.data || res.data.length === 0) {
+          // ❌ No stalls for this building → clear and redirect
+          localStorage.removeItem('selectedBuildingId');
+          navigate('/select-country');
+        } else {
+          setStalls(res.data);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to fetch stalls:', err);
+        // On error also redirect to select-country
+        localStorage.removeItem('selectedBuildingId');
+        navigate('/select-country');
+      })
+      .finally(() => {
+        setLoading(false);
       });
-      return;
-    }
+  }, [buildingId, navigate]);
 
-    console.log("✅ Stalls.js using values:", {
-      adminId: effectiveAdminId,
-      token: effectiveToken,
-      buildingId,
-    });
+  const handleStallClick = (stallId) => {
+    navigate(`/categories/${stallId}`);
+  };
 
-    // 👉 place your fetch call here using effectiveAdminId + effectiveToken
-  }, [effectiveAdminId, effectiveToken, buildingId, navigate]);
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="stall-wrapper">
+          <p className="stall-empty">Loading stalls...</p>
+        </div>
+      </>
+    );
+  }
 
-  return <div>Stalls Page</div>;
+  return (
+    <>
+      <Header />
+
+      <div className="stall-wrapper">
+        <div className="stall-content">
+          <div className="stall-head-wrapper">
+            <h2 className="stall-headings">Explore Outlets</h2>
+            <p className="stall-subtext">
+              Browse menus and order your favorite meals.
+            </p>
+          </div>
+
+          {stalls.length === 0 ? (
+            <p className="stall-empty">No stalls available in this building.</p>
+          ) : (
+            <div className="stall-grid">
+              {stalls.map((stall) => (
+                <div
+                  className="stall-card-wrapper"
+                  key={stall.id}
+                  onClick={() => handleStallClick(stall.id)}
+                >
+                  <div className="stall-card">
+                    <div className="image-container">
+                      <img
+                        src={stall.image_url}
+                        alt={stall.name}
+                        className="stall-image"
+                      />
+                      <div className="view-menu-layout">View Menu</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
 }
