@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import './SignUp.css';
 import { Link, useNavigate } from 'react-router-dom';
-import { signupUser, sendOtp, verifyOtp } from '../apis/apis';
+import { signupUser } from '../apis/apis';
 
 export default function SignUp() {
   const [selectedCode, setSelectedCode] = useState('+91');
-  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
   const navigate = useNavigate();
@@ -17,7 +16,6 @@ export default function SignUp() {
     phone_number: '',
     password: '',
     confirm_password: '',
-    otp: '',
   });
 
   const countryCodes = [
@@ -49,7 +47,7 @@ export default function SignUp() {
 
   const cleanedPhoneNumber = selectedCode.replace('+', '') + form.phone_number;
 
-  const handleSendOtp = async () => {
+  const handleSignUp = async () => {
     if (!isValidCompanyEmail(form.company_email)) {
       alert('Public email domains are not allowed. Please use your company email.');
       return;
@@ -78,35 +76,14 @@ export default function SignUp() {
       const signupRes = await signupUser(payload);
       console.log('✅ User created:', signupRes.data);
 
-      const otpRes = await sendOtp({
-        company_email: form.company_email,
-      });
-      console.log('✅ OTP Sent:', otpRes.data);
-
-      setOtpSent(true);
-      setPopupMessage(`OTP sent to your email`);
-      setTimeout(() => setPopupMessage(''), 3000);
+      setPopupMessage('Account created successfully! Redirecting...');
+      setTimeout(() => {
+        setPopupMessage('');
+        navigate('/'); // navigate to sign in
+      }, 2000);
     } catch (err) {
-      console.error('❌ Failed during signup or OTP:', err.response?.data?.detail);
-      alert(err.response?.data?.detail || 'Signup or OTP failed');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    setLoading(true);
-    try {
-      const verifyRes = await verifyOtp({
-        company_email: form.company_email,
-        otp: form.otp,
-      });
-
-      console.log('✅ OTP Verified:', verifyRes.data);
-      navigate('/');
-    } catch (err) {
-      console.error('❌ OTP Verification Failed:', err.response?.data?.detail);
-      alert(err.response?.data?.detail || 'OTP verification failed');
+      console.error('❌ Signup failed:', err.response?.data?.detail);
+      alert(err.response?.data?.detail || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -152,7 +129,8 @@ export default function SignUp() {
             onChange={handleChange}
             value={form.company_name}
           />
-                    <label className="signup-label">Phone Number</label>
+
+          <label className="signup-label">Phone Number</label>
           <div className="signup-phone-input">
             <select
               className="signup-code"
@@ -205,27 +183,12 @@ export default function SignUp() {
             value={form.confirm_password}
           />
 
-          <button className="signup-send-otp" onClick={handleSendOtp} disabled={loading}>
-            Send OTP
-          </button>
-
-
-          <label className="signup-label">Enter OTP</label>
-          <input
-            name="otp"
-            className="signup-input"
-            placeholder="Enter 6-digit OTP"
-            onChange={handleChange}
-            value={form.otp}
-            disabled={!otpSent}
-          />
-
           <button
             className="signup-button"
-            onClick={handleVerifyOtp}
-            disabled={!otpSent || !form.otp || loading}
+            onClick={handleSignUp}
+            disabled={loading}
           >
-            Create Account
+            Sign Up
           </button>
 
           <p className="signup-footer">
