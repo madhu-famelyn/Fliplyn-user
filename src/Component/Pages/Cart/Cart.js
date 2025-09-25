@@ -20,31 +20,43 @@ export default function Cart() {
   // fetch item details
   const fetchItemDetails = useCallback(async (cartItems) => {
     if (!cartItems || cartItems.length === 0) return {};
-    const requests = cartItems.map((item) =>
-      axios.get(`${API_BASE_URL}/items/items/${item.item_id}`)
-    );
-    const responses = await Promise.all(requests);
-    const itemMap = {};
-    responses.forEach((res) => {
-      const item = res.data;
-      itemMap[item.id] = item;
-    });
-    return itemMap;
+    try {
+      console.log("📦 Fetching item details for:", cartItems);
+      const requests = cartItems.map((item) =>
+        axios.get(`${API_BASE_URL}/items/items/${item.item_id}`)
+      );
+      const responses = await Promise.all(requests);
+      const itemMap = {};
+      responses.forEach((res) => {
+        const item = res.data;
+        itemMap[item.id] = item;
+      });
+      console.log("✅ Item details fetched:", itemMap);
+      return itemMap;
+    } catch (err) {
+      console.error("❌ Error fetching item details:", err.response?.data || err.message);
+      return {};
+    }
   }, []);
 
   // fetch cart
   const fetchCart = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      console.warn("⚠️ No user found, skipping fetchCart");
+      return;
+    }
+    console.log(`🛒 Fetching cart for user: ${user.id}`);
     try {
       const res = await axios.get(`${API_BASE_URL}/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log("✅ Cart fetched:", res.data);
       const fetchedCart = res.data;
       const itemMap = await fetchItemDetails(fetchedCart.items);
       setCart(fetchedCart);
       setItemDetails(itemMap);
     } catch (err) {
-      console.error("Error fetching cart:", err);
+      console.error("❌ Error fetching cart:", err.response?.data || err.message);
       setError("No items in cart");
       setCart(null);
     } finally {
@@ -60,18 +72,25 @@ export default function Cart() {
   const updateQuantity = async (item_id, quantity) => {
     if (quantity < 0) return;
 
+    console.log("🔄 Updating quantity:", {
+      user_id: user?.id,
+      item_id,
+      quantity,
+    });
+
     try {
       if (quantity === 0 && cart.items.length === 1) {
-        // 🚀 If last item is being removed -> clear the whole cart
+        console.log("🗑 Clearing entire cart for user:", user.id);
         await axios.delete(`${API_BASE_URL}/cart/clear/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log("✅ Cart cleared");
         setCart(null); // clear local state
         return;
       }
 
       // Otherwise, just update quantity
-      await axios.put(
+      const res = await axios.put(
         `${API_BASE_URL}/cart/update-quantity`,
         {
           user_id: user.id,
@@ -83,9 +102,10 @@ export default function Cart() {
         }
       );
 
+      console.log("✅ Quantity updated:", res.data);
       fetchCart();
     } catch (err) {
-      console.error("Failed to update quantity:", err);
+      console.error("❌ Failed to update quantity:", err.response?.data || err.message);
       setError("Failed to update quantity");
     }
   };
