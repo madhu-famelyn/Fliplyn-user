@@ -1,26 +1,27 @@
 // src/pages/Cart.js
-import { useEffect, useState, useCallback } from 'react';
-import axios from 'axios';
-import Header from '../Header/Header';
-import { useAuth } from '../../AuthContext/ContextApi';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import Header from "../Header/Header";
+import { useAuth } from "../../AuthContext/ContextApi";
+import { useNavigate } from "react-router-dom";
 import "./Cart.css";
 
-const S3_BASE_URL = 'https://fliplyn-assets.s3.ap-south-1.amazonaws.com/';
+const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
+const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 
 export default function Cart() {
   const { user, token } = useAuth();
   const [cart, setCart] = useState(null);
   const [itemDetails, setItemDetails] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   // fetch item details
   const fetchItemDetails = useCallback(async (cartItems) => {
     if (!cartItems || cartItems.length === 0) return {};
     const requests = cartItems.map((item) =>
-      axios.get(`/items/items/${item.item_id}`)
+      axios.get(`${API_BASE_URL}/items/items/${item.item_id}`)
     );
     const responses = await Promise.all(requests);
     const itemMap = {};
@@ -35,7 +36,7 @@ export default function Cart() {
   const fetchCart = useCallback(async () => {
     if (!user) return;
     try {
-      const res = await axios.get(`/cart/${user.id}`, {
+      const res = await axios.get(`${API_BASE_URL}/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const fetchedCart = res.data;
@@ -43,8 +44,9 @@ export default function Cart() {
       setCart(fetchedCart);
       setItemDetails(itemMap);
     } catch (err) {
-      console.error('Error fetching cart:', err);
-      setError('No items in cart');
+      console.error("Error fetching cart:", err);
+      setError("No items in cart");
+      setCart(null);
     } finally {
       setLoading(false);
     }
@@ -57,9 +59,20 @@ export default function Cart() {
   // update quantity
   const updateQuantity = async (item_id, quantity) => {
     if (quantity < 0) return;
+
     try {
+      if (quantity === 0 && cart.items.length === 1) {
+        // 🚀 If last item is being removed -> clear the whole cart
+        await axios.delete(`${API_BASE_URL}/cart/clear/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setCart(null); // clear local state
+        return;
+      }
+
+      // Otherwise, just update quantity
       await axios.put(
-        'https://admin-aged-field-2794.fly.dev/cart/update-quantity',
+        `${API_BASE_URL}/cart/update-quantity`,
         {
           user_id: user.id,
           item_id,
@@ -69,22 +82,27 @@ export default function Cart() {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+
       fetchCart();
     } catch (err) {
-      console.error('Failed to update quantity:', err);
-      setError('Failed to update quantity');
+      console.error("Failed to update quantity:", err);
+      setError("Failed to update quantity");
     }
   };
 
   return (
     <>
       <Header />
-      <h2 className='heading'>Your Cart</h2>
+      <h2 className="heading">Your Cart</h2>
 
       {loading ? (
-        <div style={{ textAlign: 'center', marginTop: '2rem' }}>Loading cart...</div>
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          Loading cart...
+        </div>
       ) : error || !cart || cart.items.length === 0 ? (
-        <div style={{ textAlign: 'center', marginTop: '2rem' }}>Your cart is empty.</div>
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>
+          Your cart is empty.
+        </div>
       ) : (
         <div className="cart-wrapper">
           <div className="cart-grid">
@@ -92,7 +110,7 @@ export default function Cart() {
               const itemData = itemDetails[item.item_id];
               const itemTotal = item.quantity * item.price_at_addition;
 
-              const imageUrl = itemData?.image_url?.startsWith('http')
+              const imageUrl = itemData?.image_url?.startsWith("http")
                 ? itemData.image_url
                 : `${S3_BASE_URL}${itemData?.image_url}`;
 
@@ -105,7 +123,7 @@ export default function Cart() {
                       className="item-image"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = '/fallback-item.jpg'; // fallback if image fails
+                        e.target.src = "/fallback-item.jpg"; // fallback if image fails
                       }}
                     />
                     <div className="item-info">
@@ -113,12 +131,27 @@ export default function Cart() {
                       <p className="item-price">₹ {item.price_at_addition}</p>
                     </div>
                     <div className="quantity-box">
-                      <button onClick={() => updateQuantity(item.item_id, item.quantity - 1)}>-</button>
+                      <button
+                        onClick={() =>
+                          updateQuantity(item.item_id, item.quantity - 1)
+                        }
+                      >
+                        -
+                      </button>
                       <span>{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.item_id, item.quantity + 1)}>+</button>
+                      <button
+                        onClick={() =>
+                          updateQuantity(item.item_id, item.quantity + 1)
+                        }
+                      >
+                        +
+                      </button>
                     </div>
                     <p className="item-total">
-                      ₹ {Number.isInteger(itemTotal) ? itemTotal : itemTotal.toFixed(2)}
+                      ₹{" "}
+                      {Number.isInteger(itemTotal)
+                        ? itemTotal
+                        : itemTotal.toFixed(2)}
                     </p>
                   </div>
 
@@ -138,17 +171,26 @@ export default function Cart() {
             <div className="summary-line">
               <span>{cart.items.length} items</span>
               <span>
-                Total: ₹{' '}
+                Total: ₹{" "}
                 {cart.items
-                  .reduce((total, item) => total + item.quantity * item.price_at_addition, 0)
+                  .reduce(
+                    (total, item) =>
+                      total + item.quantity * item.price_at_addition,
+                    0
+                  )
                   .toFixed(2)}
               </span>
             </div>
           </div>
 
           <div className="cart-actions">
-            <button className="cancel-button" onClick={() => navigate(-1)}>Cancel</button>
-            <button className="proceed-button" onClick={() => navigate('/wallet')}>
+            <button className="cancel-button" onClick={() => navigate(-1)}>
+              Cancel
+            </button>
+            <button
+              className="proceed-button"
+              onClick={() => navigate("/wallet")}
+            >
               Continue to Payment
             </button>
           </div>
