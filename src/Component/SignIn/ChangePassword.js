@@ -18,7 +18,7 @@ const ChangePassword = () => {
     }
 
     try {
-      await axios.post('https://admin-aged-field-2794.fly.dev/auth/reset-password', {
+      await axios.post('auth/reset-password', {
         email,
         otp,
         new_password: newPassword

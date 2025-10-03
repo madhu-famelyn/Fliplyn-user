@@ -32,8 +32,8 @@ export default function PaymentMethodPage() {
     const fetchWalletAndUser = async () => {
       try {
         const [walletRes, userRes] = await Promise.all([
-          axios.get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`),
-          axios.get(`https://admin-aged-field-2794.fly.dev/user/${userId}`),
+          axios.get(`http://127.0.0.1:8000/wallets/${userId}`),
+          axios.get(`http://127.0.0.1:8000/user/${userId}`),
         ]);
 
         setWalletBalance(walletRes.data.balance_amount || 0);
@@ -48,7 +48,7 @@ export default function PaymentMethodPage() {
 
     const fetchCartItems = async () => {
       try {
-        const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${userId}`, {
+        const res = await axios.get(`http://127.0.0.1:8000/cart/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setCartItems(res.data.items || []);
@@ -61,34 +61,48 @@ export default function PaymentMethodPage() {
     fetchCartItems();
   }, [userId, token]);
 
-  const handleConfirmPayment = async () => {
-    const itemsPayload = cartItems.map((item) => ({
-      item_id: item.item_id,
-      quantity: item.quantity,
-    }));
+const handleConfirmPayment = async () => {
+  const itemsPayload = cartItems.map((item) => ({
+    item_id: item.item_id,
+    quantity: item.quantity,
+  }));
 
-    const requestBody = {
-      user_id: userId,
-      user_phone: userDetails.phone_number,
-      user_email: userDetails.company_email,
-      items: itemsPayload,
-      pay_with_wallet: selectedMethod === 'Wallet',
-    };
-
-    try {
-      const res = await axios.post('https://admin-aged-field-2794.fly.dev/orders/place', requestBody);
-
-      // Clear cart after successful order
-      await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      // Navigate to success page with full order data including GST
-      navigate('/success', { state: { order: res.data } });
-    } catch (err) {
-      console.error('Order failed:', err);
-    }
+  const requestBody = {
+    user_id: userId,
+    user_phone: userDetails.phone_number,
+    user_email: userDetails.company_email,
+    items: itemsPayload,
+    pay_with_wallet: selectedMethod === 'Wallet',
   };
+
+  // ✅ Log request before sending
+  console.log("🛒 Sending order payload to backend:");
+  console.log("URL:", "http://127.0.0.1:8000/orders/place");
+  console.log("Payload:", JSON.stringify(requestBody, null, 2));
+
+  try {
+    const res = await axios.post(
+      "http://127.0.0.1:8000/orders/place",
+      requestBody
+    );
+
+    console.log("✅ Order success:", res.data);
+
+    // Clear cart after successful order
+    await axios.delete(`http://127.0.0.1:8000/cart/clear/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    navigate("/success", { state: { order: res.data } });
+  } catch (err) {
+    console.error("❌ Order failed with error:", err);
+    if (err.response) {
+      console.error("Response data:", err.response.data);
+      console.error("Status:", err.response.status);
+      console.error("Headers:", err.response.headers);
+    }
+  }
+};
 
   return (
     <>

@@ -20,7 +20,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (user?.id) {
-      axios.get(`https://admin-aged-field-2794.fly.dev/user/${user.id}`)
+      axios.get(`http://127.0.0.1:8000/user/${user.id}`)
         .then(res => {
           if (!res.data || Object.keys(res.data).length === 0) {
             setNoUserFound(true); // ✅ No user data
@@ -51,7 +51,7 @@ export default function Profile() {
   };
 
   const handleUpdateSubmit = () => {
-    axios.put(`https://admin-aged-field-2794.fly.dev/user/${user.id}`, formData)
+    axios.put(`http://127.0.0.1:8000/user/${user.id}`, formData)
       .then(res => {
         setFullUser(res.data);
         setShowEditModal(false);

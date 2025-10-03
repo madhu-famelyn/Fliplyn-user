@@ -54,7 +54,7 @@ const handleLogin = async () => {
     let orders = [];
     try {
       const ordersRes = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/orders/user/${user.id}`,
+        `http://127.0.0.1:8000/orders/user/${user.id}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       orders = Array.isArray(ordersRes.data) ? ordersRes.data : [];

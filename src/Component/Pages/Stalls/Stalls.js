@@ -18,7 +18,7 @@ export default function Stall() {
     }
 
     axios
-      .get(`https://admin-aged-field-2794.fly.dev/stalls/building/${buildingId}`)
+      .get(`http://127.0.0.1:8000/stalls/building/${buildingId}`)
       .then((res) => {
         if (!res.data || res.data.length === 0) {
           // ❌ No stalls for this building → clear and redirect
