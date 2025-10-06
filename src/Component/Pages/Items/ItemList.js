@@ -17,7 +17,7 @@ export default function ItemList({ items, itemsLoaded }) {
   // ✅ useCallback to avoid missing dependency warning
   const fetchCartItems = useCallback(async () => {
     try {
-      const res = await axios.get(`http://127.0.0.1:8000/cart/${user.id}`, {
+      const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const itemIds = res.data.items.map((item) => item.item_id);
@@ -50,7 +50,7 @@ export default function ItemList({ items, itemsLoaded }) {
     };
 
     try {
-      await axios.post("http://127.0.0.1:8000/cart/add-multiple", payload, {
+      await axios.post("https://admin-aged-field-2794.fly.dev/cart/add-multiple", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

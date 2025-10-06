@@ -6,7 +6,7 @@ import { useAuth } from "../../AuthContext/ContextApi";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
 const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 
 export default function Cart() {
