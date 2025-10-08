@@ -25,7 +25,7 @@ export default function QRScannerReceipt() {
 
             if (qrData.id) {
               const res = await axios.get(
-                `https://admin-aged-field-2794.fly.dev/orders/${qrData.id}`
+                `https://fliplyn.onrender.com/orders/${qrData.id}`
               );
               order = res.data;
             } else {
@@ -61,7 +61,7 @@ export default function QRScannerReceipt() {
     }
     try {
       const res = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/orders/orders/by-token/${tokenInput}`
+        `https://fliplyn.onrender.com/orders/orders/by-token/${tokenInput}`
       );
       setOrderDetails(res.data);
       setError("");
@@ -78,7 +78,7 @@ export default function QRScannerReceipt() {
       window.print();
 
       await axios.put(
-        `https://admin-aged-field-2794.fly.dev/orders/${orderDetails.id}/print`
+        `https://fliplyn.onrender.com/orders/${orderDetails.id}/print`
       );
 
       setOrderDetails((prev) => ({ ...prev, is_printed: true }));

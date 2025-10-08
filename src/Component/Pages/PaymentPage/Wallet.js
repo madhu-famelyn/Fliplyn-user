@@ -26,40 +26,65 @@ export default function PaymentMethodPage() {
     { label: 'Split Pay', icon: <RiGroupLine /> },
   ];
 
-  useEffect(() => {
-    if (!userId) return;
+useEffect(() => {
+  if (!userId) return;
 
-    const fetchWalletAndUser = async () => {
-      try {
-        const [walletRes, userRes] = await Promise.all([
-          axios.get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`),
-          axios.get(`https://admin-aged-field-2794.fly.dev/user/${userId}`),
-        ]);
+const fetchWalletAndUser = async () => {
+  try {
+    console.log(`📡 Fetching wallet for building_id: ${user?.building_id}`);
+    console.log(`URL: https://fliplyn.onrender.com/wallets/by-building/${user?.building_id}`);
 
-        setWalletBalance(walletRes.data.balance_amount || 0);
-        setUserDetails({
-          phone_number: userRes.data.phone_number || '',
-          company_email: userRes.data.company_email || '',
-        });
-      } catch (err) {
-        console.error('Failed to fetch wallet or user info', err);
-      }
-    };
+    const walletRes = await axios.get(
+      `https://fliplyn.onrender.com/wallets/by-building/${user?.building_id}`
+    );
 
-    const fetchCartItems = async () => {
-      try {
-        const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setCartItems(res.data.items || []);
-      } catch (err) {
-        console.error('Failed to fetch cart items:', err);
-      }
-    };
+    const wallets = walletRes.data;
+    const wallet = Array.isArray(wallets) ? wallets[0] : wallets;
 
-    fetchWalletAndUser();
-    fetchCartItems();
-  }, [userId, token]);
+    if (wallet) {
+      console.log("✅ Wallet found:", wallet);
+      setWalletBalance(wallet.balance_amount || 0);
+    } else {
+      console.warn("⚠️ No wallet found for this building.");
+      setWalletBalance(0);
+    }
+
+    console.log(`📡 Fetching user details for userId: ${userId}`);
+    const userRes = await axios.get(
+      `https://fliplyn.onrender.com/user/${userId}`
+    );
+    console.log("✅ User response:", userRes.data);
+
+    setUserDetails({
+      phone_number: userRes.data.phone_number || "",
+      company_email: userRes.data.company_email || "",
+    });
+  } catch (err) {
+    console.error("❌ Failed to fetch wallet or user info", err);
+    if (err.response) {
+      console.error("Response data:", err.response.data);
+      console.error("Status:", err.response.status);
+    }
+  }
+};
+
+  const fetchCartItems = async () => {
+    try {
+      console.log(`📡 Fetching cart items for userId: ${userId}`);
+      const res = await axios.get(`https://fliplyn.onrender.com/cart/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log('✅ Cart items response:', res.data);
+      setCartItems(res.data.items || []);
+    } catch (err) {
+      console.error('❌ Failed to fetch cart items:', err);
+    }
+  };
+
+  fetchWalletAndUser();
+  fetchCartItems();
+}, [userId, token]);
+
 
 const handleConfirmPayment = async () => {
   const itemsPayload = cartItems.map((item) => ({
@@ -77,19 +102,19 @@ const handleConfirmPayment = async () => {
 
   // ✅ Log request before sending
   console.log("🛒 Sending order payload to backend:");
-  console.log("URL:", "https://admin-aged-field-2794.fly.dev/orders/place");
+  console.log("URL:", "https://fliplyn.onrender.com/orders/place");
   console.log("Payload:", JSON.stringify(requestBody, null, 2));
 
   try {
     const res = await axios.post(
-      "https://admin-aged-field-2794.fly.dev/orders/place",
+      "https://fliplyn.onrender.com/orders/place",
       requestBody
     );
 
     console.log("✅ Order success:", res.data);
 
     // Clear cart after successful order
-    await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
+    await axios.delete(`https://fliplyn.onrender.com/cart/clear/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

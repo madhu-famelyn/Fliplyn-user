@@ -11,7 +11,7 @@ export default function ReceiptPage() {
   // Fetch order details
   useEffect(() => {
     axios
-      .get(`https://admin-aged-field-2794.fly.dev/orders/${id}`)
+      .get(`https://fliplyn.onrender.com/orders/${id}`)
       .then((res) => {
         setOrderDetails(res.data);
       })
