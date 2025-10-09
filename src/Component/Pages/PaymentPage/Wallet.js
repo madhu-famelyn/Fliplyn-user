@@ -32,10 +32,10 @@ useEffect(() => {
 const fetchWalletAndUser = async () => {
   try {
     console.log(`📡 Fetching wallet for building_id: ${user?.building_id}`);
-    console.log(`URL: https://fliplyn.onrender.com/wallets/by-building/${user?.building_id}`);
+    console.log(`URL: https://admin-aged-field-2794.fly.dev/wallets/by-building/${user?.building_id}`);
 
     const walletRes = await axios.get(
-      `https://fliplyn.onrender.com/wallets/by-building/${user?.building_id}`
+      `https://admin-aged-field-2794.fly.dev/wallets/by-building/${user?.building_id}`
     );
 
     const wallets = walletRes.data;
@@ -51,7 +51,7 @@ const fetchWalletAndUser = async () => {
 
     console.log(`📡 Fetching user details for userId: ${userId}`);
     const userRes = await axios.get(
-      `https://fliplyn.onrender.com/user/${userId}`
+      `https://admin-aged-field-2794.fly.dev/user/${userId}`
     );
     console.log("✅ User response:", userRes.data);
 
@@ -71,7 +71,7 @@ const fetchWalletAndUser = async () => {
   const fetchCartItems = async () => {
     try {
       console.log(`📡 Fetching cart items for userId: ${userId}`);
-      const res = await axios.get(`https://fliplyn.onrender.com/cart/${userId}`, {
+      const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('✅ Cart items response:', res.data);
@@ -102,19 +102,19 @@ const handleConfirmPayment = async () => {
 
   // ✅ Log request before sending
   console.log("🛒 Sending order payload to backend:");
-  console.log("URL:", "https://fliplyn.onrender.com/orders/place");
+  console.log("URL:", "https://admin-aged-field-2794.fly.dev/orders/place");
   console.log("Payload:", JSON.stringify(requestBody, null, 2));
 
   try {
     const res = await axios.post(
-      "https://fliplyn.onrender.com/orders/place",
+      "https://admin-aged-field-2794.fly.dev/orders/place",
       requestBody
     );
 
     console.log("✅ Order success:", res.data);
 
     // Clear cart after successful order
-    await axios.delete(`https://fliplyn.onrender.com/cart/clear/${userId}`, {
+    await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 

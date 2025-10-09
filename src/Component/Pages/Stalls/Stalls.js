@@ -29,7 +29,7 @@ export default function Stall() {
         if (userId) {
           try {
             const walletRes = await axios.get(
-              `https://fliplyn.onrender.com/wallets/${userId}`
+              `https://admin-aged-field-2794.fly.dev/wallets/${userId}`
             );
             userWallet = walletRes.data;
             setWallet(userWallet);
@@ -44,7 +44,7 @@ export default function Stall() {
 
         // ✅ Step 2: Fetch stalls by building ID
         const stallsRes = await axios.get(
-          `https://fliplyn.onrender.com/stalls/building/${buildingId}`
+          `https://admin-aged-field-2794.fly.dev/stalls/building/${buildingId}`
         );
 
         let fetchedStalls = stallsRes.data || [];

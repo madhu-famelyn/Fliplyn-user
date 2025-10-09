@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Corrected BASE_URL to avoid '/user'
-const BASE_URL = 'https://fliplyn.onrender.com';
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev';
 
 // ✅ User Signup
 export const signupUser = (userData) => {
@@ -21,7 +21,7 @@ export const verifyOtp = (data) => {
 // ✅ User Login - initiate OTP
 export const initiateLogin = async ({ company_email, password }) => {
   const response = await axios.post(
-    'https://fliplyn.onrender.com/user/login',
+    'https://admin-aged-field-2794.fly.dev/user/login',
     { company_email, password }, // ✅ JSON body
     {
       headers: {

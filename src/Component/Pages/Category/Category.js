@@ -9,7 +9,7 @@ import CategoryList from './CategoryList';
 import ItemList from '../Items/ItemList';
 import { FiShoppingCart } from 'react-icons/fi';
 
-const BASE_URL = 'https://fliplyn.onrender.com';
+const BASE_URL = 'https://admin-aged-field-2794.fly.dev';
 
 export default function Category() {
   const { stallId } = useParams();

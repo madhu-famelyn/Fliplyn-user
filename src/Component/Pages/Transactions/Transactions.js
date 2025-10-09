@@ -36,7 +36,7 @@ export default function Transactions() {
 
   const fetchAndDownload = async (orderId) => {
     try {
-      const res = await axios.get(`https://fliplyn.onrender.com/orders/${orderId}`);
+      const res = await axios.get(`https://admin-aged-field-2794.fly.dev/orders/${orderId}`);
       setSelectedOrder(res.data);
       setTimeout(() => downloadPDF(res.data.id), 300);
     } catch (err) {
@@ -136,7 +136,7 @@ export default function Transactions() {
                             style={{ cursor: 'pointer' }}
                           >
                             <QRCodeCanvas
-                              value={`https://fliplyn.onrender.com/receipt/${order.id}`}
+                              value={`https://admin-aged-field-2794.fly.dev/receipt/${order.id}`}
                               size={60}
                             />
                           </div>
@@ -159,7 +159,7 @@ export default function Transactions() {
           <div className="qr-modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Order QR Code</h3>
             <QRCodeCanvas
-              value={`https://fliplyn.onrender.com/receipt/${qrModal.orderId}`}
+              value={`https://admin-aged-field-2794.fly.dev/receipt/${qrModal.orderId}`}
               size={250}
             />
            
