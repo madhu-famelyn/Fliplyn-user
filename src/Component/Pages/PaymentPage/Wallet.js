@@ -29,44 +29,44 @@ export default function PaymentMethodPage() {
 useEffect(() => {
   if (!userId) return;
 
-const fetchWalletAndUser = async () => {
-  try {
-    console.log(`📡 Fetching wallet for building_id: ${user?.building_id}`);
-    console.log(`URL: https://admin-aged-field-2794.fly.dev/wallets/by-building/${user?.building_id}`);
+  const fetchWalletAndUser = async () => {
+    try {
+      console.log(`📡 Fetching wallet for building_id: ${user?.building_id}`);
+      console.log(`URL: https://admin-aged-field-2794.fly.dev/wallets/by-building/${user?.building_id}`);
 
-    const walletRes = await axios.get(
-      `https://admin-aged-field-2794.fly.dev/wallets/by-building/${user?.building_id}`
-    );
+      const walletRes = await axios.get(
+        `https://admin-aged-field-2794.fly.dev/wallets/by-building/${user?.building_id}`
+      );
 
-    const wallets = walletRes.data;
-    const wallet = Array.isArray(wallets) ? wallets[0] : wallets;
+      const wallets = walletRes.data;
+      const wallet = Array.isArray(wallets) ? wallets[0] : wallets;
 
-    if (wallet) {
-      console.log("✅ Wallet found:", wallet);
-      setWalletBalance(wallet.balance_amount || 0);
-    } else {
-      console.warn("⚠️ No wallet found for this building.");
-      setWalletBalance(0);
+      if (wallet) {
+        console.log("✅ Wallet found:", wallet);
+        setWalletBalance(wallet.balance_amount || 0);
+      } else {
+        console.warn("⚠️ No wallet found for this building.");
+        setWalletBalance(0);
+      }
+
+      console.log(`📡 Fetching user details for userId: ${userId}`);
+      const userRes = await axios.get(
+        `https://admin-aged-field-2794.fly.dev/user/${userId}`
+      );
+      console.log("✅ User response:", userRes.data);
+
+      setUserDetails({
+        phone_number: userRes.data.phone_number || "",
+        company_email: userRes.data.company_email || "",
+      });
+    } catch (err) {
+      console.error("❌ Failed to fetch wallet or user info", err);
+      if (err.response) {
+        console.error("Response data:", err.response.data);
+        console.error("Status:", err.response.status);
+      }
     }
-
-    console.log(`📡 Fetching user details for userId: ${userId}`);
-    const userRes = await axios.get(
-      `https://admin-aged-field-2794.fly.dev/user/${userId}`
-    );
-    console.log("✅ User response:", userRes.data);
-
-    setUserDetails({
-      phone_number: userRes.data.phone_number || "",
-      company_email: userRes.data.company_email || "",
-    });
-  } catch (err) {
-    console.error("❌ Failed to fetch wallet or user info", err);
-    if (err.response) {
-      console.error("Response data:", err.response.data);
-      console.error("Status:", err.response.status);
-    }
-  }
-};
+  };
 
   const fetchCartItems = async () => {
     try {
@@ -83,7 +83,8 @@ const fetchWalletAndUser = async () => {
 
   fetchWalletAndUser();
   fetchCartItems();
-}, [userId, token]);
+}, [userId, token, user?.building_id]);
+
 
 
 const handleConfirmPayment = async () => {

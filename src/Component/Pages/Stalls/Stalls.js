@@ -8,7 +8,7 @@ import { useAuth } from "../../AuthContext/ContextApi";
 export default function Stall() {
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [wallet, setWallet] = useState(null);
+  const [, setWallet] = useState(null);
 
   const buildingId = localStorage.getItem("selectedBuildingId");
   const navigate = useNavigate();
