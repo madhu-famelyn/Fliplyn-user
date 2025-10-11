@@ -348,9 +348,11 @@
     padding: 16px 12px;  /* Slightly more padding for mobile */
     gap: 16px;           /* Reduce gap for mobile */
   }
-  .remove-button {
-  width: 360px;
-  max-width: 340px;
+  
+}
+
+.remove-button {
+  width: 301px;
   height: 48px;
   border-radius: 8px;
   border: 1px solid #EA7C69; /* Figma border color */
@@ -367,10 +369,6 @@
   margin-top: 10px;
   opacity: 1;
 }
-
-}
-
-
 
 
   .item-image {
