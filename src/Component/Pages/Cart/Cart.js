@@ -1,4 +1,3 @@
-// src/pages/Cart.js
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import Header from "../Header/Header";
@@ -15,13 +14,13 @@ export default function Cart() {
   const [itemDetails, setItemDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [pageLoading, setPageLoading] = useState(false); // ✅ Full-page loader
   const navigate = useNavigate();
 
   // fetch item details
   const fetchItemDetails = useCallback(async (cartItems) => {
     if (!cartItems || cartItems.length === 0) return {};
     try {
-      console.log("📦 Fetching item details for:", cartItems);
       const requests = cartItems.map((item) =>
         axios.get(`${API_BASE_URL}/items/items/${item.item_id}`)
       );
@@ -31,7 +30,6 @@ export default function Cart() {
         const item = res.data;
         itemMap[item.id] = item;
       });
-      console.log("✅ Item details fetched:", itemMap);
       return itemMap;
     } catch (err) {
       console.error("❌ Error fetching item details:", err.response?.data || err.message);
@@ -41,16 +39,11 @@ export default function Cart() {
 
   // fetch cart
   const fetchCart = useCallback(async () => {
-    if (!user) {
-      console.warn("⚠️ No user found, skipping fetchCart");
-      return;
-    }
-    console.log(`🛒 Fetching cart for user: ${user.id}`);
+    if (!user) return;
     try {
       const res = await axios.get(`${API_BASE_URL}/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("✅ Cart fetched:", res.data);
       const fetchedCart = res.data;
       const itemMap = await fetchItemDetails(fetchedCart.items);
       setCart(fetchedCart);
@@ -71,54 +64,64 @@ export default function Cart() {
   // update quantity
   const updateQuantity = async (item_id, quantity) => {
     if (quantity < 0) return;
-
-    console.log("🔄 Updating quantity:", {
-      user_id: user?.id,
-      item_id,
-      quantity,
-    });
+    setPageLoading(true); // ✅ Show full-page loader
 
     try {
       if (quantity === 0 && cart.items.length === 1) {
-        console.log("🗑 Clearing entire cart for user:", user.id);
         await axios.delete(`${API_BASE_URL}/cart/clear/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log("✅ Cart cleared");
-        setCart(null); // clear local state
+        setCart(null);
         return;
       }
 
-      // Otherwise, just update quantity
-      const res = await axios.put(
+      await axios.put(
         `${API_BASE_URL}/cart/update-quantity`,
-        {
-          user_id: user.id,
-          item_id,
-          quantity,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { user_id: user.id, item_id, quantity },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      console.log("✅ Quantity updated:", res.data);
-      fetchCart();
+      await fetchCart();
     } catch (err) {
       console.error("❌ Failed to update quantity:", err.response?.data || err.message);
       setError("Failed to update quantity");
+    } finally {
+      setPageLoading(false); // ✅ Hide full-page loader
     }
+  };
+
+  // cancel button
+  const handleCancel = async () => {
+    setPageLoading(true);
+    setTimeout(() => {
+      navigate(-1);
+      setPageLoading(false);
+    }, 800);
+  };
+
+  // proceed to payment
+  const handleProceed = async () => {
+    setPageLoading(true);
+    setTimeout(() => {
+      navigate("/wallet");
+      setPageLoading(false);
+    }, 800);
   };
 
   return (
     <>
+      {/* ✅ Full-page loader overlay */}
+      {pageLoading && (
+        <div className="page-loader-overlay">
+          <div className="spinner"></div>
+        </div>
+      )}
+
       <Header />
       <h2 className="heading">Your Cart</h2>
 
       {loading ? (
-        <div style={{ textAlign: "center", marginTop: "2rem" }}>
-          Loading cart...
-        </div>
+        <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading cart...</div>
       ) : error || !cart || cart.items.length === 0 ? (
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           Your cart is empty.
@@ -143,30 +146,31 @@ export default function Cart() {
                       className="item-image"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "/fallback-item.jpg"; // fallback if image fails
+                        e.target.src = "/fallback-item.jpg";
                       }}
                     />
                     <div className="item-info">
                       <p className="item-name">{itemData?.name}</p>
                       <p className="item-price">₹ {item.price_at_addition}</p>
                     </div>
+
+                    {/* Quantity Controls */}
                     <div className="quantity-box">
                       <button
-                        onClick={() =>
-                          updateQuantity(item.item_id, item.quantity - 1)
-                        }
+                        onClick={() => updateQuantity(item.item_id, item.quantity - 1)}
                       >
                         -
                       </button>
+
                       <span>{item.quantity}</span>
+
                       <button
-                        onClick={() =>
-                          updateQuantity(item.item_id, item.quantity + 1)
-                        }
+                        onClick={() => updateQuantity(item.item_id, item.quantity + 1)}
                       >
                         +
                       </button>
                     </div>
+
                     <p className="item-total">
                       ₹{" "}
                       {Number.isInteger(itemTotal)
@@ -204,13 +208,10 @@ export default function Cart() {
           </div>
 
           <div className="cart-actions">
-            <button className="cancel-button" onClick={() => navigate(-1)}>
+            <button className="cancel-button" onClick={handleCancel}>
               Cancel
             </button>
-            <button
-              className="proceed-button"
-              onClick={() => navigate("/wallet")}
-            >
+            <button className="proceed-button" onClick={handleProceed}>
               Continue to Payment
             </button>
           </div>

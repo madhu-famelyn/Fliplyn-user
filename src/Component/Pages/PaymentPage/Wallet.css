@@ -232,3 +232,50 @@
     align-items: stretch;
   }
 }
+
+
+
+.error-msg {
+  color: #d9534f;
+  background-color: #f9d6d5;
+  border: 1px solid #f5c6c6;
+  padding: 10px 12px;
+  margin-top: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.confirm-btn[disabled],
+.continue-btn[disabled],
+.method-btn[disabled],
+.go-to-wallet-btn[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirm-btn {
+  position: relative;
+}
+
+.confirm-btn::after {
+  content: '';
+  display: inline-block;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  border-top: 3px solid transparent;
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+  animation: spin 0.9s linear infinite;
+  visibility: hidden;
+}
+
+.confirm-btn:disabled::after {
+  visibility: visible;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

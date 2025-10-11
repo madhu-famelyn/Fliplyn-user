@@ -71,11 +71,11 @@ export default function Stall() {
         }
 
         // ✅ Step 4: If still empty, clear and redirect
-        if (!fetchedStalls || fetchedStalls.length === 0) {
-          localStorage.removeItem("selectedBuildingId");
-          navigate("/select-country");
-          return;
-        }
+        // if (!fetchedStalls || fetchedStalls.length === 0) {
+        //   localStorage.removeItem("selectedBuildingId");
+        //   navigate("/select-country");
+        //   return;
+        // }
 
         setStalls(fetchedStalls);
       } catch (error) {

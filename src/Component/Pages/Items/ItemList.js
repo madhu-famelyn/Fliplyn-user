@@ -3,7 +3,7 @@ import axios from "axios";
 import "../Category/Category.css";
 import { useAuth } from "../../AuthContext/ContextApi";
 import "./Items.css";
-import { BiFoodTag } from "react-icons/bi"; // ✅ Imported
+import { BiFoodTag } from "react-icons/bi"; // ✅ Food icon
 
 const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 
@@ -13,8 +13,9 @@ export default function ItemList({ items, itemsLoaded }) {
   const [popupMessage, setPopupMessage] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [filterType, setFilterType] = useState("all");
+  const [isLoading, setIsLoading] = useState(false); // ✅ Freezer + loader control
 
-  // ✅ useCallback to avoid missing dependency warning
+  // ✅ Fetch cart items
   const fetchCartItems = useCallback(async () => {
     try {
       const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${user.id}`, {
@@ -31,8 +32,9 @@ export default function ItemList({ items, itemsLoaded }) {
     if (user) {
       fetchCartItems();
     }
-  }, [user, fetchCartItems]); // ✅ fixed dependency warning
+  }, [user, fetchCartItems]);
 
+  // ✅ Add item to cart
   const handleAddToCart = async (itemId) => {
     if (!user || !user.id) {
       setPopupMessage("⚠️ Please log in to add items to your cart.");
@@ -42,7 +44,7 @@ export default function ItemList({ items, itemsLoaded }) {
     }
 
     const isInCart = cartItems.includes(itemId);
-    if (isInCart) return; // Already in cart
+    if (isInCart) return;
 
     const payload = {
       user_id: user.id,
@@ -50,6 +52,8 @@ export default function ItemList({ items, itemsLoaded }) {
     };
 
     try {
+      setIsLoading(true); // 🧊 Show freezer + loader
+
       await axios.post("https://admin-aged-field-2794.fly.dev/cart/add-multiple", payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -61,14 +65,14 @@ export default function ItemList({ items, itemsLoaded }) {
     } catch (err) {
       console.error("❌ Failed to add to cart:", err);
 
-      // ✅ Show backend message if available
       const errorMsg =
         err.response?.data?.detail ||
         "❌ Failed to add item. Please try again.";
-
       setPopupMessage(errorMsg);
       setShowPopup(true);
       setTimeout(() => setShowPopup(false), 2500);
+    } finally {
+      setIsLoading(false); // ❄️ Hide freezer + loader
     }
   };
 
@@ -80,8 +84,18 @@ export default function ItemList({ items, itemsLoaded }) {
 
   return (
     <div className="items-section">
+      {/* ✅ Popup Message */}
       {showPopup && <div className="cart-popup">{popupMessage}</div>}
 
+      {/* ✅ Freezer Overlay + Loader */}
+      {isLoading && (
+        <div className="freezer-overlay">
+          <div className="loader"></div>
+          <p>Adding to cart...</p>
+        </div>
+      )}
+
+      {/* Filter Buttons */}
       <div className="filter-buttons">
         <button
           className={`filter-btn ${filterType === "all" ? "active" : ""}`}
@@ -134,7 +148,6 @@ export default function ItemList({ items, itemsLoaded }) {
                     {item.name}
                   </h4>
 
-                  {/* Show price after GST */}
                   <p className="item-prices">
                     ₹
                     {item.price
@@ -148,6 +161,7 @@ export default function ItemList({ items, itemsLoaded }) {
                   <button
                     className={`add-to-cart-btn ${isInCart ? "added" : ""}`}
                     onClick={() => handleAddToCart(item.id)}
+                    disabled={isLoading} // prevent spamming during load
                   >
                     {isInCart ? "Item Added" : "Add to Cart"}
                   </button>
