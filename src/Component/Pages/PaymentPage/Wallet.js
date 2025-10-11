@@ -70,68 +70,66 @@ export default function PaymentMethodPage() {
     }, 0);
   };
 
-const handleConfirmPayment = async () => {
-  setErrorMsg('');
-  const totalAmount = calculateTotalAmount();
-
-  // 🧮 Check for insufficient wallet balance before sending request
-  if (selectedMethod === 'Wallet' && totalAmount > walletBalance) {
-    setErrorMsg(
-      `❌ Insufficient Wallet Balance! Wallet: ₹${walletBalance.toFixed(
-        2
-      )}, Order Total: ₹${totalAmount.toFixed(2)}`
-    );
-    return;
-  }
-
-  const itemsPayload = cartItems.map((item) => ({
-    item_id: item.item_id,
-    quantity: item.quantity,
-  }));
-
-  const requestBody = {
-    user_id: userId,
-    user_phone: userDetails.phone_number,
-    user_email: userDetails.company_email,
-    items: itemsPayload,
-    pay_with_wallet: selectedMethod === 'Wallet',
-  };
-
-  console.log('🛒 Sending order payload:', requestBody);
-  setIsLoading(true);
-
-  try {
-    const res = await axios.post('https://admin-aged-field-2794.fly.dev/orders/place', requestBody);
-    console.log('✅ Order success:', res.data);
-
-    await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    navigate('/success', { state: { order: res.data } });
-  } catch (err) {
-    console.error('❌ Order failed:', err);
-
-if (err.response) {
-  const { detail } = err.response.data;
-
-  // 🎯 Handle insufficient wallet balance specifically
-  if (detail === 'Insufficient wallet balance') {
+  const handleConfirmPayment = async () => {
+    setErrorMsg('');
     const totalAmount = calculateTotalAmount();
-    setErrorMsg(
-      `❌ Insufficient Wallet Balance! Wallet: ₹${walletBalance.toFixed(
-        2
-      )},`
-    );
-  } else {
-    setErrorMsg(`⚠️ ${detail || 'Unexpected error occurred.'}`);
-  }
-}
 
-  } finally {
-    setIsLoading(false);
-  }
-};
+    // 🧮 Check for insufficient wallet balance before sending request
+    if (selectedMethod === 'Wallet' && totalAmount > walletBalance) {
+      setErrorMsg(
+        `❌ Insufficient Wallet Balance! Wallet: ₹${walletBalance.toFixed(
+          2
+        )}, Order Total: ₹${totalAmount.toFixed(2)}`
+      );
+      return;
+    }
+
+    const itemsPayload = cartItems.map((item) => ({
+      item_id: item.item_id,
+      quantity: item.quantity,
+    }));
+
+    const requestBody = {
+      user_id: userId,
+      user_phone: userDetails.phone_number,
+      user_email: userDetails.company_email,
+      items: itemsPayload,
+      pay_with_wallet: selectedMethod === 'Wallet',
+    };
+
+    console.log('🛒 Sending order payload:', requestBody);
+    setIsLoading(true);
+
+    try {
+      const res = await axios.post('https://admin-aged-field-2794.fly.dev/orders/place', requestBody);
+      console.log('✅ Order success:', res.data);
+
+      await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      navigate('/success', { state: { order: res.data } });
+    } catch (err) {
+      console.error('❌ Order failed:', err);
+
+      if (err.response) {
+        const { detail } = err.response.data;
+
+        // 🎯 Handle insufficient wallet balance specifically
+        if (detail === 'Insufficient wallet balance') {
+          setErrorMsg(
+            `❌ Insufficient Wallet Balance! Wallet: ₹${walletBalance.toFixed(2)}`
+          );
+        } else {
+          setErrorMsg(`⚠️ ${detail || 'Unexpected error occurred.'}`);
+        }
+      } else {
+        setErrorMsg('⚠️ Network error. Please check your connection.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -175,7 +173,7 @@ if (err.response) {
             className="confirm-btn"
             onClick={handleConfirmPayment}
             disabled={isLoading}
-          >
+          >                                       
             {isLoading ? 'Processing...' : 'Confirm Payment'}
           </button>
           <button
