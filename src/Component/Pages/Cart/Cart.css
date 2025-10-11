@@ -52,10 +52,13 @@
 .cart-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+   max-width: 340px;    
   gap: 20px;
   padding: 20px;
   border-radius: 12px;
   position: relative;
+  align-self: center;
+  margin-left: 1vh;
 }
 
 .cart-grid::before {
@@ -447,7 +450,7 @@
 
   .cart-actions {
     flex-direction: column;
-    max-width: 400px;           /* keeps container compact */
+    max-width: 370px;           /* keeps container compact */
   flex-direction: row;  
     gap: 12px;
     align-items: center;        /* vertical alignment */
