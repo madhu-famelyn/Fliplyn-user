@@ -330,15 +330,27 @@
 .cart-item {
   display: flex;
   flex-direction: column;
-  border-radius: 8px;          /* 🛠️ Reduced from 12px */
-  padding: 25px 10px;          /* 🛠️ Top/Bottom 25px as per Figma */
-  gap: 16px;                   /* 🛠️ Matches Figma spacing between children */
-  width: 303px;                /* 🛠️ Exact width from Figma for mobile */
-  max-width: 100%;             /* 🛠️ Prevents overflow on smaller screens */
+  border-radius: 12px;
+  padding: 16px 10px; /* top/bottom padding */
+  gap: 20px;
+  width: 371px;       /* Desktop width */
+  max-width: 100%;
   box-sizing: border-box;
 }
-.remove-button {
-  width: 301px;
+
+/* === Mobile Centering === */
+@media (max-width: 768px) {
+  .cart-item {
+    width: 100%;          /* Adjust width to fit mobile */
+    max-width: 360px;    /* Optional: exact mobile width from Figma */
+    margin: 0 auto;      /* Center horizontally */
+    border-radius: 8px;  /* Optional: smaller radius on mobile */
+    padding: 16px 12px;  /* Slightly more padding for mobile */
+    gap: 16px;           /* Reduce gap for mobile */
+  }
+  .remove-button {
+  width: 360px;
+  max-width: 340px;
   height: 48px;
   border-radius: 8px;
   border: 1px solid #EA7C69; /* Figma border color */
@@ -355,6 +367,10 @@
   margin-top: 10px;
   opacity: 1;
 }
+
+}
+
+
 
 
   .item-image {
