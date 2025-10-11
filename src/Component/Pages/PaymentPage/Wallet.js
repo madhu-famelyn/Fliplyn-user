@@ -112,23 +112,22 @@ const handleConfirmPayment = async () => {
   } catch (err) {
     console.error('❌ Order failed:', err);
 
-    if (err.response) {
-      const { detail } = err.response.data;
+if (err.response) {
+  const { detail } = err.response.data;
 
-      // 🎯 Handle insufficient wallet balance specifically
-      if (detail === 'Insufficient wallet balance') {
-        const totalAmount = calculateTotalAmount();
-        setErrorMsg(
-          `❌ Insufficient Wallet Balance! Wallet: ₹${walletBalance.toFixed(
-            2
-          )},`
-        );
-      } else {
-        setErrorMsg(`⚠️ ${detail || 'Unexpected error occurred.'}`);
-      }
-    } else {
-      setErrorMsg('⚠️ Network error. Please check your connection.');
-    }
+  // 🎯 Handle insufficient wallet balance specifically
+  if (detail === 'Insufficient wallet balance') {
+    const totalAmount = calculateTotalAmount();
+    setErrorMsg(
+      `❌ Insufficient Wallet Balance! Wallet: ₹${walletBalance.toFixed(
+        2
+      )},`
+    );
+  } else {
+    setErrorMsg(`⚠️ ${detail || 'Unexpected error occurred.'}`);
+  }
+}
+
   } finally {
     setIsLoading(false);
   }
