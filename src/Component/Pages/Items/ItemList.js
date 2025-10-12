@@ -13,9 +13,9 @@ export default function ItemList({ items, itemsLoaded }) {
   const [popupMessage, setPopupMessage] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [filterType, setFilterType] = useState("all");
-  const [isLoading, setIsLoading] = useState(false); // ✅ Freezer + loader control
+  const [isLoading, setIsLoading] = useState(false); 
 
-  // ✅ Fetch cart items
+
   const fetchCartItems = useCallback(async () => {
     try {
       const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${user.id}`, {
@@ -34,7 +34,6 @@ export default function ItemList({ items, itemsLoaded }) {
     }
   }, [user, fetchCartItems]);
 
-  // ✅ Add item to cart
   const handleAddToCart = async (itemId) => {
     if (!user || !user.id) {
       setPopupMessage("⚠️ Please log in to add items to your cart.");
@@ -161,7 +160,7 @@ export default function ItemList({ items, itemsLoaded }) {
                   <button
                     className={`add-to-cart-btn ${isInCart ? "added" : ""}`}
                     onClick={() => handleAddToCart(item.id)}
-                    disabled={isLoading} // prevent spamming during load
+                    disabled={isLoading}
                   >
                     {isInCart ? "Item Added" : "Add to Cart"}
                   </button>

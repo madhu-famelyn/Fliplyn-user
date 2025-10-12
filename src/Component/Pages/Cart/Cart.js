@@ -33,6 +33,7 @@ export default function Cart() {
       return itemMap;
     } catch (err) {
       console.error("❌ Error fetching item details:", err.response?.data || err.message);
+      setError(err.response?.data?.detail || "Failed to fetch item details");
       return {};
     }
   }, []);
@@ -40,6 +41,8 @@ export default function Cart() {
   // fetch cart
   const fetchCart = useCallback(async () => {
     if (!user) return;
+    setLoading(true);
+    setError("");
     try {
       const res = await axios.get(`${API_BASE_URL}/cart/${user.id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -50,7 +53,7 @@ export default function Cart() {
       setItemDetails(itemMap);
     } catch (err) {
       console.error("❌ Error fetching cart:", err.response?.data || err.message);
-      setError("No items in cart");
+      setError(err.response?.data?.detail || "Failed to fetch cart");
       setCart(null);
     } finally {
       setLoading(false);
@@ -64,9 +67,11 @@ export default function Cart() {
   // update quantity
   const updateQuantity = async (item_id, quantity) => {
     if (quantity < 0) return;
-    setPageLoading(true); // ✅ Show full-page loader
+    setPageLoading(true);
+    setError("");
 
     try {
+      // clear cart if last item
       if (quantity === 0 && cart.items.length === 1) {
         await axios.delete(`${API_BASE_URL}/cart/clear/${user.id}`, {
           headers: { Authorization: `Bearer ${token}` },
@@ -75,18 +80,21 @@ export default function Cart() {
         return;
       }
 
+      // update quantity
       await axios.put(
         `${API_BASE_URL}/cart/update-quantity`,
         { user_id: user.id, item_id, quantity },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
+      // fetch updated cart
       await fetchCart();
     } catch (err) {
       console.error("❌ Failed to update quantity:", err.response?.data || err.message);
-      setError("Failed to update quantity");
+      // ✅ Show backend error if available
+      setError(err.response?.data?.detail || "Failed to update quantity");
     } finally {
-      setPageLoading(false); // ✅ Hide full-page loader
+      setPageLoading(false);
     }
   };
 
@@ -120,9 +128,16 @@ export default function Cart() {
       <Header />
       <h2 className="heading">Your Cart</h2>
 
+      {/* ✅ Show backend error if exists */}
+      {error && (
+        <div className="cart-error">
+          {error}
+        </div>
+      )}
+
       {loading ? (
         <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading cart...</div>
-      ) : error || !cart || cart.items.length === 0 ? (
+      ) : !cart || cart.items.length === 0 ? (
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           Your cart is empty.
         </div>
