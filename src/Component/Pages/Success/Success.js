@@ -15,10 +15,7 @@ export default function PaymentSuccess() {
 
   useEffect(() => {
     const order = location.state?.order;
-    if (order) {
-      // Use the order object directly
-      setOrderDetails(order);
-    }
+    if (order) setOrderDetails(order);
   }, [location]);
 
   const downloadPDF = () => {
@@ -45,23 +42,12 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-  const {
-    cgst = 0,
-    sgst = 0,
-    total_gst = 0,
-    round_off = 0,
-    total_amount = 0,
-  } = orderDetails;
+  const { cgst = 0, sgst = 0, total_gst = 0, round_off = 0, total_amount = 0 } =
+    orderDetails;
 
-  const roundedTotal = Math.round(total_amount + round_off);
-
-  // 👇 Build full QR payload with all order details
-  const qrPayload = JSON.stringify({
-    ...orderDetails,
-    token_no: tokenNo,
-    created_at: createdAt,
-    rounded_total: roundedTotal,
-  });
+  // Calculate "Total" before round-off
+  const totalBeforeRoundOff =
+    orderDetails.order_details.reduce((acc, item) => acc + item.price, 0) + total_gst;
 
   return (
     <div className="receipt-wrapper">
@@ -119,6 +105,7 @@ export default function PaymentSuccess() {
                   <td>{item.price.toFixed(2)}</td>
                 </tr>
               ))}
+
               <tr>
                 <td>CGST</td>
                 <td></td>
@@ -134,28 +121,26 @@ export default function PaymentSuccess() {
                 <td></td>
                 <td>{total_gst.toFixed(2)}</td>
               </tr>
+
+              {/* Total before round-off */}
               <tr>
-                <td>Total (Rs)</td>
+                <td><strong>Total (Rs)</strong></td>
                 <td></td>
-                <td>{total_amount.toFixed(2)}</td>
+                <td><strong>{totalBeforeRoundOff.toFixed(2)}</strong></td>
               </tr>
+
+              {/* Round Off */}
               <tr>
                 <td>Round Off (Rs)</td>
                 <td></td>
-                <td>
-                  {round_off >= 0
-                    ? `+ ${round_off.toFixed(2)}`
-                    : `- ${Math.abs(round_off).toFixed(2)}`}
-                </td>
+                <td>{round_off.toFixed(2)}</td>
               </tr>
+
+              {/* Grand Total from backend */}
               <tr className="grand-total-row">
-                <td>
-                  <strong>Grand Total (Rs)</strong>
-                </td>
+                <td><strong>Grand Total (Rs)</strong></td>
                 <td></td>
-                <td>
-                  <strong>{roundedTotal.toFixed(2)}</strong>
-                </td>
+                <td><strong>{total_amount.toFixed(2)}</strong></td>
               </tr>
             </tbody>
           </table>
@@ -169,7 +154,7 @@ export default function PaymentSuccess() {
       {/* QR Section */}
       {view === "qr" && (
         <div className="qr-wrapper">
-          <QRCodeCanvas value={qrPayload} size={180} />
+          <QRCodeCanvas value={JSON.stringify(orderDetails)} size={180} />
         </div>
       )}
     </div>

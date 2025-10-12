@@ -2,29 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { BsCheck } from "react-icons/bs";
-import "./Receipt.css"; // ✅ make sure print styles are included
+import "./Receipt.css"; // Make sure print styles are included
 
 export default function ReceiptPage() {
   const { id } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
 
-  // Fetch order details
+  // Fetch order details from backend
   useEffect(() => {
     axios
       .get(`https://admin-aged-field-2794.fly.dev/orders/${id}`)
-      .then((res) => {
-        setOrderDetails(res.data);
-      })
+      .then((res) => setOrderDetails(res.data))
       .catch((err) => console.error(err));
   }, [id]);
 
   // Trigger print AFTER orderDetails is loaded
   useEffect(() => {
     if (orderDetails) {
-      // Small timeout to ensure DOM fully renders
       setTimeout(() => {
         window.print();
-      }, 100); // 100ms is usually enough
+      }, 100); // ensure DOM renders before printing
     }
   }, [orderDetails]);
 
@@ -36,15 +33,18 @@ export default function ReceiptPage() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
+  // Use backend values directly
   const {
     cgst = 0,
     sgst = 0,
     total_gst = 0,
     round_off = 0,
-    total_amount = 0,
+    total_amount = 0, // already includes round-off
+    order_details = [],
   } = orderDetails;
 
-  const roundedTotal = Math.round(total_amount + round_off);
+  // Total before round-off (for display only)
+  const totalBeforeRoundOff = total_amount - round_off;
 
   return (
     <div className="view-wrapper print-wrapper">
@@ -59,7 +59,7 @@ export default function ReceiptPage() {
 
       <div className="view-card print-card">
         <h2 className="view-stall print-stall">
-          {orderDetails.order_details[0]?.stall_name || "Stall Name"}
+          {order_details[0]?.stall_name || "Stall Name"}
         </h2>
         <p className="view-token print-token">
           Token No.: <strong>{tokenNo}</strong>
@@ -77,7 +77,7 @@ export default function ReceiptPage() {
             </tr>
           </thead>
           <tbody>
-            {orderDetails.order_details.map((item, index) => (
+            {order_details.map((item, index) => (
               <tr key={index}>
                 <td>{item.name}</td>
                 <td>{item.quantity}</td>
@@ -102,7 +102,7 @@ export default function ReceiptPage() {
             <tr>
               <td>Total</td>
               <td></td>
-              <td>{total_amount.toFixed(2)}</td>
+              <td>{totalBeforeRoundOff.toFixed(2)}</td>
             </tr>
             <tr>
               <td>Round Off</td>
@@ -119,7 +119,7 @@ export default function ReceiptPage() {
               </td>
               <td></td>
               <td>
-                <strong>{roundedTotal.toFixed(2)}</strong>
+                <strong>{total_amount.toFixed(2)}</strong>
               </td>
             </tr>
           </tbody>
