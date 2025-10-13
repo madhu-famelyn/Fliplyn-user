@@ -98,51 +98,46 @@ export default function PaymentSuccess() {
               </tr>
             </thead>
             <tbody>
-              {orderDetails.order_details.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.price.toFixed(2)}</td>
-                </tr>
-              ))}
+  {orderDetails.order_details.map((item, index) => (
+    <tr key={index}>
+      <td>{item.name}</td>
+      <td>{item.quantity}</td>
+      <td>{(item.price * item.quantity).toFixed(2)}</td>
+    </tr>
+  ))}
 
-              <tr>
-                <td>CGST</td>
-                <td></td>
-                <td>{cgst.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td>SGST</td>
-                <td></td>
-                <td>{sgst.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td>Total GST</td>
-                <td></td>
-                <td>{total_gst.toFixed(2)}</td>
-              </tr>
+  <tr>
+    <td>CGST</td>
+    <td></td>
+    <td>{cgst.toFixed(3)}</td>
+  </tr>
+  <tr>
+    <td>SGST</td>
+    <td></td>
+    <td>{sgst.toFixed(3)}</td>
+  </tr>
+  <tr>
+    <td>Total GST</td>
+    <td></td>
+    <td>{total_gst.toFixed(2)}</td>
+  </tr>
+  <tr>
+    <td><strong>Total (Rs)</strong></td>
+    <td></td>
+    <td><strong>{totalBeforeRoundOff.toFixed(2)}</strong></td>
+  </tr>
+  <tr>
+    <td>Round Off (Rs)</td>
+    <td></td>
+    <td>{round_off.toFixed(2)}</td>
+  </tr>
+  <tr className="grand-total-row">
+    <td><strong>Grand Total (Rs)</strong></td>
+    <td></td>
+    <td><strong>{total_amount.toFixed(2)}</strong></td>
+  </tr>
+</tbody>
 
-              {/* Total before round-off */}
-              <tr>
-                <td><strong>Total (Rs)</strong></td>
-                <td></td>
-                <td><strong>{totalBeforeRoundOff.toFixed(2)}</strong></td>
-              </tr>
-
-              {/* Round Off */}
-              <tr>
-                <td>Round Off (Rs)</td>
-                <td></td>
-                <td>{round_off.toFixed(2)}</td>
-              </tr>
-
-              {/* Grand Total from backend */}
-              <tr className="grand-total-row">
-                <td><strong>Grand Total (Rs)</strong></td>
-                <td></td>
-                <td><strong>{total_amount.toFixed(2)}</strong></td>
-              </tr>
-            </tbody>
           </table>
 
           <button className="download-btn" onClick={downloadPDF}>
