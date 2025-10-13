@@ -48,15 +48,14 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-  // // --- GST & Total Calculation ---
-  // let totalBasePrice = 0;
-  // let totalCgst = 0;
-  // let totalSgst = 0;
-  // let totalGst = 0;
-  // let totalWithGst = 0;
+   totalBasePrice = 0;
+   totalCgst = 0;
+   totalSgst = 0;
+   totalGst = 0;
+   totalWithGst = 0;
 
   orderDetails.order_details.forEach((item) => {
-    const basePrice = item.price; // already base price (without GST)
+    const basePrice = item.price; 
     const cgst = basePrice * 0.025;
     const sgst = basePrice * 0.025;
     const totalItemGst = cgst + sgst;
@@ -174,7 +173,6 @@ export default function PaymentSuccess() {
         </div>
       )}
 
-      {/* QR Section */}
       {view === "qr" && (
         <div className="qr-wrapper">
           <QRCodeCanvas value={JSON.stringify(orderDetails)} size={180} />
