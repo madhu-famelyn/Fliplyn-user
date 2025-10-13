@@ -48,12 +48,12 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-  // --- GST & Total Calculation ---
-  let totalBasePrice = 0;
-  let totalCgst = 0;
-  let totalSgst = 0;
-  let totalGst = 0;
-  let totalWithGst = 0;
+  // // --- GST & Total Calculation ---
+  // let totalBasePrice = 0;
+  // let totalCgst = 0;
+  // let totalSgst = 0;
+  // let totalGst = 0;
+  // let totalWithGst = 0;
 
   orderDetails.order_details.forEach((item) => {
     const basePrice = item.price; // already base price (without GST)
