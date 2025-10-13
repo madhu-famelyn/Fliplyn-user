@@ -4,18 +4,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { BsCheck } from "react-icons/bs";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import axios from "axios";
 import { QRCodeCanvas } from "qrcode.react";
 
 export default function PaymentSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(null);
-  const [view, setView] = useState("receipt"); // toggle view
+  const [view, setView] = useState("receipt");
   const receiptRef = useRef(null);
 
   useEffect(() => {
     const order = location.state?.order;
-    if (order) setOrderDetails(order);
+    if (order?.id) {
+      axios
+        .get(`https://admin-aged-field-2794.fly.dev/orders/${order.id}`)
+        .then((res) => setOrderDetails(res.data))
+        .catch((err) => console.error("Error fetching order:", err));
+    }
   }, [location]);
 
   const downloadPDF = () => {
@@ -42,12 +48,32 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-  const { cgst = 0, sgst = 0, total_gst = 0, round_off = 0, total_amount = 0 } =
-    orderDetails;
+  // --- GST & Total Calculation ---
+  let totalBasePrice = 0;
+  let totalCgst = 0;
+  let totalSgst = 0;
+  let totalGst = 0;
+  let totalWithGst = 0;
 
-  // Calculate "Total" before round-off
-  const totalBeforeRoundOff =
-    orderDetails.order_details.reduce((acc, item) => acc + item.price, 0) + total_gst;
+  orderDetails.order_details.forEach((item) => {
+    const basePrice = item.price; // already base price (without GST)
+    const cgst = basePrice * 0.025;
+    const sgst = basePrice * 0.025;
+    const totalItemGst = cgst + sgst;
+    const priceWithGst = basePrice + totalItemGst;
+
+    totalBasePrice += basePrice * item.quantity;
+    totalCgst += cgst * item.quantity;
+    totalSgst += sgst * item.quantity;
+    totalGst += totalItemGst * item.quantity;
+    totalWithGst += priceWithGst * item.quantity;
+  });
+
+  // Use backend round_off if available, else compute locally
+  const roundOff =
+    orderDetails.round_off ??
+    Math.round(orderDetails.total_amount) - totalWithGst;
+  const grandTotal = totalWithGst + roundOff;
 
   return (
     <div className="receipt-wrapper">
@@ -92,52 +118,54 @@ export default function PaymentSuccess() {
           <table className="receipt-table">
             <thead>
               <tr>
-                <th>Item Name</th>
-                <th>Qty.</th>
-                <th>Price (Rs)</th>
+                <th>Field</th>
+                <th>Value (₹)</th>
               </tr>
             </thead>
             <tbody>
-  {orderDetails.order_details.map((item, index) => (
-    <tr key={index}>
-      <td>{item.name}</td>
-      <td>{item.quantity}</td>
-      <td>{(item.price * item.quantity).toFixed(2)}</td>
-    </tr>
-  ))}
+              {orderDetails.order_details.map((item, index) => {
+                const basePrice = item.price;
+                const cgst = basePrice * 0.025;
+                const sgst = basePrice * 0.025;
+                const totalGstItem = cgst + sgst;
+                const priceWithGst = basePrice + totalGstItem;
 
-  <tr>
-    <td>CGST</td>
-    <td></td>
-    <td>{cgst.toFixed(3)}</td>
-  </tr>
-  <tr>
-    <td>SGST</td>
-    <td></td>
-    <td>{sgst.toFixed(3)}</td>
-  </tr>
-  <tr>
-    <td>Total GST</td>
-    <td></td>
-    <td>{total_gst.toFixed(2)}</td>
-  </tr>
-  <tr>
-    <td><strong>Total (Rs)</strong></td>
-    <td></td>
-    <td><strong>{totalBeforeRoundOff.toFixed(2)}</strong></td>
-  </tr>
-  <tr>
-    <td>Round Off (Rs)</td>
-    <td></td>
-    <td>{round_off.toFixed(2)}</td>
-  </tr>
-  <tr className="grand-total-row">
-    <td><strong>Grand Total (Rs)</strong></td>
-    <td></td>
-    <td><strong>{total_amount.toFixed(2)}</strong></td>
-  </tr>
-</tbody>
+                return (
+                  <React.Fragment key={index}>
 
+                    <tr>
+                      <td>Base Price</td>
+                      <td>{basePrice.toFixed(2)}</td>
+                    </tr>
+                    <tr>
+                      <td>CGST</td>
+                      <td>{cgst.toFixed(3)}</td>
+                    </tr>
+                    <tr>
+                      <td>SGST </td>
+                      <td>{sgst.toFixed(3)}</td>
+                    </tr>
+                    <tr>
+                      <td>Total GST</td>
+                      <td>{totalGstItem.toFixed(3)}</td>
+                    </tr>
+                    <tr>
+                      <td>Price</td>
+                      <td>{priceWithGst.toFixed(2)}</td>
+                    </tr>
+                  </React.Fragment>
+                );
+              })}
+
+              <tr>
+                <td><strong>Round Off</strong></td>
+                <td>{roundOff.toFixed(2)}</td>
+              </tr>
+              <tr className="grand-total-row">
+                <td><strong>Grand Total</strong></td>
+                <td><strong>{grandTotal.toFixed(2)}</strong></td>
+              </tr>
+            </tbody>
           </table>
 
           <button className="download-btn" onClick={downloadPDF}>

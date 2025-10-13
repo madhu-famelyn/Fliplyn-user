@@ -10,6 +10,23 @@ body {
   color: #000000;
 }
 
+
+.receipt-table th,
+.receipt-table td {
+  padding: 10px 20px;
+}
+
+.receipt-table th:first-child,
+.receipt-table td:first-child {
+  width: 60%;
+}
+
+.receipt-table th:last-child,
+.receipt-table td:last-child {
+  width: 40%;
+  text-align: right;
+}
+
 /* Wrapper */
 .receipt-wrapper {
   display: flex;
@@ -137,6 +154,7 @@ body {
   padding: 10px 0 8px;
   border-bottom: 1.5px dashed #000000;
   font-weight: 600;
+  
 }
 
 .receipt-table tbody td {

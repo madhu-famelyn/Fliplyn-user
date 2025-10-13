@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { getOrderDetailsByUserId } from './Service';
-import { useAuth } from '../../AuthContext/ContextApi';
-import Header from '../Header/Header';
-import './Transactions.css';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import axios from 'axios';
-import { QRCodeCanvas } from 'qrcode.react';
+import React, { useEffect, useState, useRef } from "react";
+import { getOrderDetailsByUserId } from "./Service";
+import { useAuth } from "../../AuthContext/ContextApi";
+import Header from "../Header/Header";
+import "./Transactions.css";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import axios from "axios";
+import { QRCodeCanvas } from "qrcode.react";
 
 export default function Transactions() {
   const { user } = useAuth();
@@ -28,7 +28,7 @@ export default function Transactions() {
           setLoading(false);
         })
         .catch((err) => {
-          console.error('Error fetching orders:', err);
+          console.error("Error fetching orders:", err);
           setLoading(false);
         });
     }
@@ -36,22 +36,24 @@ export default function Transactions() {
 
   const fetchAndDownload = async (orderId) => {
     try {
-      const res = await axios.get(`https://admin-aged-field-2794.fly.dev/orders/${orderId}`);
+      const res = await axios.get(
+        `https://admin-aged-field-2794.fly.dev/orders/${orderId}`
+      );
       setSelectedOrder(res.data);
       setTimeout(() => downloadPDF(res.data.token_number, res.data), 300);
     } catch (err) {
-      console.error('Failed to fetch order details:', err);
+      console.error("Failed to fetch order details:", err);
     }
   };
 
-  const downloadPDF = (tokenNumber, order) => {
+  const downloadPDF = (tokenNumber) => {
     const input = receiptRef.current;
     html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`receipt_${tokenNumber}.pdf`);
     });
   };
@@ -93,17 +95,24 @@ export default function Transactions() {
                 return (
                   <div key={order.id} className="txn-row">
                     <span>
-                      {new Date(order.created_datetime).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
+                      {new Date(order.created_datetime).toLocaleDateString(
+                        "en-GB",
+                        {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                        }
+                      )}
                     </span>
                     <span>{order.token_number}</span>
                     <span>₹{order.total_amount.toFixed(2)}</span>
-                    <span>{order.payment_method_detail || 'Wallet'}</span>
-                    <span className={`txn-status ${isFailed ? 'failed' : 'success'}`}>
-                      {isFailed ? 'Failed' : 'Success'}
+                    <span>{order.payment_method_detail || "Wallet"}</span>
+                    <span
+                      className={`txn-status ${
+                        isFailed ? "failed" : "success"
+                      }`}
+                    >
+                      {isFailed ? "Failed" : "Success"}
                     </span>
                     <span>
                       {!isFailed ? (
@@ -126,7 +135,7 @@ export default function Transactions() {
                             onClick={() =>
                               setQrModal({ open: true, orderId: order.id })
                             }
-                            style={{ cursor: 'pointer' }}
+                            style={{ cursor: "pointer" }}
                           >
                             <QRCodeCanvas
                               value={`https://admin-aged-field-2794.fly.dev/receipt/${order.id}`}
@@ -167,22 +176,26 @@ export default function Transactions() {
 
       {/* Hidden PDF Receipt */}
       {selectedOrder && (
-        <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
+        <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
           <div ref={receiptRef} className="txn-pdf-receipt-card">
             <h2 className="txn-stall-name">
-              {selectedOrder.order_details[0]?.stall_name || 'Stall Name'}
+              {selectedOrder.order_details[0]?.stall_name || "Stall Name"}
             </h2>
+
             <p className="txn-pdf-token-no">
-              Token No.:{' '}
-              <strong>{selectedOrder.token_number}</strong>
+              Token No.: <strong>{selectedOrder.token_number}</strong>
             </p>
             <p className="txn-pdf-order-date">
-              Date:{' '}
-              {new Date(selectedOrder.created_datetime).toLocaleString('en-IN', {
-                hour12: true,
-                timeZone: 'Asia/Kolkata',
-              })}
+              Date:{" "}
+              {new Date(selectedOrder.created_datetime).toLocaleString(
+                "en-IN",
+                {
+                  hour12: true,
+                  timeZone: "Asia/Kolkata",
+                }
+              )}
             </p>
+
             <hr />
             <table>
               <thead>
@@ -201,15 +214,16 @@ export default function Transactions() {
                   </tr>
                 ))}
 
+                {/* GST Rows */}
                 <tr>
                   <td>CGST</td>
                   <td></td>
-                  <td>{selectedOrder.cgst.toFixed(2)}</td>
+                  <td>{selectedOrder.cgst.toFixed(3)}</td>
                 </tr>
                 <tr>
                   <td>SGST</td>
                   <td></td>
-                  <td>{selectedOrder.sgst.toFixed(2)}</td>
+                  <td>{selectedOrder.sgst.toFixed(3)}</td>
                 </tr>
                 <tr>
                   <td>Total GST</td>
@@ -219,15 +233,12 @@ export default function Transactions() {
 
                 {/* Total before round-off */}
                 <tr>
-                  <td><strong>Total (Rs)</strong></td>
+                  <td>Total (Rs)</td>
                   <td></td>
                   <td>
-                    <strong>
-                      {(
-                        selectedOrder.order_details.reduce((acc, i) => acc + i.price, 0) +
-                        selectedOrder.total_gst
-                      ).toFixed(2)}
-                    </strong>
+                    {(
+                      selectedOrder.total_amount - selectedOrder.round_off
+                    ).toFixed(2)}
                   </td>
                 </tr>
 
@@ -235,14 +246,22 @@ export default function Transactions() {
                 <tr>
                   <td>Round Off (Rs)</td>
                   <td></td>
-                  <td>{selectedOrder.round_off.toFixed(2)}</td>
+                  <td>
+                    {selectedOrder.round_off >= 0
+                      ? `+ ${selectedOrder.round_off.toFixed(2)}`
+                      : `- ${Math.abs(selectedOrder.round_off).toFixed(2)}`}
+                  </td>
                 </tr>
 
-                {/* Grand Total from backend */}
+                {/* Grand Total */}
                 <tr className="txn-grand-total-row">
-                  <td><strong>Grand Total (Rs)</strong></td>
+                  <td>
+                    <strong>Grand Total (Rs)</strong>
+                  </td>
                   <td></td>
-                  <td><strong>{selectedOrder.total_amount.toFixed(2)}</strong></td>
+                  <td>
+                    <strong>{selectedOrder.total_amount.toFixed(2)}</strong>
+                  </td>
                 </tr>
               </tbody>
             </table>

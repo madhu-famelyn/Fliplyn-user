@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { BsCheck } from "react-icons/bs";
-import "./Receipt.css"; // Make sure print styles are included
+import "./Receipt.css";
 
 export default function ReceiptPage() {
   const { id } = useParams();
   const [orderDetails, setOrderDetails] = useState(null);
 
-  // Fetch order details from backend
+  // ✅ Fetch order details
   useEffect(() => {
     axios
       .get(`https://admin-aged-field-2794.fly.dev/orders/${id}`)
@@ -16,12 +16,12 @@ export default function ReceiptPage() {
       .catch((err) => console.error(err));
   }, [id]);
 
-  // Trigger print AFTER orderDetails is loaded
+  // ✅ Trigger print AFTER details are loaded
   useEffect(() => {
     if (orderDetails) {
       setTimeout(() => {
         window.print();
-      }, 100); // ensure DOM renders before printing
+      }, 100);
     }
   }, [orderDetails]);
 
@@ -33,21 +33,22 @@ export default function ReceiptPage() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-  // Use backend values directly
+  // ✅ Extract backend values
   const {
     cgst = 0,
     sgst = 0,
     total_gst = 0,
     round_off = 0,
-    total_amount = 0, // already includes round-off
+    total_amount = 0,
     order_details = [],
   } = orderDetails;
 
-  // Total before round-off (for display only)
+  // ✅ Total before round-off
   const totalBeforeRoundOff = total_amount - round_off;
 
   return (
     <div className="view-wrapper print-wrapper">
+      {/* Success Message */}
       <div className="view-status print-status">
         <p className="view-success print-success">
           <span className="view-icon print-icon">
@@ -57,10 +58,12 @@ export default function ReceiptPage() {
         </p>
       </div>
 
+      {/* Receipt Card */}
       <div className="view-card print-card">
         <h2 className="view-stall print-stall">
           {order_details[0]?.stall_name || "Stall Name"}
         </h2>
+
         <p className="view-token print-token">
           Token No.: <strong>{tokenNo}</strong>
         </p>
@@ -68,12 +71,13 @@ export default function ReceiptPage() {
 
         <hr className="view-separator print-separator" />
 
+        {/* Table */}
         <table className="view-table print-table">
           <thead>
             <tr>
-              <th>Item</th>
-              <th>Qty</th>
-              <th>Rs</th>
+              <th>Item Name</th>
+              <th>Qty.</th>
+              <th>Price (Rs)</th>
             </tr>
           </thead>
           <tbody>
@@ -84,28 +88,32 @@ export default function ReceiptPage() {
                 <td>{item.price.toFixed(2)}</td>
               </tr>
             ))}
+
+            {/* Taxes */}
             <tr>
               <td>CGST</td>
               <td></td>
-              <td>{cgst.toFixed(2)}</td>
+              <td>{cgst.toFixed(3)}</td>
             </tr>
             <tr>
               <td>SGST</td>
               <td></td>
-              <td>{sgst.toFixed(2)}</td>
+              <td>{sgst.toFixed(3)}</td>
             </tr>
             <tr>
               <td>Total GST</td>
               <td></td>
               <td>{total_gst.toFixed(2)}</td>
             </tr>
+
+            {/* Totals */}
             <tr>
-              <td>Total</td>
+              <td>Total (Rs)</td>
               <td></td>
               <td>{totalBeforeRoundOff.toFixed(2)}</td>
             </tr>
             <tr>
-              <td>Round Off</td>
+              <td>Round Off (Rs)</td>
               <td></td>
               <td>
                 {round_off >= 0
@@ -115,7 +123,7 @@ export default function ReceiptPage() {
             </tr>
             <tr className="view-grand print-grand">
               <td>
-                <strong>Grand Total</strong>
+                <strong>Grand Total (Rs)</strong>
               </td>
               <td></td>
               <td>
