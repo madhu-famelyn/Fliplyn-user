@@ -48,25 +48,34 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-   totalBasePrice = 0;
-   totalCgst = 0;
-   totalSgst = 0;
-   totalGst = 0;
-   totalWithGst = 0;
+let totalBasePrice = 0;
+let totalCgst = 0;
+let totalSgst = 0;
+let totalGst = 0;
+let totalWithGst = 0;
 
-  orderDetails.order_details.forEach((item) => {
-    const basePrice = item.price; 
-    const cgst = basePrice * 0.025;
-    const sgst = basePrice * 0.025;
-    const totalItemGst = cgst + sgst;
-    const priceWithGst = basePrice + totalItemGst;
+orderDetails.order_details.forEach((item) => {
+  const basePrice = item.price; 
+  const cgst = basePrice * 0.025;
+  const sgst = basePrice * 0.025;
+  const totalItemGst = cgst + sgst;
+  const priceWithGst = basePrice + totalItemGst;
 
-    totalBasePrice += basePrice * item.quantity;
-    totalCgst += cgst * item.quantity;
-    totalSgst += sgst * item.quantity;
-    totalGst += totalItemGst * item.quantity;
-    totalWithGst += priceWithGst * item.quantity;
-  });
+  totalBasePrice += basePrice * item.quantity;
+  totalCgst += cgst * item.quantity;
+  totalSgst += sgst * item.quantity;
+  totalGst += totalItemGst * item.quantity;
+  totalWithGst += priceWithGst * item.quantity;
+});
+
+console.log({
+  totalBasePrice,
+  totalCgst,
+  totalSgst,
+  totalGst,
+  totalWithGst
+});
+
 
   // Use backend round_off if available, else compute locally
   const roundOff =
