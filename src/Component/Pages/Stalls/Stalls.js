@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Stalls.css";
@@ -26,7 +25,7 @@ export default function Stall() {
       try {
         let userWallet = null;
 
-        // ✅ Step 1: Try to get wallet by user ID
+        // Step 1: Fetch wallet
         if (userId) {
           try {
             const walletRes = await axios.get(
@@ -35,7 +34,6 @@ export default function Stall() {
             userWallet = walletRes.data;
             setWallet(userWallet);
 
-            // ✅ Log wallet payment type
             console.log("💰 User Wallet:", userWallet);
             console.log("🟢 Wallet Payment Method:", userWallet.payment_method);
           } catch (err) {
@@ -43,40 +41,34 @@ export default function Stall() {
           }
         }
 
-        // ✅ Step 2: Fetch stalls by building ID
+        // Step 2: Fetch stalls for building
         const stallsRes = await axios.get(
           `https://admin-aged-field-2794.fly.dev/stalls/building/${buildingId}`
         );
-
         let fetchedStalls = stallsRes.data || [];
 
-        // ✅ Log all stalls
         console.log("🏪 All fetched stalls:", fetchedStalls);
 
-        // ✅ Separate prepaid and postpaid stalls for clarity
+        // Step 3: Separate PREPAID and POSTPAID stalls
         const prepaidStalls = fetchedStalls.filter(
-          (stall) => stall.payment_type === "PREPAID"
+          (stall) => stall.payment_type.toUpperCase() === "PREPAID"
         );
         const postpaidStalls = fetchedStalls.filter(
-          (stall) => stall.payment_type === "POSTPAID"
+          (stall) => stall.payment_type.toUpperCase() === "POSTPAID"
         );
 
         console.log("🟢 PREPAID Stalls:", prepaidStalls);
         console.log("🟠 POSTPAID Stalls:", postpaidStalls);
 
-        // ✅ Step 3: Filter based on wallet type
-        if (userWallet && userWallet.payment_method === "POSTPAID") {
-          fetchedStalls = fetchedStalls.filter(
-            (stall) => stall.payment_type === "POSTPAID"
-          );
+        // Step 4: Filter stalls based on wallet type
+        if (userWallet?.payment_method.toUpperCase() === "PREPAID") {
+          fetchedStalls = prepaidStalls;
+        } else if (userWallet?.payment_method.toUpperCase() === "POSTPAID") {
+          fetchedStalls = postpaidStalls;
+        } else {
+          // fallback: show all
+          fetchedStalls = [...prepaidStalls, ...postpaidStalls];
         }
-
-        // ✅ Step 4: If still empty, clear and redirect
-        // if (!fetchedStalls || fetchedStalls.length === 0) {
-        //   localStorage.removeItem("selectedBuildingId");
-        //   navigate("/select-country");
-        //   return;
-        // }
 
         setStalls(fetchedStalls);
       } catch (error) {
@@ -109,7 +101,6 @@ export default function Stall() {
   return (
     <>
       <Header />
-
       <div className="stall-wrapper">
         <div className="stall-content">
           <div className="stall-head-wrapper">
@@ -138,8 +129,16 @@ export default function Stall() {
                       />
                       <div className="view-menu-layout">View Menu</div>
                     </div>
-                    {/* ✅ Show payment type visually */}
-                    <div className="stall-payment-tag">{stall.payment_type}</div>
+                    {/* Show payment type visually */}
+                    <div
+                      className={`stall-payment-tag ${
+                        stall.payment_type.toUpperCase() === "PREPAID"
+                          ? "prepaid"
+                          : "postpaid"
+                      }`}
+                    >
+                      {stall.payment_type.toUpperCase()}
+                    </div>
                   </div>
                 </div>
               ))}

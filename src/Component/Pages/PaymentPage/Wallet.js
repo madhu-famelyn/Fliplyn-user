@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../Header/Header';
 import './Wallet.css';
-import { FaQrcode, FaWallet, FaCreditCard } from 'react-icons/fa';
-import { MdOutlinePayments } from 'react-icons/md';
-import { RiGroupLine } from 'react-icons/ri';
+// import { FaQrcode, FaWallet, FaCreditCard } from 'react-icons/fa';
+import {  FaWallet } from 'react-icons/fa';
+
+// import { MdOutlinePayments } from 'react-icons/md';
+// import { RiGroupLine } from 'react-icons/ri';
 import { useAuth } from '../../AuthContext/ContextApi';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,11 +23,11 @@ export default function PaymentMethodPage() {
   const navigate = useNavigate();
 
   const paymentMethods = [
-    { label: 'QR Code', icon: <FaQrcode /> },
+    // { label: 'QR Code', icon: <FaQrcode /> },
     { label: 'Wallet', icon: <FaWallet /> },
-    { label: 'UPI', icon: <MdOutlinePayments /> },
-    { label: 'Card', icon: <FaCreditCard /> },
-    { label: 'Split Pay', icon: <RiGroupLine /> },
+    // { label: 'UPI', icon: <MdOutlinePayments /> },
+    // { label: 'Card', icon: <FaCreditCard /> },
+    // { label: 'Split Pay', icon: <RiGroupLine /> },
   ];
 
   useEffect(() => {
