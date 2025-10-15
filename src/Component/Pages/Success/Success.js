@@ -48,11 +48,11 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-let totalBasePrice = 0;
-let totalCgst = 0;
-let totalSgst = 0;
-let totalGst = 0;
-let totalWithGst = 0;
+// let totalBasePrice = 0;
+// let totalCgst = 0;
+// let totalSgst = 0;
+// let totalGst = 0;
+// let totalWithGst = 0;
 
 orderDetails.order_details.forEach((item) => {
   const basePrice = item.price; 
