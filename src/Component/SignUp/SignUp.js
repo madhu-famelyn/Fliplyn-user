@@ -73,6 +73,8 @@ export default function SignUp() {
         password: form.password,
       };
 
+      const signupRes = await signupUser(payload);
+      console.log('✅ User created:', signupRes.data);
 
       setPopupMessage('Account created successfully! Redirecting...');
       setTimeout(() => {
