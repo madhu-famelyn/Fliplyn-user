@@ -20,7 +20,7 @@ export default function PaymentSuccess() {
       axios
         .get(`https://admin-aged-field-2794.fly.dev/orders/${order.id}`)
         .then((res) => setOrderDetails(res.data))
-        .catch((err) => console.error("Error fetching order:", err));
+        .catch(() => {});
     }
   }, [location]);
 
@@ -48,30 +48,28 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-// let totalBasePrice = 0;
-// let totalCgst = 0;
-// let totalSgst = 0;
-// let totalGst = 0;
-// let totalWithGst = 0;
+  let totalBasePrice = 0;
+  let totalCgst = 0;
+  let totalSgst = 0;
+  let totalGst = 0;
+  let totalWithGst = 0;
 
-orderDetails.order_details.forEach((item) => {
-  const basePrice = item.price; 
-  const cgst = basePrice * 0.025;
-  const sgst = basePrice * 0.025;
-  const totalItemGst = cgst + sgst;
-  const priceWithGst = basePrice + totalItemGst;
+  if (orderDetails?.order_details?.length) {
+    orderDetails.order_details.forEach((item) => {
+      const basePrice = item.price;
+      const cgst = basePrice * 0.025;
+      const sgst = basePrice * 0.025;
+      const totalItemGst = cgst + sgst;
+      const priceWithGst = basePrice + totalItemGst;
 
-  totalBasePrice += basePrice * item.quantity;
-  totalCgst += cgst * item.quantity;
-  totalSgst += sgst * item.quantity;
-  totalGst += totalItemGst * item.quantity;
-  totalWithGst += priceWithGst * item.quantity;
-});
+      totalBasePrice += basePrice * item.quantity;
+      totalCgst += cgst * item.quantity;
+      totalSgst += sgst * item.quantity;
+      totalGst += totalItemGst * item.quantity;
+      totalWithGst += priceWithGst * item.quantity;
+    });
+  }
 
-
-
-
-  // Use backend round_off if available, else compute locally
   const roundOff =
     orderDetails.round_off ??
     Math.round(orderDetails.total_amount) - totalWithGst;
@@ -88,7 +86,6 @@ orderDetails.order_details.forEach((item) => {
         </p>
       </div>
 
-      {/* Toggle Buttons */}
       <div className="toggle-btns">
         <button
           className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
@@ -104,7 +101,6 @@ orderDetails.order_details.forEach((item) => {
         </button>
       </div>
 
-      {/* Receipt Section */}
       {view === "receipt" && (
         <div className="receipt-card" ref={receiptRef}>
           <h2 className="stall-name">
@@ -134,7 +130,10 @@ orderDetails.order_details.forEach((item) => {
 
                 return (
                   <React.Fragment key={index}>
-
+                    <tr>
+                      <td>Item</td>
+                      <td>{item.name}</td>
+                    </tr>
                     <tr>
                       <td>Base Price</td>
                       <td>{basePrice.toFixed(2)}</td>
@@ -144,7 +143,7 @@ orderDetails.order_details.forEach((item) => {
                       <td>{cgst.toFixed(3)}</td>
                     </tr>
                     <tr>
-                      <td>SGST </td>
+                      <td>SGST</td>
                       <td>{sgst.toFixed(3)}</td>
                     </tr>
                     <tr>
@@ -155,17 +154,32 @@ orderDetails.order_details.forEach((item) => {
                       <td>Price</td>
                       <td>{priceWithGst.toFixed(2)}</td>
                     </tr>
+                    <tr>
+                      <td>Quantity</td>
+                      <td>{item.quantity}</td>
+                    </tr>
+                    <tr>
+                      <td colSpan="2">
+                        <hr />
+                      </td>
+                    </tr>
                   </React.Fragment>
                 );
               })}
 
               <tr>
-                <td><strong>Round Off</strong></td>
+                <td>
+                  <strong>Round Off</strong>
+                </td>
                 <td>{roundOff.toFixed(2)}</td>
               </tr>
               <tr className="grand-total-row">
-                <td><strong>Grand Total</strong></td>
-                <td><strong>{grandTotal.toFixed(2)}</strong></td>
+                <td>
+                  <strong>Grand Total</strong>
+                </td>
+                <td>
+                  <strong>{grandTotal.toFixed(2)}</strong>
+                </td>
               </tr>
             </tbody>
           </table>
