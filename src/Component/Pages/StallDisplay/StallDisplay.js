@@ -8,44 +8,31 @@ import { IoIosArrowBack } from 'react-icons/io';
 export default function StallDisplay({
   name = '',
   description = '',
-  imageUrl = '',
-  categoryCount = 0,
-  itemCount = 0
+  imageUrl = ''
 }) {
   const navigate = useNavigate();
 
   return (
     <>
       {/* ✅ Back Button */}
-     <div className="back-button-container">
-  <button className="back-button" onClick={() => navigate(-1)}>
-    <IoIosArrowBack style={{ marginRight: '8px' }} />
-    <span>{name}</span>
-    <span className="dots" /> 
-    <span className="store-text">store</span>
-  </button>
-</div>
-
+      <div className="back-button-container">
+        <button className="back-button" onClick={() => navigate(-1)}>
+          <IoIosArrowBack style={{ marginRight: '8px' }} />
+          <span>{name}</span>
+          <span className="dots" /> 
+          <span className="store-text">store</span>
+        </button>
+      </div>
 
       {/* ✅ Stall Banner */}
       <div
         className="stall-banner"
-        style={{ backgroundImage: `url(${imageUrl})` }} // ✅ use full S3 URL directly
+        style={{ backgroundImage: `url(${imageUrl})` }} // full image, no overlay
       >
         <div className="stall-banner-overlay">
           <div className="stall-info-left">
-            <h1 className="stall-title">{name}</h1>
+            {/* Optional subtitle if needed */}
             {/* <p className="stall-subtitle">{description}</p> */}
-          </div>
-          <div className="stall-info-right">
-            <div className="stall-count-group">
-              <p className="stall-count">{itemCount}</p>
-              <p className="stall-count-label">Total Items</p>
-            </div>
-            <div className="stall-count-group">
-              <p className="stall-count">{categoryCount}</p>
-              <p className="stall-count-label">Category</p>
-            </div>
           </div>
         </div>
       </div>

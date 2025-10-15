@@ -17,7 +17,7 @@ export default function LoadingScreen({ onFinish }) {
   return (
     <div className={`loading-container ${step === 1 ? 'orange' : 'white'}`}>
       <h1 className={`logo-text ${step === 1 ? 'flip' : ''}`}>
-        Fliplyne
+        Fliplyn
       </h1>
     </div>
   );
