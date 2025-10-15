@@ -99,12 +99,10 @@ export default function PaymentMethodPage() {
       pay_with_wallet: selectedMethod === 'Wallet',
     };
 
-    console.log('🛒 Sending order payload:', requestBody);
     setIsLoading(true);
 
     try {
       const res = await axios.post('https://admin-aged-field-2794.fly.dev/orders/place', requestBody);
-      console.log('✅ Order success:', res.data);
 
       await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },

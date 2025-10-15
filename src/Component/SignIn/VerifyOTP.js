@@ -60,9 +60,7 @@ const handleVerify = async () => {
       phone_number: phoneNumber || undefined,
       company_email: email || undefined,
     };
-    console.log('Sending verify request with payload:', payload);
     const result = await verifyLoginOTP(payload);
-    console.log('OTP Verified:', result);
 
     login(result.token, result.user); // ✅ this is what you were missing
 
@@ -85,7 +83,6 @@ const handleVerify = async () => {
         phone_number: phoneNumber || undefined,
         company_email: email || undefined,
       };
-      console.log('Sending OTP resend request with payload:', payload);
       await initiateLoginOTP(payload);
       setTimer(60);
       setResendDisabled(true);

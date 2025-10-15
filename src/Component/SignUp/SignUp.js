@@ -74,7 +74,6 @@ export default function SignUp() {
       };
 
       const signupRes = await signupUser(payload);
-      console.log('✅ User created:', signupRes.data);
 
       setPopupMessage('Account created successfully! Redirecting...');
       setTimeout(() => {

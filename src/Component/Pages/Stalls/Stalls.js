@@ -34,8 +34,6 @@ export default function Stall() {
             userWallet = walletRes.data;
             setWallet(userWallet);
 
-            console.log("💰 User Wallet:", userWallet);
-            console.log("🟢 Wallet Payment Method:", userWallet.payment_method);
           } catch (err) {
             console.warn("⚠️ No wallet found for this user, showing all stalls.");
           }
@@ -47,7 +45,6 @@ export default function Stall() {
         );
         let fetchedStalls = stallsRes.data || [];
 
-        console.log("🏪 All fetched stalls:", fetchedStalls);
 
         // Step 3: Separate PREPAID and POSTPAID stalls
         const prepaidStalls = fetchedStalls.filter(
@@ -57,8 +54,6 @@ export default function Stall() {
           (stall) => stall.payment_type.toUpperCase() === "POSTPAID"
         );
 
-        console.log("🟢 PREPAID Stalls:", prepaidStalls);
-        console.log("🟠 POSTPAID Stalls:", postpaidStalls);
 
         // Step 4: Filter stalls based on wallet type
         if (userWallet?.payment_method.toUpperCase() === "PREPAID") {

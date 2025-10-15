@@ -68,13 +68,7 @@ orderDetails.order_details.forEach((item) => {
   totalWithGst += priceWithGst * item.quantity;
 });
 
-console.log({
-  totalBasePrice,
-  totalCgst,
-  totalSgst,
-  totalGst,
-  totalWithGst
-});
+
 
 
   // Use backend round_off if available, else compute locally
