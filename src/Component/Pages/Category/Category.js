@@ -19,7 +19,7 @@ export default function Category() {
 
   const [categories, setCategories] = useState([]);
   const [stallDetails, setStallDetails] = useState(null);
-  const [itemCount, setItemCount] = useState(0);
+  const [, setItemCount] = useState(0);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [items, setItems] = useState([]);
   const [itemsLoaded, setItemsLoaded] = useState(false);
