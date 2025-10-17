@@ -24,7 +24,7 @@ const VerifyOTPPassword = () => {
         otp,
       });
       setMessage(response.data.message);
-      navigate('/change-password', { state: { email, otp } }); // Go to next step
+      navigate('/change-password', { state: { email, otp } });  
     } catch (err) {
       if (err.response?.data?.detail) {
         setError(err.response.data.detail);

@@ -48,40 +48,14 @@ export default function PaymentSuccess() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-let totalBasePrice = 0;
-let totalCgst = 0;
-let totalSgst = 0;
-let totalGst = 0;
-let totalWithGst = 0;
+  const totalCgst = orderDetails.cgst ?? 0;
+  const totalSgst = orderDetails.sgst ?? 0;
+  const totalGst = orderDetails.total_gst ?? totalCgst + totalSgst;
+  const roundOff = orderDetails.round_off ?? 0;
+  const grandTotal = orderDetails.total_amount ?? 0;
 
-orderDetails.order_details.forEach((item) => {
-  const basePrice = item.price; 
-  const cgst = basePrice * 0.025;
-  const sgst = basePrice * 0.025;
-  const totalItemGst = cgst + sgst;
-  const priceWithGst = basePrice + totalItemGst;
-
-  totalBasePrice += basePrice * item.quantity;
-  totalCgst += cgst * item.quantity;
-  totalSgst += sgst * item.quantity;
-  totalGst += totalItemGst * item.quantity;
-  totalWithGst += priceWithGst * item.quantity;
-});
-
-console.log({
-  totalBasePrice,
-  totalCgst,
-  totalSgst,
-  totalGst,
-  totalWithGst
-});
-
-
-  // Use backend round_off if available, else compute locally
-  const roundOff =
-    orderDetails.round_off ??
-    Math.round(orderDetails.total_amount) - totalWithGst;
-  const grandTotal = totalWithGst + roundOff;
+  // Calculate subtotal before round off
+  const subtotal = grandTotal - roundOff;
 
   return (
     <div className="receipt-wrapper">
@@ -94,7 +68,6 @@ console.log({
         </p>
       </div>
 
-      {/* Toggle Buttons */}
       <div className="toggle-btns">
         <button
           className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
@@ -110,9 +83,8 @@ console.log({
         </button>
       </div>
 
-      {/* Receipt Section */}
       {view === "receipt" && (
-        <div className="receipt-card" ref={receiptRef}>
+        <div className="receipt-card compact-token" ref={receiptRef}>
           <h2 className="stall-name">
             {orderDetails.order_details[0]?.stall_name || "Stall Name"}
           </h2>
@@ -123,58 +95,56 @@ console.log({
 
           <hr className="separator" />
 
-          <table className="receipt-table">
-            <thead>
-              <tr>
-                <th>Field</th>
-                <th>Value (₹)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderDetails.order_details.map((item, index) => {
-                const basePrice = item.price;
-                const cgst = basePrice * 0.025;
-                const sgst = basePrice * 0.025;
-                const totalGstItem = cgst + sgst;
-                const priceWithGst = basePrice + totalGstItem;
+          <div className="token-table">
+            <div className="token-header">
+              <span>Item</span>
+              <span>Rs</span>
+            </div>
 
-                return (
-                  <React.Fragment key={index}>
+            {orderDetails.order_details.map((item, index) => (
+              <div key={index} className="token-row">
+                <span className="item-name">{item.name} X {item.quantity}</span>
+                <span>{item.price.toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
 
-                    <tr>
-                      <td>Base Price</td>
-                      <td>{basePrice.toFixed(2)}</td>
-                    </tr>
-                    <tr>
-                      <td>CGST</td>
-                      <td>{cgst.toFixed(3)}</td>
-                    </tr>
-                    <tr>
-                      <td>SGST </td>
-                      <td>{sgst.toFixed(3)}</td>
-                    </tr>
-                    <tr>
-                      <td>Total GST</td>
-                      <td>{totalGstItem.toFixed(3)}</td>
-                    </tr>
-                    <tr>
-                      <td>Price</td>
-                      <td>{priceWithGst.toFixed(2)}</td>
-                    </tr>
-                  </React.Fragment>
-                );
-              })}
+         
 
-              <tr>
-                <td><strong>Round Off</strong></td>
-                <td>{roundOff.toFixed(2)}</td>
-              </tr>
-              <tr className="grand-total-row">
-                <td><strong>Grand Total</strong></td>
-                <td><strong>{grandTotal.toFixed(2)}</strong></td>
-              </tr>
-            </tbody>
-          </table>
+         <div className="token-summary" style={{ maxWidth: "400px", margin: "0 auto" }}>
+  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+    <span>CGST</span>
+    <span>{totalCgst.toFixed(2)}</span>
+  </p>
+  <hr className="separator" />
+  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+    <span>SGST</span>
+    <span>{totalSgst.toFixed(2)}</span>
+  </p>
+  <hr className="separator" />
+  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+    <span>Total GST</span>
+    <span>{totalGst.toFixed(2)}</span>
+  </p>
+  <hr className="separator" />
+  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+    <span>Total</span>
+    <span>{subtotal.toFixed(2)}</span>
+  </p>
+  <hr className="separator" />
+  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+    <span>Round Off</span>
+    <span>{roundOff >= 0 ? `+${roundOff.toFixed(2)}` : roundOff.toFixed(2)}</span>
+  </p>
+  <p
+    className="grand-total"
+    style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" }}
+  >
+    <span>Grand Total</span>
+    <span>{grandTotal.toFixed(2)}</span>
+  </p>
+</div>
+
 
           <button className="download-btn" onClick={downloadPDF}>
             Download Receipt
