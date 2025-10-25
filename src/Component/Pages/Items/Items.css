@@ -396,3 +396,33 @@
   color: #fd890d;
   font-size: 16px;
 }
+
+
+
+/* 🔍 Search Bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 20px auto; /* centers horizontally */
+  width: 90%; /* responsive width */
+  max-width: 900px; /* cap the width */
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.search-icon {
+  margin-right: 8px;
+  color: #888;
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 15px;
+  background: transparent;
+}
