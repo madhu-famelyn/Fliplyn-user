@@ -17,7 +17,7 @@ export default function SignUp() {
     phone_number: '',
     password: '',
     confirm_password: '',
-    country: 'India',
+    country: '',
     state: '',
     city: '',
     building_id: ''
@@ -34,18 +34,31 @@ export default function SignUp() {
     { code: '+971', country: 'UAE' },
   ];
 
-  const states = [
-    'Tamil Nadu',
-    'Telangana',
-    'Andhra Pradesh',
-    'Karnataka'
-  ];
+  const states = {
+    India: ['Tamil Nadu', 'Telangana', 'Andhra Pradesh', 'Karnataka'],
+    USA: ['California', 'Texas', 'New York'],
+    UK: ['London', 'Manchester'],
+    Japan: ['Tokyo', 'Osaka'],
+    Australia: ['Sydney', 'Melbourne'],
+    UAE: ['Dubai', 'Abu Dhabi']
+  };
 
   const citiesByState = {
-    Telangana: ['Hyderabad', 'Warangal', 'Karimnagar', 'Nizamabad', 'Khammam'],
-    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Trichy', 'Salem'],
-    'Andhra Pradesh': ['Vijayawada', 'Visakhapatnam', 'Guntur', 'Tirupati', 'Nellore'],
-    Karnataka: ['Bangalore', 'Mysore', 'Mangalore', 'Hubli', 'Belgaum']
+    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai'],
+    Telangana: ['Hyderabad', 'Warangal'],
+    'Andhra Pradesh': ['Vijayawada', 'Visakhapatnam'],
+    Karnataka: ['Bangalore', 'Mysore'],
+    California: ['Los Angeles', 'San Francisco'],
+    Texas: ['Houston', 'Dallas'],
+    'New York': ['New York City'],
+    London: ['Central London'],
+    Manchester: ['Salford'],
+    Tokyo: ['Shibuya'],
+    Osaka: ['Kita'],
+    Sydney: ['CBD'],
+    Melbourne: ['Docklands'],
+    Dubai: ['Deira', 'Marina'],
+    'Abu Dhabi': ['Yas Island']
   };
 
   const handleChange = (e) => {
@@ -54,8 +67,8 @@ export default function SignUp() {
 
   const isValidCompanyEmail = (email) => {
     const publicDomains = [
-      'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'aol.com',
-      'protonmail.com', 'icloud.com', 'zoho.com', 'gmx.com', 'mail.com', 'yandex.com'
+      'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
+      'aol.com', 'protonmail.com', 'icloud.com', 'zoho.com'
     ];
     const domain = email.split('@')[1]?.toLowerCase();
     return domain && !publicDomains.includes(domain);
@@ -83,12 +96,32 @@ export default function SignUp() {
     }
   };
 
-  const handleStateChange = (e) => {
-    const state = e.target.value;
-    setForm({ ...form, state, city: '', building_id: '' });
+  // ✅ Country change
+  const handleCountryChange = (e) => {
+    const country = e.target.value;
+    setForm({
+      ...form,
+      country,
+      state: '',
+      city: '',
+      building_id: ''
+    });
     setBuildings([]);
   };
 
+  // ✅ State change
+  const handleStateChange = (e) => {
+    const state = e.target.value;
+    setForm({
+      ...form,
+      state,
+      city: '',
+      building_id: ''
+    });
+    setBuildings([]);
+  };
+
+  // ✅ City change
   const handleCityChange = async (e) => {
     const city = e.target.value;
     setForm({ ...form, city, building_id: '' });
@@ -97,12 +130,12 @@ export default function SignUp() {
 
   const handleSignUp = async () => {
     if (!isValidCompanyEmail(form.company_email)) {
-      alert('Public email domains are not allowed. Please use your company email.');
+      alert('Public email domains are not allowed.');
       return;
     }
 
     if (!isValidPassword(form.password)) {
-      alert('Password must be at least 8 characters long, include uppercase, lowercase, number, and special character.');
+      alert('Password must include uppercase, lowercase, number and special character.');
       return;
     }
 
@@ -136,7 +169,6 @@ export default function SignUp() {
         navigate('/');
       }, 2000);
     } catch (err) {
-      console.error('❌ Signup failed:', err.response?.data?.detail);
       alert(err.response?.data?.detail || 'Signup failed');
     } finally {
       setLoading(false);
@@ -160,7 +192,6 @@ export default function SignUp() {
       <main className="signup-main">
         <div className="signup-card">
           <h2>Create Your Account</h2>
-          <p className="signup-subtext">Enter your company email to get started.</p>
 
           <label className="signup-label">Name</label>
           <input className="signup-input" name="name" type="text" onChange={handleChange} value={form.name} />
@@ -175,25 +206,45 @@ export default function SignUp() {
                 <option key={code} value={code}>{code}</option>
               ))}
             </select>
-            <input name="phone_number" type="text" className="signup-number" placeholder="Enter number" onChange={handleChange} value={form.phone_number} />
+            <input
+              name="phone_number"
+              type="text"
+              className="signup-number"
+              placeholder="Enter number"
+              onChange={handleChange}
+              value={form.phone_number}
+            />
           </div>
 
-          {/* ✅ Country */}
+          {/* ✅ Country Dropdown (NOW ENABLED) */}
           <label className="signup-label">Country</label>
-          <select className="signup-input" name="country" value={form.country} disabled>
-            <option>India</option>
+          <select
+            className="signup-input"
+            name="country"
+            value={form.country}
+            onChange={handleCountryChange}
+          >
+            <option value="">Select Country</option>
+            {countryCodes.map(({ country }) => (
+              <option key={country} value={country}>{country}</option>
+            ))}
           </select>
 
-          {/* ✅ State */}
+          {/* ✅ State Dropdown */}
           <label className="signup-label">State</label>
-          <select className="signup-input" value={form.state} onChange={handleStateChange}>
+          <select
+            className="signup-input"
+            value={form.state}
+            onChange={handleStateChange}
+            disabled={!form.country}
+          >
             <option value="">Select State</option>
-            {states.map((s) => (
+            {states[form.country]?.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
           </select>
 
-          {/* ✅ City */}
+          {/* ✅ City Dropdown */}
           <label className="signup-label">City</label>
           <select
             className="signup-input"
@@ -202,10 +253,9 @@ export default function SignUp() {
             disabled={!form.state}
           >
             <option value="">Select City</option>
-            {form.state &&
-              citiesByState[form.state]?.map((city) => (
-                <option key={city} value={city}>{city}</option>
-              ))}
+            {citiesByState[form.state]?.map((city) => (
+              <option key={city} value={city}>{city}</option>
+            ))}
           </select>
 
           {/* ✅ Building Dropdown */}
@@ -225,13 +275,13 @@ export default function SignUp() {
           </select>
 
           <label className="signup-label">Company Email</label>
-          <input className="signup-input" name="company_email" type="email" placeholder="Enter company email" onChange={handleChange} value={form.company_email} />
+          <input className="signup-input" name="company_email" type="email" onChange={handleChange} value={form.company_email} />
 
           <label className="signup-label">Password</label>
-          <input className="signup-input" name="password" type="password" placeholder="Enter strong password" onChange={handleChange} value={form.password} />
+          <input className="signup-input" name="password" type="password" onChange={handleChange} value={form.password} />
 
           <label className="signup-label">Confirm Password</label>
-          <input className="signup-input" name="confirm_password" type="password" placeholder="Re-enter password" onChange={handleChange} value={form.confirm_password} />
+          <input className="signup-input" name="confirm_password" type="password" onChange={handleChange} value={form.confirm_password} />
 
           <button className="signup-button" onClick={handleSignUp} disabled={loading}>
             Sign Up
