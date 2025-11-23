@@ -19,7 +19,7 @@ export default function CategoryList({ categories, selectedCategoryId, onCategor
       <div className={`category-sidebar ${isOpen ? 'open' : 'closed'}`}>
         
         {/* All Items */}
-        <div
+        {/* <div
           className={`category-item ${selectedCategoryId === null ? 'active' : ''}`}
           onClick={() => handleCategoryClick(null)}
         >
@@ -29,7 +29,7 @@ export default function CategoryList({ categories, selectedCategoryId, onCategor
             className="category-icon"
           />
           <span className="category-name">All Items</span>
-        </div>
+        </div> */}
 
         {/* Categories Loop */}
         {categories.map((cat) => {

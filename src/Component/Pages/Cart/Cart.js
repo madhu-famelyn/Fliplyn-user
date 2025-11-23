@@ -177,10 +177,10 @@ export default function Cart() {
               <span>₹{subtotal.toFixed(0)}</span>
             </p>
 
-            <p>
+            {/* <p>
               <span>GST/Taxes</span>
               <span>₹{totalGST.toFixed(0)}</span>
-            </p>
+            </p> */}
 
             <hr />
 
