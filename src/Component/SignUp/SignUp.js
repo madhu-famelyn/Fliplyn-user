@@ -74,7 +74,7 @@ export default function SignUp() {
 
     try {
       const res = await axios.get(
-        `http://127.0.0.1:8000/buildings/city/${city}`
+        `https://admin-aged-field-2794.fly.dev/buildings/city/${city}`
       );
       setBuildings(res.data);
     } catch (err) {

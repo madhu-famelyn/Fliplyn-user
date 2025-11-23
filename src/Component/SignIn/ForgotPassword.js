@@ -16,7 +16,7 @@ const ForgotPassword = () => {
     setError('');
 
     try {
-      const response = await axios.post("http://127.0.0.1:8000/auth/request-otp", {
+      const response = await axios.post("https://admin-aged-field-2794.fly.dev/auth/request-otp", {
         email: email,
       });
       setMessage(response.data.message);

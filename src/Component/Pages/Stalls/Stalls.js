@@ -34,7 +34,7 @@ export default function Stall() {
           console.log("🔍 Fetching buildingId using userId...");
 
           const userRes = await axios.get(
-            `http://127.0.0.1:8000/user/${userId}`
+            `https://admin-aged-field-2794.fly.dev/user/${userId}`
           );
 
           finalBuildingId = userRes.data?.building_id;
@@ -56,7 +56,7 @@ export default function Stall() {
         // ------------------ FETCH WALLET ------------------
         try {
           const walletRes = await axios.get(
-            `http://127.0.0.1:8000/wallets/${userId}`
+            `https://admin-aged-field-2794.fly.dev/wallets/${userId}`
           );
           userWallet = walletRes.data;
           setWallet(walletRes.data);
@@ -68,7 +68,7 @@ export default function Stall() {
         console.log("🔄 Fetching fresh stalls from API...");
 
         const res = await axios.get(
-          `http://127.0.0.1:8000/stalls/building/${finalBuildingId}`
+          `https://admin-aged-field-2794.fly.dev/stalls/building/${finalBuildingId}`
         );
 
         let fetched = res.data || [];

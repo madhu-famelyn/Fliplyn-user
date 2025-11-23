@@ -18,7 +18,7 @@ export default function PaymentSuccess() {
     const order = location.state?.order;
     if (order?.id) {
       axios
-        .get(`http://127.0.0.1:8000/orders/${order.id}`)
+        .get(`https://admin-aged-field-2794.fly.dev/orders/${order.id}`)
         .then((res) => setOrderDetails(res.data))
         .catch((err) => console.error("Error fetching order:", err));
     }

@@ -42,9 +42,9 @@ export default function PaymentMethodPage() {
     const fetchData = async () => {
       try {
         const [walletRes, userRes, cartRes] = await Promise.all([
-          axios.get(`http://127.0.0.1:8000/wallets/${userId}`),
-          axios.get(`http://127.0.0.1:8000/user/${userId}`),
-          axios.get(`http://127.0.0.1:8000/cart/${userId}`, {
+          axios.get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`),
+          axios.get(`https://admin-aged-field-2794.fly.dev/user/${userId}`),
+          axios.get(`https://admin-aged-field-2794.fly.dev/cart/${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
           })
         ]);
@@ -81,7 +81,7 @@ export default function PaymentMethodPage() {
     try {
       // 1️⃣ First create order in backend
       const orderRes = await axios.post(
-        'http://127.0.0.1:8000/orders/place',
+        'https://admin-aged-field-2794.fly.dev/orders/place',
         orderPayload
       );
 
@@ -90,7 +90,7 @@ export default function PaymentMethodPage() {
 
       // 2️⃣ Create Razorpay order from backend
       const razorpayRes = await axios.post(
-        'http://127.0.0.1:8000/orders/create-razorpay-order',
+        'https://admin-aged-field-2794.fly.dev/orders/create-razorpay-order',
         { order_id: orderId }
       );
 
@@ -111,7 +111,7 @@ export default function PaymentMethodPage() {
 
         handler: async function () {
           try {
-            await axios.delete(`http://127.0.0.1:8000/cart/clear/${userId}`, {
+            await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
               headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -169,9 +169,9 @@ export default function PaymentMethodPage() {
 
       setIsLoading(true);
       try {
-        const res = await axios.post('http://127.0.0.1:8000/orders/place', orderPayload);
+        const res = await axios.post('https://admin-aged-field-2794.fly.dev/orders/place', orderPayload);
 
-        await axios.delete(`http://127.0.0.1:8000/cart/clear/${userId}`, {
+        await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 

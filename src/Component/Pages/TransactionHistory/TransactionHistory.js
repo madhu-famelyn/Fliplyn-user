@@ -4,7 +4,7 @@ import Header from '../Header/Header';
 import axios from 'axios';
 import { useAuth } from '../../AuthContext/ContextApi';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000'; // ✅ API base URL
+axios.defaults.baseURL = 'https://admin-aged-field-2794.fly.dev'; // ✅ API base URL
 
 export default function TransactionHistory() {
   const { user } = useAuth();

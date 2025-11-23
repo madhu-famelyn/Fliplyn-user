@@ -11,7 +11,7 @@ export default function ReceiptPage() {
   // ✅ Fetch order details
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/orders/${id}`)
+      .get(`https://admin-aged-field-2794.fly.dev/orders/${id}`)
       .then((res) => setOrderDetails(res.data))
       .catch((err) => console.error(err));
   }, [id]);
