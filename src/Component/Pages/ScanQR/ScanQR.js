@@ -25,7 +25,7 @@ export default function QRScannerReceipt() {
 
             if (qrData.id) {
               const res = await axios.get(
-                `https://admin-aged-field-2794.fly.dev/orders/${qrData.id}`
+                `http://127.0.0.1:8000/orders/${qrData.id}`
               );
               order = res.data;
             } else {
@@ -61,7 +61,7 @@ export default function QRScannerReceipt() {
     }
     try {
       const res = await axios.get(
-        `https://admin-aged-field-2794.fly.dev/orders/orders/by-token/${tokenInput}`
+        `http://127.0.0.1:8000/orders/orders/by-token/${tokenInput}`
       );
       setOrderDetails(res.data);
       setError("");
@@ -78,7 +78,7 @@ export default function QRScannerReceipt() {
       window.print();
 
       await axios.put(
-        `https://admin-aged-field-2794.fly.dev/orders/${orderDetails.id}/print`
+        `http://127.0.0.1:8000/orders/${orderDetails.id}/print`
       );
 
       setOrderDetails((prev) => ({ ...prev, is_printed: true }));

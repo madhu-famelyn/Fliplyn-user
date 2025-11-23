@@ -1,237 +1,206 @@
-import { useEffect, useState, useCallback } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import Header from "../Header/Header";
 import { useAuth } from "../../AuthContext/ContextApi";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
 
-const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
+const API_BASE_URL = "http://127.0.0.1:8000";
 const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 
 export default function Cart() {
   const { user, token } = useAuth();
-  const [cart, setCart] = useState(null);
-  const [itemDetails, setItemDetails] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [cartItems, setCartItems] = useState([]);
   const [error, setError] = useState("");
-  const [pageLoading, setPageLoading] = useState(false); // ✅ Full-page loader
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // fetch item details
-  const fetchItemDetails = useCallback(async (cartItems) => {
-    if (!cartItems || cartItems.length === 0) return {};
-    try {
-      const requests = cartItems.map((item) =>
-        axios.get(`${API_BASE_URL}/items/items/${item.item_id}`)
-      );
-      const responses = await Promise.all(requests);
-      const itemMap = {};
-      responses.forEach((res) => {
-        const item = res.data;
-        itemMap[item.id] = item;
-      });
-      return itemMap;
-    } catch (err) {
-      console.error("❌ Error fetching item details:", err.response?.data || err.message);
-      setError(err.response?.data?.detail || "Failed to fetch item details");
-      return {};
-    }
+  // Load from localStorage
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("cartItems")) || [];
+    setCartItems(stored);
   }, []);
 
-  // fetch cart
-  const fetchCart = useCallback(async () => {
-    if (!user) return;
+  // Update quantity
+  const updateQuantity = (itemId, newQty) => {
+    let updated = [...cartItems];
+
+    if (newQty <= 0) {
+      updated = updated.filter((item) => item.id !== itemId);
+    } else {
+      updated = updated.map((item) =>
+        item.id === itemId ? { ...item, quantity: newQty } : item
+      );
+    }
+
+    setCartItems(updated);
+    localStorage.setItem("cartItems", JSON.stringify(updated));
+  };
+
+  // Send to backend
+  const handleProceed = async () => {
+    if (cartItems.length === 0) return;
+
     setLoading(true);
-    setError("");
+
     try {
-      const res = await axios.get(`${API_BASE_URL}/cart/${user.id}`, {
+      const payload = {
+        user_id: user.id,
+        items: cartItems.map((i) => ({
+          item_id: i.id,
+          quantity: i.quantity,
+          Gst_precentage: i.Gst_precentage || 0,
+        })),
+      };
+
+      await axios.post(`${API_BASE_URL}/cart/add-multiple`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const fetchedCart = res.data;
-      const itemMap = await fetchItemDetails(fetchedCart.items);
-      setCart(fetchedCart);
-      setItemDetails(itemMap);
+
+      navigate("/wallet");
     } catch (err) {
-      console.error("❌ Error fetching cart:", err.response?.data || err.message);
-      setError(err.response?.data?.detail || "Failed to fetch cart");
-      setCart(null);
+      console.error("❌ Cart creation failed:", err);
+      setError("Failed to create cart. Try again.");
     } finally {
       setLoading(false);
     }
-  }, [user, token, fetchItemDetails]);
-
-  useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
-
-  // update quantity
-  const updateQuantity = async (item_id, quantity) => {
-    if (quantity < 0) return;
-    setPageLoading(true);
-    setError("");
-
-    try {
-      // clear cart if last item
-      if (quantity === 0 && cart.items.length === 1) {
-        await axios.delete(`${API_BASE_URL}/cart/clear/${user.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setCart(null);
-        return;
-      }
-
-      // update quantity
-      await axios.put(
-        `${API_BASE_URL}/cart/update-quantity`,
-        { user_id: user.id, item_id, quantity },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      // fetch updated cart
-      await fetchCart();
-    } catch (err) {
-      console.error("❌ Failed to update quantity:", err.response?.data || err.message);
-      // ✅ Show backend error if available
-      setError(err.response?.data?.detail || "Failed to update quantity");
-    } finally {
-      setPageLoading(false);
-    }
   };
 
-  // cancel button
-  const handleCancel = async () => {
-    setPageLoading(true);
-    setTimeout(() => {
-      navigate(-1);
-      setPageLoading(false);
-    }, 800);
-  };
+  // Calculations
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
 
-  // proceed to payment
-  const handleProceed = async () => {
-    setPageLoading(true);
-    setTimeout(() => {
-      navigate("/wallet");
-      setPageLoading(false);
-    }, 800);
-  };
+  const totalGST = cartItems.reduce(
+    (sum, item) =>
+      sum + item.price * item.quantity * ((item.Gst_precentage || 0) / 100),
+    0
+  );
+
+  const total = subtotal + totalGST;
+  const finalTotal = Math.round(total);
+
+  // Loader screen
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="cart-loader-container">
+          <div className="cart-loader"></div>
+          <p>Processing payment...</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
-      {/* ✅ Full-page loader overlay */}
-      {pageLoading && (
-        <div className="page-loader-overlay">
-          <div className="spinner"></div>
-        </div>
-      )}
-
       <Header />
-      <h2 className="heading">Your Cart</h2>
+          <div className="cart-page">
 
-      {/* ✅ Show backend error if exists */}
-      {error && (
-        <div className="cart-error">
-          {error}
-        </div>
-      )}
+      <h2 className="heading">Your Basket</h2>
 
-      {loading ? (
-        <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading cart...</div>
-      ) : !cart || cart.items.length === 0 ? (
+      {error && <div className="cart-error">{error}</div>}
+
+      {cartItems.length === 0 ? (
         <div style={{ textAlign: "center", marginTop: "2rem" }}>
           Your cart is empty.
         </div>
       ) : (
-        <div className="cart-wrapper">
-          <div className="cart-grid">
-            {cart.items.map((item) => {
-              const itemData = itemDetails[item.item_id];
-              const itemTotal = item.quantity * item.price_at_addition;
+        <>
+          <div className="cart-wrapper">
+            <div className="cart-grid">
+              {cartItems.map((item) => {
+                const imageUrl = item.image_url?.startsWith("http")
+                  ? item.image_url
+                  : `${S3_BASE_URL}${item.image_url}`;
 
-              const imageUrl = itemData?.image_url?.startsWith("http")
-                ? itemData.image_url
-                : `${S3_BASE_URL}${itemData?.image_url}`;
+                // const itemGST =
+                //   (item.price *
+                //     item.quantity *
+                //     (item.Gst_precentage || 0)) /
+                //   100;
 
-              return (
-                <div className="cart-item" key={item.id}>
-                  <div className="cart-item-row">
-                    <img
-                      src={imageUrl}
-                      alt={itemData?.name}
-                      className="item-image"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/fallback-item.jpg";
-                      }}
-                    />
-                    <div className="item-info">
-                      <p className="item-name">{itemData?.name}</p>
-                      <p className="item-price">₹ {item.price_at_addition}</p>
+                return (
+                  <div className="cart-item" key={item.id}>
+                    <div className="cart-item-row">
+                      <img
+                        src={imageUrl}
+                        alt={item.name}
+                        className="item-image"
+                        onError={(e) => (e.target.src = "/fallback-item.jpg")}
+                      />
+
+                      <div className="item-info">
+                        <p className="item-name">{item.name}</p>
+                        <p className="item-subtext">{item.description || "With fries"}</p>
+                      </div>
+
+                      <div className="price-and-qty">
+                        <p className="price-text">₹{item.price}</p>
+
+                        <div className="quantity-box">
+                          <button
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity - 1)
+                            }
+                          >
+                            -
+                          </button>
+
+                          <span>{item.quantity}</span>
+
+                          <button
+                            onClick={() =>
+                              updateQuantity(item.id, item.quantity + 1)
+                            }
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
                     </div>
-
-                    {/* Quantity Controls */}
-                    <div className="quantity-box">
-                      <button
-                        onClick={() => updateQuantity(item.item_id, item.quantity - 1)}
-                      >
-                        -
-                      </button>
-
-                      <span>{item.quantity}</span>
-
-                      <button
-                        onClick={() => updateQuantity(item.item_id, item.quantity + 1)}
-                      >
-                        +
-                      </button>
-                    </div>
-
-                    <p className="item-total">
-                      ₹{" "}
-                      {Number.isInteger(itemTotal)
-                        ? itemTotal
-                        : itemTotal.toFixed(2)}
-                    </p>
                   </div>
-
-                  <button
-                    className="remove-button"
-                    onClick={() => updateQuantity(item.item_id, 0)}
-                    title="Remove item"
-                  >
-                    Remove from Cart
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="cart-summary">
-            <div className="summary-line">
-              <span>{cart.items.length} items</span>
-              <span>
-                Total: ₹{" "}
-                {cart.items
-                  .reduce(
-                    (total, item) =>
-                      total + item.quantity * item.price_at_addition,
-                    0
-                  )
-                  .toFixed(2)}
-              </span>
+                );
+              })}
+              <button className="add-more-btn" onClick={() => navigate(-1)}>
+              ADD MORE ITEMS
+            </button>
             </div>
           </div>
 
-          <div className="cart-actions">
-            <button className="cancel-button" onClick={handleCancel}>
-              Cancel
-            </button>
-            <button className="proceed-button" onClick={handleProceed}>
-              Continue to Payment
+          {/* Summary section */}
+          <div className="cart-summary">
+            <p>
+              <span>Subtotal</span>
+              <span>₹{subtotal.toFixed(0)}</span>
+            </p>
+
+            <p>
+              <span>GST/Taxes</span>
+              <span>₹{totalGST.toFixed(0)}</span>
+            </p>
+
+            <hr />
+
+            <h3>
+              <span>Total</span>
+              <span>₹{finalTotal.toFixed(0)}</span>
+            </h3>
+          </div>
+
+          {/* Bottom Buttons */}
+          <div className="sticky-bottom">
+            
+
+            <button className="payment-btn" onClick={handleProceed}>
+              Select Payment
             </button>
           </div>
-        </div>
+        </>
       )}
+      </div>
     </>
   );
 }

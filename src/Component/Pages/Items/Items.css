@@ -1,428 +1,262 @@
-
-
-/* ✅ Item Grid Layout */
-.item-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr); /* 4 items per row */
-  gap: 20px;
-  padding: 0 20px;
-  max-width: 867px;
-  margin: 0 auto;
-  box-sizing: border-box;
-  justify-content: center;
-  margin-bottom: 20vh;
-}
-
-/* ✅ Item Card */
-.item-card {
-  position: relative;
-  width: 172px;
-  height: 210px;
-  background-color: #F6F6F6;
-  border-radius: 14px;
-  border: 1px solid #E0E0E0;
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.04);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 72px;
-  box-sizing: border-box;
-  text-align: center;
-  overflow: visible;
- margin-bottom: 15vh;
-}
-
-/* ✅ Item Image */
-.item-card img {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  position: absolute;
-  top: -50px; /* ⬇️ Less negative = moves image downward */
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-  background-color: #fff;
-}
-
-
-/* ✅ Item Name - allows multiline */
-.item-name {
-  font-weight: 500;
-  font-size: 13.5px;
-  line-height: 130%;
-  margin: 10px 0 4px;
-  margin-top: 4vh;
-  padding: 0 10px;
-  color: #333;
-  word-break: break-word;
-  white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
-}
-
-/* ✅ Item Price */
-.item-price {
-  font-size: 13px;
-  color: #666;
-  margin-bottom: 12px;
-}
-
-/* ✅ Add to Cart Button - improved */
-.add-to-cart-btn {
-  width: 100px;
-  height: 34px;
-  padding: 0 12px;
-  border-radius: 8px;
-  border: 1px solid #888;
-  background-color: #ffffff;
-  font-size: 13px;
-  font-weight: 500;
-  font-family: 'Helvetica Neue', sans-serif;
-  cursor: pointer;
-  margin-top: auto;
-  margin-bottom: 12px;
-  transition: all 0.2s ease;
-}
-
-.add-to-cart-btn:hover {
-  background-color: #f0f0f0;
-  border-color: #555;
-}
-
-/* ✅ Mobile Responsive */
-@media (max-width: 600px) {
-  .item-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    padding: 0 16px;
-    justify-content: center;
-    
-  }
-
-  .item-card {
-    width: 100%;
-    height: 240px;
-    padding-top: 80px;
-    border-radius: 16px;
-    margin: 20px 0;
-  }
-
-  .item-card img {
-    width: 100px;
-    height: 100px;
-    top: -50px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 50%;
-    background-color: #fff;
-  }
-
-  .item-name {
-    font-size: 14px;
-    margin: 10px 8px 6px;
-    padding: 0 12px;
-  }
-
- .add-to-cart-btn {
-  width: 100px;
-  height: 26.63px;
-  gap: 6px; /* Optional – can be used in flex layout if needed */
-  border-radius: 8px;
-  border: 1px solid #6A6A6A;
-  padding: 0 10px;
-  background-color: #fff;
-  color: #000;
-  font-size: 13px;
-  font-family: 'Helvetica Neue', sans-serif;
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  transition: background-color 0.2s ease;
-}
-
-.add-to-cart-btn:hover {
-  background-color: #f2f2f2;
-}
-
-
-  .menu-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 16px;
-    padding-bottom: 40px;
-    margin: 40px 0 20px 0;
-  }
-
-  .menu-title {
-    font-size: 18px;
-  }
-
-  .view-cart-btn {
-    font-size: 14px;
-    padding: 6px 12px;
-    height: auto;
-    white-space: nowrap;
-  }
-}
-
-
-
-/* ✅ Cart Popup */
-.cart-popup {
-  position: fixed;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #333;
-  color: #fff;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  z-index: 9999;
-}
-
-
-
-/* ✅ Animation class for added-to-cart effect */
-.add-to-cart-btn.added-to-cart {
-  background-color: #000;
-  color: #fff;
-  border-color: #000;
-  animation: cartPulse 0.3s ease;
-}
-
-@keyframes cartPulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-
-.add-to-cart-btn {
-  width: 100px;
-  height: 26.6px;
-  border-radius: 8px;
-  border: 1px solid #0f0f0e;
-  background-color: #ffffff;
-  color: #211b15;
-  font-size: 14px;
-  font-weight: 500;
-  margin-top: 3vh;
-  cursor: pointer;
-  transition: background-color 0.4s ease, color 0.4s ease, transform 0.2s;
-}
-
-
-/* 🔄 When item is added to cart */
-.add-to-cart-btn.added {
-  background-color: #000000;
-  color: #ffffff;
-  border-color: #000000;
-}
-
-
-
-.cart-popup {
-  position: fixed;
-  top: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #F17F1C; /* 🔶 Orange background */
-  color: #fff;
-  padding: 12px 24px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  z-index: 9999;
-  animation: fadeInOut 2s ease-in-out;
-}
-
-@keyframes fadeInOut {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-  10% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  90% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-}
-
-
-.item-names {
-  font-family: "Helvetica Neue", sans-serif;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 130%;
-  letter-spacing: 0;
-  text-align: center;
-  color: #000000;
-  margin: 0 0 10px 0; /* 4px space below the item name */
-}
-
-.item-price {
-  font-size: 14px;
-  text-align: center;
-  margin: 0; /* reset default margin */
-}
-
-
-
-
-
-.item-infermation {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* horizontally center contents */
-  justify-content: center;
-  padding-top: 10px;
-}
-
-.item-names,
-.item-prices {
-  margin: 4px 0;
-  text-align: center;
-  width: 100%;
-}
-
-
+/* -----------------------------
+   PAGE LAYOUT FIX (IMPORTANT)
+------------------------------ */
 
 .filter-buttons {
+
   display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-  gap: 10px;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;
+  gap: 10px; /* space between buttons */
+  margin: 15px 0;
 }
 
-.filter-btn {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  background-color: white;
-  cursor: pointer;
-  border-radius: 4px;
-  font-weight: 500;
-  margin-bottom: 10vh;
-}
-
-.filter-btn.active {
-  background-color: #F17F1C;
-  color: white;
-  border-color: #ff7700;
-}
-
-.food-tag {
-  z-index: 2;
-}
-
-
-.no-items-text {
-  font-family: 'Helvetica Neue', Arial, sans-serif; /* clean font */
-  font-size: 16px; /* readable size */
-  font-weight: 500; /* medium weight */
-  color: #555555; /* subtle gray */
-  text-align: center; /* center in container */
-  padding: 40px 20px; /* spacing around text */
-  background-color: #f7f7f7; /* light background to stand out */
-  border-radius: 8px; /* slightly rounded corners */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05); /* soft shadow for depth */
-  margin: 20px auto; /* space from other elements */
-  max-width: 400px; /* prevent it from stretching too wide */
-}
-
-
-
-
-
-/* Freezer overlay */
-.freezer-overlay {
+.stall-popup {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ff4d4d;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  z-index: 9999;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  animation: popupSlide 0.3s ease-out;
+}
+
+/* Slide animation */
+@keyframes popupSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0px);
+  }
+}
+
+
+/* -----------------------------
+   FILTER BUTTONS (All / Veg / Non-Veg)
+------------------------------ */
+.filter-btn {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 1px solid #ffc2b0;
+  background: #fff4ef;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+}
+
+/* Hover */
+.filter-btn:hover {
+  background: #ffe6de;
+}
+
+/* Active State */
+.filter-btn.active {
+  background: linear-gradient(90deg, #F84D25 0%, #FF9047 100%);
+  color: white;
+  border-color: transparent;
+  box-shadow: 0 3px 6px rgba(255, 125, 80, 0.35);
+  transform: scale(1.03);
+}
+
+
+.page-container {
+  display: flex;
+  position: relative;
+}
+
+/* Sidebar always stays on top, items never move */
+
+
+/* Item grid container never shifts */
+.item-grid-wrapper {
+  margin-left: 260px;           /* same width as sidebar */
+  padding: 20px;
+  position: relative;
+  z-index: 1;                   /* stays behind sidebar */
+}
+
+/* When sidebar is hidden (mobile case) */
+.sidebar-hidden .item-grid-wrapper {
+  margin-left: 0;
+}
+
+/* -----------------------------
+   GRID SYSTEM (Responsive)
+------------------------------ */
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;                    /* more spacing */
+}
+
+@media (min-width: 1024px) {
+  .item-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* -----------------------------
+   ITEM CARD
+------------------------------ */
+.item-card {
+  background: #fff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  border: none;
+  transition: 0.25s ease;
+}
+
+.item-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Image spacing (ADDED) */
+.item-img-wrapper {
+  position: relative;
+  height: 140px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin: 10px;                 /* Space around image */
+}
+
+.item-img {
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(3px);
-  z-index: 9999;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+/* ----------------------------------------
+   Veg / Non-Veg Badge
+----------------------------------------- */
+.food-icon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  background: white;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 3px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
 }
 
-/* Loader spinner */
-.loader {
-  border: 5px solid #f3f3f3;
-  border-top: 5px solid #fdb10d;
+.food-icon .dot {
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 0.8s linear infinite;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.food-icon.veg {
+  border: 2px solid #2ecc71;
 }
 
-.freezer-overlay p {
-  margin-top: 10px;
-  font-weight: 500;
-  color: #fd890d;
+.food-icon.veg .dot {
+  background: #2ecc71;
+}
+
+.food-icon.nonveg {
+  border: 2px solid #e74c3c;
+}
+
+.food-icon.nonveg .dot {
+  background: #e74c3c;
+}
+
+/* -----------------------------
+   ITEM INFO
+------------------------------ */
+.item-info {
+  padding: 12px;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.item-desc {
+  font-size: 13px;
+  color: #777;
+  margin-top: 3px;
+  margin-bottom: 8px;
+}
+
+/* -----------------------------
+   PRICE + BUTTON
+------------------------------ */
+.price-add-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price {
   font-size: 16px;
+  font-weight: 700;
+  color: #222;
 }
 
+/* -----------------------------
+   ADD BUTTON (Your Gradient)
+------------------------------ */
+.add-btn {
+  background: linear-gradient(90deg, #F84D25 0%, #FF9047 100%);
+  border: none;
+  padding: 6px 14px;
+  border-radius: 12px;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.15s ease-in-out;
+  box-shadow: 0 3px 8px rgba(255, 125, 80, 0.4);
+}
 
+.add-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
 
-/* 🔍 Search Bar */
-.search-bar {
+/* -----------------------------
+   QUANTITY BOX
+------------------------------ */
+.qty-box {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  margin: 20px auto; /* centers horizontally */
-  width: 90%; /* responsive width */
-  max-width: 900px; /* cap the width */
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  gap: 8px;
+  background: #fff7f4;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #ffd1c0;
 }
 
-.search-icon {
-  margin-right: 8px;
-  color: #888;
-}
-
-.search-bar input {
+.qty-btn {
+  background: none;
   border: none;
-  outline: none;
-  width: 100%;
-  font-size: 15px;
-  background: transparent;
+  font-size: 18px;
+  color: #F84D25;
+  cursor: pointer;
+}
+
+.qty-value {
+  font-weight: 600;
+  font-size: 14px;
 }

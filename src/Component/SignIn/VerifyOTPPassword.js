@@ -19,7 +19,7 @@ const VerifyOTPPassword = () => {
     setError('');
 
     try {
-      const response = await axios.post('https://admin-aged-field-2794.fly.dev/auth/verify-otp', {
+      const response = await axios.post('http://127.0.0.1:8000/auth/verify-otp', {
         email,
         otp,
       });

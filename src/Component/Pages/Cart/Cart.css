@@ -1,479 +1,224 @@
-/* === Cart Wrapper === */
-.cart-wrapper {
-  max-width: 850px;
-  margin: 2rem auto;
-  padding: 1rem;
-  font-family: 'Inter', sans-serif;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+/* ---------- PAGE WRAPPER (Full Screen Layout) ---------- */
+.cart-page {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #ffffff, #f6efe6);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
+
+/* ---------- MAIN SCROLLABLE CONTENT ---------- */
+.cart-content {
+  flex: 1; /* fills remaining height */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* scroll only content */
+  padding-bottom: 90px; /* space for sticky button */
+}
+
+/* ---------- HEADING ---------- */
 .heading {
-  font-family: 'Helvetica Neue', sans-serif;
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
-  line-height: 140%;
-  letter-spacing: 0;
-  color: #000; 
-  padding-left: 184px;  /* 🧱 More breathing space from left */
-  margin-top: 50px;    /* ✅ Creates gap from header above */
-  margin-bottom: 16px;
-  text-align: left;
-}
-.cart-summary {
-  padding: 10px 16px;
+  margin: 1.5rem 1rem 1rem;
+  color: #222;
 }
 
-.summary-line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
+/* ---------- CART WRAPPER ---------- */
+.cart-wrapper {
+  padding: 0 1rem;
+  margin-bottom: 1rem;
 }
 
-.item-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* ensures left alignment */
-}
-
-.item-name,
-.item-price {
-  margin: 0; /* remove default margin */
-  padding-left: 0; /* remove left padding if any */
-}
-
-
-
-/* === Grid with Center Divider === */
 .cart-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  padding: 20px;
-  border-radius: 12px;
-  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 2px 6px #FFE1B9;
 }
 
-.cart-grid::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
-  background-color: #e0e0e0;
-  transform: translateX(-50%);
-}
-
-/* === Individual Cart Item === */
+/* ---------- CART ITEM ---------- */
 .cart-item {
-  display: flex;
-  flex-direction: column;
-  border-radius: 12px;
-  padding: 16px 10px; /* 🛠️ Set padding-top and bottom to 16px */
-  gap: 20px;           /* 🛠️ Matches Figma gap */
-  width: 371px;        /* 🛠️ Matches Figma width exactly */
-  max-width: 100%;     /* 🛠️ Ensures it doesn't overflow in smaller viewports */
-  box-sizing: border-box;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
 }
 
+.cart-item:last-child {
+  border-bottom: none;
+}
 
-/* === First Row (Image + Details + Qty + Total) === */
 .cart-item-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: nowrap;
-  margin-bottom: -15px;
-  gap: 6px; /* 🛠️ Reduced from 10px to 6px to tighten layout */
+  gap: 12px;
 }
 
-/* === Image === */
+/* ---------- ITEM IMAGE ---------- */
 .item-image {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   object-fit: cover;
-  flex-shrink: 0;
 }
 
-/* === Item Info (Name + Price) === */
+/* ---------- ITEM INFO ---------- */
 .item-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-size: 13px;
-  flex-grow: 1;
-  max-width: 100px;  /* 🛠️ Added to limit width and prevent overflow */
-  overflow: hidden;  /* 🛠️ Ensures content doesn't break layout */
+  flex: 1;
 }
-
 
 .item-name {
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  color: #222;
+}
+
+.item-subtext {
   font-size: 13px;
+  margin: 2px 0 0;
+  color: #777;
 }
 
-.item-price {
-  color: #666;
-  font-size: 12px;
+/* ---------- PRICE + QTY ---------- */
+.price-and-qty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
 }
 
-/* === Quantity & Total Price === */
+.price-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+/* ---------- QTY BOX ---------- */
 .quantity-box {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 89px;                       /* ✅ Figma width */
-  height: 40.83px;                   /* ✅ Figma height */
-  background: #f0f0f0;
-  border-radius: 6px;
-  overflow: hidden;
-  font-family: 'Inter', sans-serif;
-  margin-right: 0px;
+  gap: 8px;
+  background: #f6f6f6;
+  padding: 6px 10px;
+  border-radius: 20px;
 }
 
 .quantity-box button {
-  background: none;
-  border: none;
-  font-weight: bold;
-  font-size: 16px;
+  background: white;
+  border: 1px solid #ddd;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 14px;
   cursor: pointer;
-  width: 30%;
-  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .quantity-box span {
-  font-weight: 500;
   font-size: 14px;
-  width: 40%;
-  text-align: center;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-left: 1px solid #ccc;      /* ✅ Left line */
-  border-right: 1px solid #ccc;     /* ✅ Right line */
+  font-weight: 600;
 }
 
-.item-total {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 500;            /* ✅ Roboto Medium */
-  font-size: 18px;             /* ✅ Figma font size */
-  line-height: 140%;           /* ✅ Line height */
-  letter-spacing: 0;
-  text-align: right;           /* ✅ Align price to the right */
-  width: 50px;                 /* ✅ Fixed width */
-  height: 22px;                /* ✅ Fixed height */
-  color: #000000;                 /* ✅ Make text readable */
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;   /* ✅ Align number to the right inside box */
-  border-radius: 4px;          /* Optional: smooth corners */
-}
-
-
-/* === Remove Button (Fixed width 361px) === */
-.remove-button {
-  width: 361px;
-  height: 48px;
-  border-radius: 8px;
-  border: 1px solid #EA7C69;
-  background: transparent;
-  color: #d9534f;
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-  opacity: 1;
-}
-
-/* === Remove Button === */
-.remove-button {
-  width: 361px;
-  height: 48px;
-  border-radius: 8px;
-  border: 1px solid #EA7C69; /* Figma border color */
-  background: transparent;
-  color: #d9534f; /* Matches your custom red */
-  font-size: 14px;
-  font-weight: 500;
-  padding: 0 14px; /* Horizontal padding only */
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 10px;
-  opacity: 1;
-}
-
-
-/* === Summary Section === */
-
-/* === Action Buttons === */
-.cart-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: space-between;
-  margin-top: 10px;
-}
-
-.cancel-button,
-.proceed-button {
-  width: 40px; /* 🎯 Set fixed width */
-  padding: 10px;
-  font-size: 14px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.cart-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  margin-top: 24px;
-  flex-wrap: wrap; /* allows them to wrap on small screens */
-}
-
-.cancel-button {
-  width: 361px;
-  height: 48px;
-  border-radius: 8px;
-  border: 1px solid #D4D4D4;
-  background: #FFFFFF;
-  padding: 14px 64px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-
-.proceed-button {
-  width: 361px;
-  height: 48px;
-  border-radius: 8px;
-  background: #F17F1C;
-  border: 1px solid #FFA455;
-  padding: 14px 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #FFFFFF;
-  box-shadow: 0px 8px 24px 0px #F17F1C4D;
-  cursor: pointer;
-}
-
-
-@media (max-width: 768px) {
-  .cart-actions {
-    flex-direction: row !important;    /* Keep buttons side by side */
-    flex-wrap: nowrap !important;      /* Prevent wrapping */
-    justify-content: center;
-    padding: 0 12px;                   /* ✅ Adds spacing inside the container */
-  }
-
-  .cancel-button,
-  .proceed-button {
-    width: 45vw;
-    padding: 0;
-    margin: 0 6px;                     /* ✅ Adds space between and outside buttons */
-  }
-}
-
-@media (max-width: 768px) {
-  .cart-summary {
-    flex-direction: row !important;      /* Force row layout */
-    justify-content: space-between;      /* Spread summary items */
-    align-items: center;
-    gap: 8px;
-    padding: 16px 12px;                  /* Add side spacing */
-    font-size: 14px;                     /* Optional: Slightly smaller font on mobile */
-    flex-wrap: nowrap !important;        /* Prevent line break */
-  }
-}
-
-/* === Responsive Mobile View === */
-@media (max-width: 768px) {
-
-  
-  .cart-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .cart-grid::before {
-    display: none;
-  }
-
-.cart-item {
-  display: flex;
-  flex-direction: column;
+/* ---------- SUMMARY SECTION ---------- */
+.cart-summary {
+  background: white;
+  padding: 1rem;
+  margin: 0 1rem;
   border-radius: 12px;
-  padding: 16px 10px; /* top/bottom padding */
-  gap: 20px;
-  width: 371px;       /* Desktop width */
-  max-width: 100%;
-  box-sizing: border-box;
+  font-size: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
-/* === Mobile Centering === */
-@media (max-width: 768px) {
-  .cart-item {
-    width: 100%;          /* Adjust width to fit mobile */
-    max-width: 360px;    /* Optional: exact mobile width from Figma */
-    margin: 0 auto;      /* Center horizontally */
-    border-radius: 8px;  /* Optional: smaller radius on mobile */
-    padding: 16px 12px;  /* Slightly more padding for mobile */
-    gap: 16px;           /* Reduce gap for mobile */
-  }
-  
+.cart-summary p {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+  color: #444;
 }
 
-.remove-button {
-  width: 301px;
-  height: 48px;
-  border-radius: 8px;
-  border: 1px solid #EA7C69; /* Figma border color */
-  background: transparent;
-  color: #d9534f; /* Matches your custom red */
+.cart-summary h3 {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #222;
+}
+
+.cart-summary hr {
+  margin: 10px 0;
+  border: none;
+  border-top: 1px dashed #ccc;
+}
+
+/* ---------- ADD MORE ---------- */
+.add-more-btn {
+  background: #ffffff;
+  color: #6a3df6;
+  border: 1px solid #d7c6ff;
+  border-radius: 20px;
+  padding: 8px 0;
+  width: 100%;
   font-size: 14px;
-  font-weight: 500;
-  padding: 0 14px; /* Horizontal padding only */
+  font-weight: 600;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: 10px auto; /* ✅ centers button horizontally */
-  opacity: 1;
+  margin-top: 12px;
 }
 
-
-
-  .item-image {
-    width: 45px;
-    height: 45px;
-  }
-  
-
-.item-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-size: 13px;
-  flex-grow: 1;
-  margin-left: 0; /* cleaner and effective than -0px */
-  overflow: hidden;
-  white-space: normal;       /* ✅ allows wrapping */
-  word-wrap: break-word;     /* ✅ breaks long words */
-  line-height: 1.3;
-}
-
-/* === Cart Wrapper === */
- .cart-wrapper {
-    border: none;
-    box-shadow: none; /* ✅ Removes box shadow on mobile */
-    padding: 0;       /* Optional: remove padding on mobile if needed */
-    border-radius: 0; /* Optional: flatten edges on mobile */
-  }
-
-
-  .quantity-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 89px;                       /* ✅ Figma width */
-  height: 40.83px;                   /* ✅ Figma height */
-  background: #f0f0f0;
-  border-radius: 6px;
-  overflow: hidden;
-  font-family: 'Inter', sans-serif;
-  margin-right: 0px;
-  }
-    .heading {
-    padding-left: 16px; /* ✅ Much better on mobile */
-    font-size: 22px;     /* Optional: slightly smaller for mobile */
-    margin-top: 50px;    /* Optional: adjust vertical spacing if needed */
-  }
-  .item-name {
-    font-size: 13px;
-  }
-
-  .item-price {
-    font-size: 11px;
-  }
-
-  .quantity-box span {
-    font-size: 13px;
-  }
-
-  .item-total {
-    font-size: 13px;
-  }
-
-  .cart-summary {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-    padding: 16px;
-  }
-
-  .cart-actions {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .cancel-button,
-  .proceed-button {
-    width: 100%;
-  }
-}
-
-
-/* ===== Full Page Loader ===== */
-.page-loader-overlay {
+/* ---------- FIXED BOTTOM BUTTON ---------- */
+.sticky-bottom {
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(2px);
+  background: white;
+  padding: 1rem;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
   display: flex;
   justify-content: center;
-  align-items: center;
-  z-index: 9999;
+  z-index: 999;
 }
 
-.spinner {
-  width: 65px;
-  height: 65px;
-  border: 6px solid #f3f3f3;
-  border-top: 6px solid #ff7b00;
+.payment-btn {
+  background: #ff3d34;
+  color: white;
+  border: none;
+  padding: 13px 0;
+  width: 90%;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------- ERROR ---------- */
+.cart-error {
+  color: #ff3d34;
+  background: #ffe6e6;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin: 1rem;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ---------- LOADER ---------- */
+.cart-loader-container {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.cart-loader {
+  border: 4px solid #eee;
+  border-top: 4px solid #ff3d34;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
+  width: 34px;
+  height: 34px;
+  margin: auto;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

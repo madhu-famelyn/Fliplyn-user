@@ -12,12 +12,13 @@
 }
 
 .loading-container.white {
-  background-color: white;
+  background-color: #F5EFE7;
 }
 
 .loading-container.orange {
-  background: linear-gradient(135deg, #f57c00, #ef6c00);
+  background: linear-gradient(0deg, #EF3F24 0%, #FF7661 100%);
 }
+
 
 .logo-text {
   font-size: 3rem;

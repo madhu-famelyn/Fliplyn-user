@@ -1,185 +1,122 @@
-/* Scroll container */
+/* ---------- MAIN WRAPPER ---------- */
 .category-wrapper {
-  max-height: 100vh;
+  display: flex;
+
+}
+
+/* ---------- FIXED LEFT CATEGORY SIDEBAR ---------- */
+
+
+
+
+/* ---------- RIGHT SIDE CONTENT (ITEMS AREA) ---------- */
+.items-section {
+  flex: 1;
+  padding: 16px;
   overflow-y: auto;
-  padding-bottom: 2rem; /* Optional: To give breathing room at the end */
+  height: 100%;
 }
 
-.category-scroll {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 21px;
-  overflow-x: auto;
-  /* overflow-y: hidden; */
-  scroll-behavior: smooth;
-  width: 100%;
-  max-width: 867px;
-  height: 120px;
-  margin: 0 auto;
-  padding: 0 20px;
-  box-sizing: border-box;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.category-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-/* Category card - Default (non-active) */
-.category-card {
-  width: 112px;
-  height: 106px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 10px 10px;
-  text-align: center;
-  background-color: #F0E3C11A; /* Non-selected background */
-  opacity: 0.7;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.category-card.active {
-  border: 2px solid #88ef91;
-  background-color: #e8ffe9;
-  opacity: 1;
-}
-
-.category-card:hover {
-  opacity: 1;
-  cursor: pointer;
-}
-
-/* Category image */
-.category-img {
-  width: 50px;
-  height: 46px;
-  object-fit: contain;
-  margin-bottom: 6px;
-  opacity: 1;
-}
-
-/* Category name */
-/* Category name */
-.category-name {
-  /* font-family: 'Helvetica Neue', sans-serif; */
-  font-weight: 00;
-  font-style: normal;
-  font-size: 16px;
-  line-height: 152%;
-  letter-spacing: -0.16px;
-  text-align: center;
-  color: #333333;
-  margin: 0;
-  opacity: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 24px;
-}
-
-
-/* Mobile responsive */
-@media (max-width: 375px) {
-  .category-scroll {
-    max-width: 340px; /* Better fit within 360px screen + padding */
-    height: 96px;
-    padding: 0 10px;
-    gap: 10px;
-  }
-
-  .category-card {
-    width: 72px;
-    height: 76px;
-    padding: 6px 8px;
-  }
-
-  .category-img {
-    width: 42px;
-    height: 40px;
-    margin-bottom: 4px;
-  }
-
-  .category-name {
-    font-size: 13px;
-    font-weight: 200; /* Lighter as per previous request */
-    line-height: 140%;
-    height: 18px;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-/* ✅ Wrapper for the menu header */
+/* ---------- MENU HEADER ---------- */
 .menu-header {
-  width: 100%;
-  max-width: 852px;
-  height: 27px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 100px auto; /* added top & bottom spacing */
-  padding: 0 20px;   /* added horizontal padding for safe alignment */
-  box-sizing: border-box;
+  margin-bottom: 16px;
+  margin-left: 80px;
 }
 
-/* ✅ Menu title styling */
 .menu-title {
-  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 22px;
   font-weight: 700;
-  font-size: 26px;
-  line-height: 100%;
-  letter-spacing: 0;
-  color: #000;
   margin: 0;
-  padding: 0;
 }
 
-/* ✅ View Cart button styling */
+/* ---------- CART BUTTON ---------- */
 .view-cart-btn {
-  width: 119px;
-  height: 36px; /* slightly taller for better click area */
-  padding: 0 12px;
-  border-radius: 8px;
-  border: 1px solid #000;
-  background-color: #000;
+  background: #d0c3ff;
   color: #fff;
-  font-family: 'Helvetica Neue', sans-serif;
+  border: none;
+  padding: 8px 14px;
   font-size: 14px;
-  font-weight: 500;
+  border-radius: 18px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  font-weight: 600;
 }
 
-.view-cart-btn:hover {
-  background-color: #222;
+.view-cart-btn.has-items {
+  background: #6f2cff;
 }
 
+/* ---------- SEARCH BAR ---------- */
+.search-bar {
+  position: relative;
+  margin-bottom: 20px;
+}
 
+.search-bar input {
+  width: 100%;
+  padding: 12px 14px 12px 38px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+}
 
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #888;
+}
 
+/* ---------- NO ITEMS TEXT ---------- */
+.no-items-text {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  font-size: 14px;
+}
 
+/* ---------- ITEM LIST ---------- */
+.item-list-container {
+  margin-top: 10px;
+}
 
+/* ---------- SCROLLBAR HIDE FOR CLEAN UI ---------- */
+.category-sidebar::-webkit-scrollbar,
+.items-section::-webkit-scrollbar {
+  width: 6px;
+}
 
+.category-sidebar::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
 
+.items-section::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
 
+/* ---------- MOBILE RESPONSIVE --------- */
+@media (max-width: 768px) {
+  .menu-title {
+    font-size: 20px;
+  }
+  .menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  margin-left: 40px;
+}
 
+  .search-bar input {
+    font-size: 13px;
+  }
+
+}
 

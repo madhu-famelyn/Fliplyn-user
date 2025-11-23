@@ -45,7 +45,7 @@
 }
 
 .method-btn.selected {
-  background-color: #f17f1c;
+  background-color: #000000;
   color: #fff;
   border-color: #f17f1c;
   box-shadow: 0px 8px 24px 0px rgba(241, 127, 28, 0.3);
@@ -71,7 +71,7 @@
   max-width: 600px;
   margin: 40px auto;
   padding: 0 24px;
-  background-color: #fff;
+  background-color: #FFF9F1;
   font-family: 'Inter', sans-serif;
 }
 
@@ -132,7 +132,7 @@
 
 /* ✅ Selected style */
 .method-btn.selected {
-  background-color: #f17f1c;
+  background-color: #EB4D26;
   color: #fff;
   border-color: #f17f1c;
   box-shadow: 0px 8px 24px 0px rgba(241, 127, 28, 0.3);
@@ -213,7 +213,7 @@
   padding: 10px 20px;
   font-size: 14px;
   font-weight: 500;
-  background-color: #ff7a00;
+  background-color: #EB4D26;
   color: #fff;
   border: 2px solid transparent;
   border-radius: 8px;

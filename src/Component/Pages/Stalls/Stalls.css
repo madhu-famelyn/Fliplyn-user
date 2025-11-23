@@ -1,616 +1,211 @@
-.stall-wrapper {
-  height: 100vh;
+/* =================== Base Layout =================== */
+.stalls-page-container {
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  padding: 1rem;
-  background-color: #ffffff;
-}
-
-.stall-wrapper {
-  max-height: 100vh;
-  overflow-y: auto;
-  padding: 1rem;
-}
-
-
-/* ✅ Wrap to align heading and subtext to the left */
-.stall-heading-wrapper {
-  text-align: left;
-  margin-left: 240px;
-  margin-bottom: 32px;
-}
-
-.stall-heading {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.stall-subtext {
-  font-size: 18px;
-  color: #888;
-  margin-bottom: 52px;
-}
-
-.stall-content {
-  max-width: 1200px;
-  width: 100%;
-  text-align: center;
-}
-
-.stall-empty {
-  font-size: 18px;
-  color: #555;
-}
-
-/* ✅ Modified: Use grid for 3-column center-aligned layout */
-.stall-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 30px;
-  max-width: 900px; /* ✅ 3 cards * 220px + gaps */
-  margin: 0 auto;
-  justify-content: center;
-}
-
-.stall-card-wrapper {
-  cursor: pointer;
-}
-
-
-
-
-.stall-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-.view-menu-overlay {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 10px 0;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  font-weight: 500;
-  font-size: 16px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-.stall-card:hover .view-menu-overlay {
-  opacity: 1;
-}
-
-/* ✅ Mobile Responsive Styles - NO CHANGES DONE */
-@media (max-width: 768px) {
-  .stall-heading-wrapper {
-    margin-left: 16px;
-    margin-right: 16px;
-    text-align: left;
-  }
-
-  .stall-heading {
-    font-size: 24px;
-  }
-
-  .stall-subtext {
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-
-  .stall-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    padding: 0 16px;
-  }
-
-  .stall-image {
-    border-radius: 12px;
-  }
-
-  .view-menu-overlay {
-    font-size: 14px;
-    padding: 8px 0;
-    opacity: 1;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-  }
-
-  .stall-card:hover .view-menu-overlay {
-    opacity: 1;
-  }
-}
-
-/* ✅ Mobile Responsive Styles */
-@media (max-width: 768px) {
-  .stall-heading-wrapper {
-    margin-left: 16px;
-    margin-right: 16px;
-    text-align: left;
-  }
-
-  .stall-heading {
-    font-size: 24px;
-  }
-
-  .stall-subtext {
-    font-size: 14px;
-  }
-
-  .stall-grid {
-    gap: 16px;
-  }
-
-
-
-  .stall-image {
-    border-radius: 12px;
-  }
-
-  .view-menu-overlay {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 8px 0;
-    text-align: center;
-    background: rgba(0, 0, 0, 0.65);
-    color: #fff;
-    font-weight: 600;
-    font-size: 14px;
-    opacity: 1; /* ✅ Always visible on mobile */
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-  }
-
-  .stall-card:hover .view-menu-overlay {
-    opacity: 1; /* ✅ Keep this to ensure hover doesn't conflict */
-  }
-}
-
-/* === Mobile: ≤ 767px === */
-@media (max-width: 767px) {
-  .stall-heading {
-    font-size: 20px;
-  }
-
-  .stall-subtext {
-    font-size: 13px;
-  }
-
-  .stall-empty {
-    font-size: 14px;
-  }
-
-  .view-menu-overlay {
-    font-size: 13px;
-  }
-}
-
-/* === 13-inch screen (usually ≤ 1280px wide) === */
-@media (max-width: 1280px) {
-  .stall-heading {
-    font-size: 24px;
-  }
-
-  .stall-subtext {
-    font-size: 15px;
-  }
-
-  .stall-empty {
-    font-size: 16px;
-  }
-
-  .view-menu-overlay {
-    font-size: 15px;
-  }
-}
-
-
-
-.stall-content {
-  max-width: 1200px;
-  width: 100%;
-  text-align: center;
-}
-
-.stall-heading {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.stall-subtext {
-  font-size: 18px;
-  color: #888;
-  margin-bottom: 32px;
-}
-
-.stall-empty {
-  font-size: 18px;
-  color: #555;
-}
-
-.stall-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 30px;
-  margin-bottom: 30vh;
-}
-
-.stall-card-wrapper {
-  cursor: pointer;
-}
-
-
-.stall-card:hover {
-  transform: scale(1.03);
-}
-
-.stall-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 16px;
-}
-
-/* View menu overlay hidden by default */
-.view-menu-overlay {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  padding: 10px 0;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  font-weight: 500;
-  font-size: 16px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-bottom-left-radius: 16px;
-  border-bottom-right-radius: 16px;
-}
-
-/* Show overlay only on hover */
-.stall-card:hover .view-menu-overlay {
-  opacity: 1;
-}
-
-
-
-/* === Mobile: Phones (up to 767px) === */
-@media (max-width: 767px) {
-  .stall-wrapper {
-    padding: 24px 12px;
-  }
-
-  .stall-heading-wrapper {
-    margin-left: 16px;
-    margin-right: 16px;
-    text-align: left;
-  }
-
-  .stall-heading {
-    font-size: 24px;
-  }
-
-  .stall-subtext {
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-
-  .stall-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    padding: 0 12px;
-  }
-
-  .stall-card {
-    width: 160px;
-    height: 120px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
-
-  .stall-image {
-    border-radius: 12px;
-  }
-
-  .view-menu-overlay {
-    font-size: 14px;
-    padding: 8px 0;
-    opacity: 1;
-    border-bottom-left-radius: 12px;
-    border-bottom-right-radius: 12px;
-  }
-}
-
-/* === Tablet: 768px to 1024px === */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .stall-heading-wrapper {
-    margin-left: 32px;
-    margin-right: 32px;
-    text-align: left;
-  }
-
-  .stall-heading {
-    font-size: 28px;
-  }
-
-  .stall-subtext {
-    font-size: 16px;
-    margin-bottom: 28px;
-  }
-
-  .stall-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
-    padding: 0 24px;
-  }
-
-
-}
-
-/* === Small Desktop: 1025px to 1280px === */
-@media (min-width: 1025px) and (max-width: 1280px) {
-  .stall-heading-wrapper {
-    margin-left: 120px;
-  }
-
-  .stall-heading {
-    font-size: 30px;
-  }
-
-  .stall-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-  }
-}
-
-/* === Large Desktop: 1281px and up === */
-@media (min-width: 1281px) {
-  .stall-heading-wrapper {
-    margin-left: 240px;
-  }
-
-  .stall-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-  }
-}
-
-
-/* === Mobile: ≤ 767px === */
-/* === Default styles (larger screens) === */
-.stall-heading {
-  font-size: 32px;
-  font-weight: 700;
-  color: #000;
-  text-align: left;
-  padding-left: 16px; /* Not too left */
-}
-
-.stall-subtext {
-  font-size: 18px;
-  font-weight: 400;
-  color: #555;
-  text-align: left;
-  padding-left: 16px;
-}
-
-.stall-empty {
-  font-size: 18px;
-  font-weight: 500;
-  color: #999;
-  text-align: left;
-  padding-left: 16px;
-}
-
-.view-menu-overlay {
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 6px 12px;
-  border-radius: 6px;
-  position: absolute;
-  bottom: 12px;
-  right: 12px;
-}
-
-
-/* === Mobile: ≤ 767px === */
-@media (max-width: 767px) {
-  .stall-heading {
-    font-size: 20px;
-    padding-left: 12px;
-  }
-
-  .stall-subtext {
-    font-size: 13px;
-    padding-left: 12px;
-  }
-
-  .stall-empty {
-    font-size: 14px;
-    padding-left: 12px;
-  }
-
-  .view-menu-overlay {
-    font-size: 13px;
-  }
-}
-
-
-/* === 13-inch screens: 1024px–1280px === */
-@media (min-width: 1024px) and (max-width: 1280px) {
-  .stall-heading {
-    font-size: 24px;
-    padding-left: 14px;
-  }
-
-  .stall-subtext {
-    font-size: 15px;
-  }
-
-  .stall-empty {
-    font-size: 16px;
-    padding-left: 14px;
-  }
-
-  .view-menu-overlay {
-    font-size: 15px;
-  }
-}
-
-
-
-
-
-
-
-
-
-.stall-headings {
-  font-family: "Helvetica Neue", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-  font-size: 26px;
-  line-height: 33.27px;
-  vertical-align: middle;
-  color: #000000;
-  text-align: left;
-  padding-left: 15px;
-  margin-bottom: 5px;
-  border-radius: 4px;
-}
-
-.stall-subtext {
-  margin-top: 0;
-}
-
-.stall-head-wrapper {
-  margin-top: 30px;
-  margin-left: 140px;
-  margin-bottom: 65px;
-}
-
-/* === Mobile: ≤ 767px === */
-@media (max-width: 767px) {
-  .stall-headings {
-    font-size: 20px;
-    line-height: 28px;
-  }
-}
-
-/* === 13-inch screens: 1024px–1280px === */
-@media (min-width: 1024px) and (max-width: 1280px) {
-  .stall-headings {
-    font-size: 24px;
-    line-height: 31px;
-  }
-}
-
-.stall-head-wrapper {
-  margin-top: 30px;
-  margin-left: 140px;
-  margin-bottom: 65px;
-}
-
-
-
-
-.stall-head-wrapper {
-  margin-top: 30px;
-  margin-left: 140px;
-  margin-bottom: 65px;
-}
-
-/* === Mobile: ≤ 767px === */
-@media (max-width: 767px) {
-  .stall-head-wrapper {
-    margin-left: 12px;
-    margin-right: 12px;
-  }
-
-  .stall-headings {
-    font-size: 20px;
-    line-height: 28px;
-    padding-left: 10px;
-  }
-}
-
-/* === Laptop: 1024px–1280px === */
-@media (min-width: 1024px) and (max-width: 1280px) {
-  .stall-headings {
-    font-size: 24px;
-    line-height: 31px;
-  }
-
-  .stall-head-wrapper {
-    margin-left: 100px;
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* 🔲 Stall Card Background */
-.stall-card {
-  width: 277px;
-  height: 183px;
-  padding: 98px 10px 20px 10px; /* top, right, bottom, left */
-  gap: 26px;
-  background-color: #EBEBEB;
-  border: 1px solid #ABABAB;
-  border-radius: 8px;
-  position: relative;
+  min-height: 100vh;
+  padding: 24px 16px;
+  background-color: #FFFCF8;
+  font-family: "Poppins", sans-serif;
   box-sizing: border-box;
-  /* overflow: hidden; */
+}
+
+/* =================== Header Section =================== */
+.top-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+  font-size: clamp(32px, 4vw, 56px);
+  line-height: 1.2;
+  color: #000;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-family: "Inter", sans-serif;
+  font-weight: 500;
+  font-size: clamp(16px, 2vw, 24px);
+  line-height: 1.2;
+  color: #5F5F5F;
+  margin: 12px 0 24px;
+}
+
+/* =================== Search Bar =================== */
+.search-bar-container {
+  width: 100%;
+  max-width: 600px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-bar {
+  width: 100%;
+  height: 52px;
+  padding: 0 16px 0 48px;
+  border-radius: 16px;
+  border: none;
+  background-color: #E8E8E8;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s ease;
+  box-sizing: border-box;
+}
+
+.search-bar:focus {
+  background: #ddd;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+/* =================== Grid Section =================== */
+.bottom-section {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  box-shadow: 0px 4px 25.8px 0px #39393966; /* ✅ Drop shadow */
+  padding-top: 16px;
 }
 
+.stalls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 24px;
+  width: 100%;
+  max-width: 1100px;
+}
 
-/* 🖼️ Stall Image Centered Inside Card */
+/* When one card only */
+.stall-card:only-child {
+  justify-self: center;
+}
+
+/* =================== Stall Card =================== */
+.stall-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Image Container */
+.stall-image-container {
+  width: 170px;
+  height: 170px;
+  background: #fff;
+  border-radius: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.stall-image-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 6px 6px 20px rgba(0,0,0,0.3);
+}
+
+/* FIX — Image should fill container perfectly */
 .stall-image {
-  width: 216px;
-  height: 144px;
+  width: 100%;
+  height: 100%;
+  box-shadow: 4px 4px 17.5px rgba(0,0,0,0.2);
   object-fit: cover;
-  border-radius: 8px;
-  position: absolute;
-  top: 20px; /* ⬅️ Adjusted from -46px to positive value */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
+  border-radius: 30px;
 }
 
+/* Stall Name */
+.stall-names {
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 12px;
+  color: #222;
+}
 
+/* =================== Back Button =================== */
+.back-btn {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  background: #FFD6D3;
+  border: none;
+  padding: 10px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease;
+}
 
-.stall-card:hover .view-menu-layout {
-  opacity: 1;
-  transform: translateY(0);
+.back-btn:hover {
+  background: #d6d6d6;
+}
+
+/* =================== Responsive =================== */
+
+/* Laptop */
+@media (max-width: 1200px) {
+  .stalls-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 20px;
+  }
+
+  .stall-image-container {
+    max-width: 150px;
+  }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .stalls-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 16px;
+  }
+
+  .stall-image-container {
+    max-width: 140px;
+  }
+}
+
+/* Mobile — ALWAYS 3 per row */
+@media (max-width: 600px) {
+  .stalls-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px;
+  }
+
+  .stall-image-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: none;
+  }
+
+  .stall-names {
+    font-size: 14px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 400px) {
+  .stalls-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px;
+  }
+
+  .stall-image-container {
+    aspect-ratio: 1 / 1;
+  }
+
+  .page-title { font-size: 28px; }
+  .page-subtitle { font-size: 16px; }
 }

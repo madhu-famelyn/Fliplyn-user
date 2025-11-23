@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Corrected BASE_URL to avoid '/user'
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 // ✅ User Signup
 export const signupUser = (userData) => {
@@ -21,7 +21,7 @@ export const verifyOtp = (data) => {
 // ✅ User Login - initiate OTP
 export const initiateLogin = async ({ company_email, password }) => {
   const response = await axios.post(
-    'https://admin-aged-field-2794.fly.dev/user/login',
+    'http://127.0.0.1:8000/user/login',
     { company_email, password }, // ✅ JSON body
     {
       headers: {

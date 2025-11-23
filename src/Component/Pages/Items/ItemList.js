@@ -1,98 +1,117 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import "../Category/Category.css";
-import { useAuth } from "../../AuthContext/ContextApi";
 import "./Items.css";
-import { BiFoodTag } from "react-icons/bi"; // ✅ Food icon
+import { useAuth } from "../../AuthContext/ContextApi";
 
 const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 
 export default function ItemList({ items, itemsLoaded }) {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [filterType, setFilterType] = useState("all");
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
 
-
-  const fetchCartItems = useCallback(async () => {
-    try {
-      const res = await axios.get(`https://admin-aged-field-2794.fly.dev/cart/${user.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const itemIds = res.data.items.map((item) => item.item_id);
-      setCartItems(itemIds);
-    } catch (err) {
-      console.error("Failed to fetch cart items:", err);
-    }
-  }, [user?.id, token]);
+  /* Load cart */
+  const loadLocalCart = useCallback(() => {
+    const stored = JSON.parse(localStorage.getItem("cartItems")) || [];
+    setCartItems(stored);
+  }, []);
 
   useEffect(() => {
-    if (user) {
-      fetchCartItems();
-    }
-  }, [user, fetchCartItems]);
+    loadLocalCart();
+  }, [loadLocalCart]);
 
-  const handleAddToCart = async (itemId) => {
+  /* Save Cart */
+  const saveCart = (updatedCart) => {
+    setCartItems(updatedCart);
+    localStorage.setItem("cartItems", JSON.stringify(updatedCart));
+  };
+
+  /* Add Item */
+  const handleAddToCart = (item) => {
     if (!user || !user.id) {
-      setPopupMessage("⚠️ Please log in to add items to your cart.");
+      setPopupMessage("⚠️ Please log in to add items.");
       setShowPopup(true);
       setTimeout(() => setShowPopup(false), 2000);
       return;
     }
 
-    const isInCart = cartItems.includes(itemId);
-    if (isInCart) return;
-
-    const payload = {
-      user_id: user.id,
-      items: [{ item_id: itemId, quantity: 1 }],
-    };
-
-    try {
-      setIsLoading(true); // 🧊 Show freezer + loader
-
-      await axios.post("https://admin-aged-field-2794.fly.dev/cart/add-multiple", payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      setCartItems([...cartItems, itemId]);
-      setPopupMessage("✅ Item added to cart!");
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 2000);
-    } catch (err) {
-      console.error("❌ Failed to add to cart:", err);
-
-      const errorMsg =
-        err.response?.data?.detail ||
-        "❌ Failed to add item. Please try again.";
-      setPopupMessage(errorMsg);
-      setShowPopup(true);
-      setTimeout(() => setShowPopup(false), 2500);
-    } finally {
-      setIsLoading(false); // ❄️ Hide freezer + loader
+    // ⛔ CHECK STALL CONFLICT
+    if (cartItems.length > 0) {
+      const existingStall = cartItems[0].stall_id;
+      if (existingStall !== item.stall_id) {
+        setPopupMessage("⚠ You can add items only from one stall at a time.");
+        setShowPopup(true);
+        setTimeout(() => setShowPopup(false), 2000);
+        return; // STOP HERE
+      }
     }
+
+    setIsLoading(true);
+
+    const index = cartItems.findIndex((c) => c.id === item.id);
+    let updatedCart = [...cartItems];
+
+    if (index > -1) {
+      updatedCart[index].quantity += 1;
+    } else {
+      updatedCart.push({
+        id: item.id,
+        name: item.name,
+        desc: item.description,
+        price: item.price,
+        is_veg: item.is_veg,
+        stall_id: item.stall_id, // 👉 store stall id here
+        image_url: item.image_url?.startsWith("http")
+          ? item.image_url
+          : `${S3_BASE_URL}${item.image_url}`,
+        quantity: 1,
+      });
+    }
+
+    saveCart(updatedCart);
+
+    setShowPopup(true);
+    setPopupMessage("Added to cart!");
+
+    setTimeout(() => {
+      setShowPopup(false);
+      setIsLoading(false);
+    }, 900);
   };
 
+  const handleDecreaseQuantity = (itemId) => {
+    let updatedCart = cartItems
+      .map((item) =>
+        item.id === itemId ? { ...item, quantity: item.quantity - 1 } : item
+      )
+      .filter((i) => i.quantity > 0);
+
+    saveCart(updatedCart);
+  };
+
+  const handleIncreaseQuantity = (itemId) => {
+    saveCart(
+      cartItems.map((item) =>
+        item.id === itemId ? { ...item, quantity: item.quantity + 1 } : item
+      )
+    );
+  };
+
+  /* Filter Logic */
   const filteredItems = items.filter((item) => {
     if (filterType === "veg") return item.is_veg;
-    if (filterType === "nonveg") return item.is_veg === false;
+    if (filterType === "nonveg") return !item.is_veg;
     return true;
   });
 
   return (
     <div className="items-section">
-      {/* ✅ Popup Message */}
-      {showPopup && <div className="cart-popup">{popupMessage}</div>}
 
-      {/* ✅ Freezer Overlay + Loader */}
-      {isLoading && (
-        <div className="freezer-overlay">
-          <div className="loader"></div>
-          <p>Adding to cart...</p>
-        </div>
-      )}
+      {/* POPUP */}
+      {showPopup && <div className="stall-popup">{popupMessage}</div>}
 
       {/* Filter Buttons */}
       <div className="filter-buttons">
@@ -116,16 +135,16 @@ export default function ItemList({ items, itemsLoaded }) {
         </button>
       </div>
 
-      {itemsLoaded && filteredItems.length === 0 ? (
-        <p className="no-items-text">No items available for selected filter.</p>
-      ) : (
-        <div className="item-grid">
-          {filteredItems.map((item) => {
-            const isInCart = cartItems.includes(item.id);
-            const foodTagColor = item.is_veg ? "green" : "red";
+      {/* Items */}
+      <div className="item-grid">
+        {filteredItems.map((item) => {
+          const cartItem = cartItems.find((c) => c.id === item.id);
+          const isInCart = !!cartItem;
 
-            return (
-              <div key={item.id} className="item-card">
+          return (
+            <div className="item-card" key={item.id}>
+
+              <div className="item-img-wrapper">
                 <img
                   src={
                     item.image_url?.startsWith("http")
@@ -134,42 +153,37 @@ export default function ItemList({ items, itemsLoaded }) {
                   }
                   alt={item.name}
                   className="item-img"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "/fallback-image.jpg";
-                  }}
                 />
-                <div className="item-infermation">
-                  <h4 className="item-names">
-                    <BiFoodTag
-                      style={{ color: foodTagColor, marginRight: "4px" }}
-                    />
-                    {item.name}
-                  </h4>
 
-                  <p className="item-prices">
-                    ₹
-                    {item.price
-                      ? item.price.toFixed(2)
-                      : (
-                          item.price +
-                          item.price * (item.Gst_precentage / 100)
-                        ).toFixed(2)}
-                  </p>
-
-                  <button
-                    className={`add-to-cart-btn ${isInCart ? "added" : ""}`}
-                    onClick={() => handleAddToCart(item.id)}
-                    disabled={isLoading}
-                  >
-                    {isInCart ? "Item Added" : "Add to Cart"}
-                  </button>
+                <div className={`food-icon ${item.is_veg ? "veg" : "nonveg"}`}>
+                  <div className="dot"></div>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      )}
+
+              <div className="item-info">
+                <h4 className="item-name">{item.name}</h4>
+
+                <div className="price-add-row">
+                  <span className="price">₹ {item.price}</span>
+
+                  {!isInCart ? (
+                    <button className="add-btn" onClick={() => handleAddToCart(item)}>
+                      + Add
+                    </button>
+                  ) : (
+                    <div className="qty-box">
+                      <button onClick={() => handleDecreaseQuantity(item.id)} className="qty-btn">–</button>
+                      <span className="qty-value">{cartItem.quantity}</span>
+                      <button onClick={() => handleIncreaseQuantity(item.id)} className="qty-btn">+</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

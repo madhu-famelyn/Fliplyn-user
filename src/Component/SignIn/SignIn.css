@@ -4,7 +4,7 @@
 
 /* ==== Wrapper ==== */
 .signin-wrapper {
-  background-color: #ffffff;
+  background-color: #F5EFE7;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -118,7 +118,8 @@
 
 /* ==== Button ==== */
 .signin-button {
-  background: #F17F1C;
+  background: linear-gradient(90deg, #F84D25 0%, #FF9047 100%);
+  
   border: 1px solid #FFA455;
   padding: 0.7rem;
   width: 100%;
@@ -139,13 +140,13 @@
   padding: 0 1rem;
   font-size: 0.875rem;
   font-weight: 700;
-  color: #f57c00;
+  color: #F95926;
   flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .signup-link {
-  color: #f57c00;
+  color: #F95926;
   text-decoration: none;
   font-weight: 700;
   cursor: pointer;
@@ -203,7 +204,7 @@
 }
 
 .forgot-password-link {
-  color: #f57c00; /* Blue link */
+  color: #F95926; /* Blue link */
   text-decoration: none;
   font-size: 14px;
 }
