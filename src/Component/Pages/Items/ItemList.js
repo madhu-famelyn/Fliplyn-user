@@ -11,7 +11,7 @@ export default function ItemList({ items, itemsLoaded }) {
   const [popupMessage, setPopupMessage] = useState("");
   const [cartItems, setCartItems] = useState([]);
   const [filterType, setFilterType] = useState("all");
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
 
   /* Load cart */
   const loadLocalCart = useCallback(() => {
