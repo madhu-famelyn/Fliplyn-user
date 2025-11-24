@@ -31,6 +31,7 @@ export default function QRScannerReceipt() {
             } else {
               order = qrData;
             }
+
             setOrderDetails(order);
             codeReader.stop();
           } catch (e) {
@@ -71,9 +72,19 @@ export default function QRScannerReceipt() {
     }
   };
 
-  // ✅ Print handler
+  // ✅ Print handler with PAYMENT CHECK
   const handlePrint = async () => {
     if (!orderDetails) return;
+
+    // ❌ If payment not completed, block printing
+    if (
+      orderDetails.payment_status !== "PAID" ||
+      orderDetails.payment_verified !== true
+    ) {
+      alert("Payment Pending! Cannot print token.");
+      return;
+    }
+
     try {
       window.print();
 
@@ -87,14 +98,19 @@ export default function QRScannerReceipt() {
     }
   };
 
-  // ✅ Only scanner + token input in UI
+  const isPaid =
+    orderDetails?.payment_status === "PAID" &&
+    orderDetails?.payment_verified === true;
+
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
       <h2>Scan QR Code or Enter Token</h2>
+
       <video
         ref={videoRef}
         style={{ width: "300px", height: "300px", border: "1px solid #ccc" }}
       />
+
       <div style={{ marginTop: "20px" }}>
         <input
           type="text"
@@ -107,9 +123,18 @@ export default function QRScannerReceipt() {
           Fetch Receipt
         </button>
       </div>
+
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {orderDetails && !orderDetails.is_printed && (
+      {/* ❌ Payment pending warning */}
+      {orderDetails && !isPaid && (
+        <p style={{ color: "red", fontSize: "20px", fontWeight: "bold" }}>
+          ⚠️ Payment Pending — Cannot Print Token
+        </p>
+      )}
+
+      {/* ✔ Show print button only if PAID */}
+      {orderDetails && isPaid && !orderDetails.is_printed && (
         <button
           onClick={handlePrint}
           style={{
@@ -126,13 +151,14 @@ export default function QRScannerReceipt() {
         </button>
       )}
 
+      {/* Already printed */}
       {orderDetails && orderDetails.is_printed && (
         <p style={{ color: "red", fontWeight: "bold", fontSize: "18px" }}>
           ⚠️ Already Printed (Token No.: {orderDetails.token_number})
         </p>
       )}
 
-      {/* ✅ Hidden receipt (only visible in print) */}
+      {/* PRINT TEMPLATE */}
       {orderDetails && (
         <div className="print-receipt">
           <div className="view-wrapper print-wrapper">
@@ -141,7 +167,7 @@ export default function QRScannerReceipt() {
                 <span className="view-icon print-icon">
                   <BsCheck />
                 </span>{" "}
-                Payment Successful
+                {isPaid ? "Payment Successful" : "Payment Pending"}
               </p>
             </div>
 
@@ -153,6 +179,7 @@ export default function QRScannerReceipt() {
                 Token No.: <strong>{orderDetails.token_number}</strong>
               </p>
               <p>post-paid</p>
+
               <p className="view-date print-date">
                 Date:{" "}
                 {new Date(orderDetails.created_datetime).toLocaleString(
@@ -179,35 +206,43 @@ export default function QRScannerReceipt() {
                       <td>{item.price.toFixed(2)}</td>
                     </tr>
                   ))}
+
                   <tr>
                     <td>CGST</td>
                     <td></td>
                     <td>{(orderDetails.cgst || 0).toFixed(2)}</td>
                   </tr>
+
                   <tr>
                     <td>SGST</td>
                     <td></td>
                     <td>{(orderDetails.sgst || 0).toFixed(2)}</td>
                   </tr>
+
                   <tr>
                     <td>Total GST</td>
                     <td></td>
                     <td>{(orderDetails.total_gst || 0).toFixed(2)}</td>
                   </tr>
+
                   <tr>
                     <td>Total</td>
                     <td></td>
                     <td>{(orderDetails.total_amount || 0).toFixed(2)}</td>
                   </tr>
+
                   <tr>
                     <td>Round Off</td>
                     <td></td>
                     <td>
                       {orderDetails.round_off >= 0
                         ? `+ ${(orderDetails.round_off || 0).toFixed(2)}`
-                        : `- ${Math.abs(orderDetails.round_off || 0).toFixed(2)}`}
+                        : `- ${Math.abs(orderDetails.round_off || 0).toFixed(
+                            2
+                          )}`}
                     </td>
                   </tr>
+
                   <tr className="view-grand print-grand">
                     <td>
                       <strong>Grand Total</strong>
