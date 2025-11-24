@@ -17,7 +17,6 @@ export default function Transactions() {
   const receiptRef = useRef(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // QR Modal
   const [qrModal, setQrModal] = useState({ open: false, orderId: null });
 
   useEffect(() => {
@@ -58,12 +57,29 @@ export default function Transactions() {
     });
   };
 
-  // QR Expiry (1 hour)
   const isQRExpired = (createdAt) => {
     const createdTime = new Date(createdAt).getTime();
     const now = new Date().getTime();
     const diffMinutes = (now - createdTime) / (1000 * 60);
     return diffMinutes > 60;
+  };
+
+  const getPaymentMethod = (order) => {
+    if (order.paid_with_wallet) return "Paid via Wallet";
+    if (order.payment_status === "PAID") return "Paid via Payment Gateway";
+    return "Payment Failed";
+  };
+
+  const canDownload = (order) => {
+    if (order.paid_with_wallet) return true;
+    if (!order.paid_with_wallet && order.payment_status === "PAID") return true;
+    return false;
+  };
+
+  const canShowQR = (order) => {
+    if (!canDownload(order)) return false;
+    if (isQRExpired(order.created_datetime)) return false;
+    return true;
   };
 
   return (
@@ -77,10 +93,11 @@ export default function Transactions() {
         ) : (
           <div className="txn-container">
             <h2 className="txn-title">Transaction History</h2>
+
             <div className="txn-table">
               <div className="txn-header">
                 <span>Date</span>
-                <span>Token No.</span>
+                <span>Token</span>
                 <span>Amount</span>
                 <span>Payment Method</span>
                 <span>Status</span>
@@ -89,7 +106,9 @@ export default function Transactions() {
               </div>
 
               {orders.map((order) => {
-                const isFailed = order.total_amount === 0;
+                const failedPayment =
+                  !order.paid_with_wallet &&
+                  order.payment_status !== "PAID";
                 const qrExpired = isQRExpired(order.created_datetime);
 
                 return (
@@ -104,18 +123,23 @@ export default function Transactions() {
                         }
                       )}
                     </span>
+
                     <span>{order.token_number}</span>
                     <span>₹{order.total_amount.toFixed(2)}</span>
-                    <span>{order.payment_method_detail || "Wallet"}</span>
+
+                    <span>{getPaymentMethod(order)}</span>
+
                     <span
                       className={`txn-status ${
-                        isFailed ? "failed" : "success"
+                        failedPayment ? "failed" : "success"
                       }`}
                     >
-                      {isFailed ? "Failed" : "Success"}
+                      {failedPayment ? "Failed" : "Success"}
                     </span>
+
+                    {/* DOWNLOAD BUTTON */}
                     <span>
-                      {!isFailed ? (
+                      {canDownload(order) ? (
                         <button
                           className="txn-download-button"
                           onClick={() => fetchAndDownload(order.id)}
@@ -126,23 +150,25 @@ export default function Transactions() {
                         <span className="txn-no-download">—</span>
                       )}
                     </span>
+
+                    {/* QR */}
                     <span className="txn-qr">
-                      {!isFailed ? (
-                        qrExpired ? (
-                          <p className="qr-expired">QR Expired</p>
-                        ) : (
-                          <div
-                            onClick={() =>
-                              setQrModal({ open: true, orderId: order.id })
-                            }
-                            style={{ cursor: "pointer" }}
-                          >
-                            <QRCodeCanvas
-                              value={`https://admin-aged-field-2794.fly.dev/receipt/${order.id}`}
-                              size={60}
-                            />
-                          </div>
-                        )
+                      {canShowQR(order) ? (
+                        <div
+                          onClick={() =>
+                            setQrModal({ open: true, orderId: order.id })
+                          }
+                          style={{ cursor: "pointer" }}
+                        >
+                          <QRCodeCanvas
+                            value={`https://admin-aged-field-2794.fly.dev/receipt/${order.id}`}
+                            size={60}
+                          />
+                        </div>
+                      ) : failedPayment ? (
+                        <p className="qr-expired">Payment Failed</p>
+                      ) : qrExpired ? (
+                        <p className="qr-expired">QR Expired</p>
                       ) : (
                         <span className="txn-no-download">—</span>
                       )}
@@ -155,7 +181,7 @@ export default function Transactions() {
         )}
       </div>
 
-      {/* QR Modal */}
+      {/* QR MODAL */}
       {qrModal.open && (
         <div
           className="qr-modal-overlay"
@@ -174,7 +200,7 @@ export default function Transactions() {
         </div>
       )}
 
-      {/* Hidden PDF Receipt */}
+      {/* HIDDEN RECEIPT */}
       {selectedOrder && (
         <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
           <div ref={receiptRef} className="txn-pdf-receipt-card">
@@ -200,9 +226,9 @@ export default function Transactions() {
             <table>
               <thead>
                 <tr>
-                  <th>Item Name</th>
-                  <th>Qty.</th>
-                  <th>Price (Rs)</th>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Price</th>
                 </tr>
               </thead>
               <tbody>
@@ -214,7 +240,6 @@ export default function Transactions() {
                   </tr>
                 ))}
 
-                {/* GST Rows */}
                 <tr>
                   <td>CGST</td>
                   <td></td>
@@ -231,9 +256,8 @@ export default function Transactions() {
                   <td>{selectedOrder.total_gst.toFixed(2)}</td>
                 </tr>
 
-                {/* Total before round-off */}
                 <tr>
-                  <td>Total (Rs)</td>
+                  <td>Total</td>
                   <td></td>
                   <td>
                     {(
@@ -242,25 +266,21 @@ export default function Transactions() {
                   </td>
                 </tr>
 
-                {/* Round Off */}
                 <tr>
-                  <td>Round Off (Rs)</td>
+                  <td>Round Off</td>
                   <td></td>
-                  <td>
-                    {selectedOrder.round_off >= 0
-                      ? `+ ${selectedOrder.round_off.toFixed(2)}`
-                      : `- ${Math.abs(selectedOrder.round_off).toFixed(2)}`}
-                  </td>
+                  <td>{selectedOrder.round_off.toFixed(2)}</td>
                 </tr>
 
-                {/* Grand Total */}
                 <tr className="txn-grand-total-row">
                   <td>
-                    <strong>Grand Total (Rs)</strong>
+                    <strong>Grand Total</strong>
                   </td>
                   <td></td>
                   <td>
-                    <strong>{selectedOrder.total_amount.toFixed(2)}</strong>
+                    <strong>
+                      {selectedOrder.total_amount.toFixed(2)}
+                    </strong>
                   </td>
                 </tr>
               </tbody>
