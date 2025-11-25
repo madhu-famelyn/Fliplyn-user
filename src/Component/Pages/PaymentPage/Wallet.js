@@ -24,7 +24,6 @@ export default function PaymentMethodPage() {
     { label: 'Payment Gateway', icon: <SiPhonepe /> }
   ];
 
-  // ✅ Load Razorpay Script
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       if (window.Razorpay) return resolve(true);
@@ -70,7 +69,6 @@ export default function PaymentMethodPage() {
     }, 0);
   };
 
-  // ✅ UPDATED Razorpay Payment Handler (Backend Compatible)
   const handleRazorpayPayment = async (orderPayload) => {
     const scriptLoaded = await loadRazorpayScript();
     if (!scriptLoaded) {
@@ -79,7 +77,6 @@ export default function PaymentMethodPage() {
     }
 
     try {
-      // 1️⃣ First create order in backend
       const orderRes = await axios.post(
         'https://admin-aged-field-2794.fly.dev/orders/place',
         orderPayload
@@ -88,18 +85,12 @@ export default function PaymentMethodPage() {
       const createdOrder = orderRes.data;
       const orderId = createdOrder.id;
 
-      // 2️⃣ Create Razorpay order from backend
       const razorpayRes = await axios.post(
         'https://admin-aged-field-2794.fly.dev/orders/create-razorpay-order',
         { order_id: orderId }
       );
 
-      const {
-        razorpay_order_id,
-        amount,
-        currency,
-        key_id
-      } = razorpayRes.data;
+      const { razorpay_order_id, amount, currency, key_id } = razorpayRes.data;
 
       const options = {
         key: key_id,
@@ -142,7 +133,6 @@ export default function PaymentMethodPage() {
     }
   };
 
-  // ✅ Main Payment Handler
   const handleConfirmPayment = async () => {
     setErrorMsg('');
     const totalAmount = calculateTotalAmount();
@@ -160,7 +150,9 @@ export default function PaymentMethodPage() {
       pay_with_wallet: selectedMethod === 'Wallet'
     };
 
-    // ✅ Wallet Flow
+    // ==============================
+    // ✅ WALLET PAYMENT FLOW
+    // ==============================
     if (selectedMethod === 'Wallet') {
       if (totalAmount > walletBalance) {
         setErrorMsg(`❌ Insufficient Wallet Balance`);
@@ -180,16 +172,23 @@ export default function PaymentMethodPage() {
         setCartItems([]);
 
         navigate('/success', { state: { order: res.data } });
+
       } catch (err) {
         console.error(err);
-        setErrorMsg('⚠️ Order failed');
+
+        // ⛔️ NEW: Show backend error such as "Insufficient wallet balance"
+        const backendErr = err?.response?.data?.detail || "⚠️ Order failed";
+        setErrorMsg(backendErr);
+
       } finally {
         setIsLoading(false);
       }
       return;
     }
 
-    // ✅ UPDATED Razorpay Flow
+    // ==============================
+    // ✅ RAZORPAY PAYMENT FLOW
+    // ==============================
     if (selectedMethod === 'Payment Gateway') {
       handleRazorpayPayment(orderPayload);
     }
