@@ -109,7 +109,6 @@ export default function PaymentMethodPage() {
             localStorage.removeItem('cartItems');
             localStorage.removeItem('cart');
             setCartItems([]);
-
             navigate('/success', { state: { order: createdOrder } });
           } catch (err) {
             console.error('Post-payment cleanup failed', err);
@@ -142,17 +141,18 @@ export default function PaymentMethodPage() {
       quantity: item.quantity
     }));
 
+    // ⛔️ NEW — Correct pay_with_wallet value
     const orderPayload = {
       user_id: userId,
       user_phone: userDetails.phone_number,
       user_email: userDetails.company_email,
       items: itemsPayload,
-      pay_with_wallet: selectedMethod === 'Wallet'
+      pay_with_wallet: selectedMethod === 'Wallet' ? true : false
     };
 
-    // ==============================
-    // ✅ WALLET PAYMENT FLOW
-    // ==============================
+    // -------------------------------
+    // WALLET PAYMENT FLOW
+    // -------------------------------
     if (selectedMethod === 'Wallet') {
       if (totalAmount > walletBalance) {
         setErrorMsg(`❌ Insufficient Wallet Balance`);
@@ -161,7 +161,10 @@ export default function PaymentMethodPage() {
 
       setIsLoading(true);
       try {
-        const res = await axios.post('https://admin-aged-field-2794.fly.dev/orders/place', orderPayload);
+        const res = await axios.post(
+          'https://admin-aged-field-2794.fly.dev/orders/place',
+          orderPayload
+        );
 
         await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -170,25 +173,21 @@ export default function PaymentMethodPage() {
         localStorage.removeItem('cartItems');
         localStorage.removeItem('cart');
         setCartItems([]);
-
         navigate('/success', { state: { order: res.data } });
 
       } catch (err) {
         console.error(err);
-
-        // ⛔️ NEW: Show backend error such as "Insufficient wallet balance"
         const backendErr = err?.response?.data?.detail || "⚠️ Order failed";
         setErrorMsg(backendErr);
-
       } finally {
         setIsLoading(false);
       }
       return;
     }
 
-    // ==============================
-    // ✅ RAZORPAY PAYMENT FLOW
-    // ==============================
+    // -------------------------------
+    // RAZORPAY PAYMENT FLOW
+    // -------------------------------
     if (selectedMethod === 'Payment Gateway') {
       handleRazorpayPayment(orderPayload);
     }

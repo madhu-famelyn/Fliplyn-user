@@ -11,13 +11,12 @@ export default function QRScannerReceipt() {
   const [tokenInput, setTokenInput] = useState("");
   const codeReaderRef = useRef(null);
 
-  // ✅ QR Scanner setup
   useEffect(() => {
     const codeReader = new BrowserQRCodeReader();
     codeReaderRef.current = codeReader;
 
     codeReader
-      .decodeFromVideoDevice(undefined, videoRef.current, async (result, err) => {
+      .decodeFromVideoDevice(undefined, videoRef.current, async (result) => {
         if (result) {
           try {
             const qrData = JSON.parse(result.getText());
@@ -39,48 +38,42 @@ export default function QRScannerReceipt() {
             console.error(e);
           }
         }
-        if (err && !(err.name === "NotFoundException")) {
-          console.error(err);
-        }
       })
       .catch((err) => setError(err.message));
 
     return () => {
-      if (codeReaderRef.current) {
-        try {
-          codeReaderRef.current.stop();
-        } catch (e) {}
-      }
+      try {
+        codeReaderRef.current?.stop();
+      } catch {}
     };
   }, []);
 
-  // ✅ Manual fetch by token number
   const fetchByToken = async () => {
-    if (!tokenInput) {
-      setError("Please enter a token number");
-      return;
-    }
+    if (!tokenInput) return setError("Please enter a token number");
     try {
       const res = await axios.get(
         `https://admin-aged-field-2794.fly.dev/orders/orders/by-token/${tokenInput}`
       );
       setOrderDetails(res.data);
       setError("");
-    } catch (err) {
+    } catch {
       setError("Invalid token number or order not found");
-      console.error(err);
     }
   };
 
-  // ✅ Print handler with PAYMENT CHECK
+  // 🔥 Updated Payment Status Logic
+  const isWalletPaid = orderDetails?.paid_with_wallet === true;
+  const isRazorpayPaid =
+    orderDetails?.payment_status === "PAID" &&
+    orderDetails?.payment_verified === true;
+
+  const isPaid = isWalletPaid || isRazorpayPaid; // 👈 FINAL
+
   const handlePrint = async () => {
     if (!orderDetails) return;
 
-    // ❌ If payment not completed, block printing
-    if (
-      orderDetails.payment_status !== "PAID" ||
-      orderDetails.payment_verified !== true
-    ) {
+    // ❌ Prevent printing failed Razorpay payment
+    if (!isPaid) {
       alert("Payment Pending! Cannot print token.");
       return;
     }
@@ -97,10 +90,6 @@ export default function QRScannerReceipt() {
       console.error("Failed to mark as printed:", err);
     }
   };
-
-  const isPaid =
-    orderDetails?.payment_status === "PAID" &&
-    orderDetails?.payment_verified === true;
 
   return (
     <div style={{ textAlign: "center", padding: "20px" }}>
@@ -126,14 +115,14 @@ export default function QRScannerReceipt() {
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {/* ❌ Payment pending warning */}
+      {/* ❌ Razorpay failed = show warning */}
       {orderDetails && !isPaid && (
         <p style={{ color: "red", fontSize: "20px", fontWeight: "bold" }}>
           ⚠️ Payment Pending — Cannot Print Token
         </p>
       )}
 
-      {/* ✔ Show print button only if PAID */}
+      {/* ✔ Print button only for success */}
       {orderDetails && isPaid && !orderDetails.is_printed && (
         <button
           onClick={handlePrint}
@@ -152,13 +141,13 @@ export default function QRScannerReceipt() {
       )}
 
       {/* Already printed */}
-      {orderDetails && orderDetails.is_printed && (
+      {orderDetails?.is_printed && (
         <p style={{ color: "red", fontWeight: "bold", fontSize: "18px" }}>
           ⚠️ Already Printed (Token No.: {orderDetails.token_number})
         </p>
       )}
 
-      {/* PRINT TEMPLATE */}
+      {/* Receipt Preview */}
       {orderDetails && (
         <div className="print-receipt">
           <div className="view-wrapper print-wrapper">
@@ -166,14 +155,14 @@ export default function QRScannerReceipt() {
               <p className="view-success print-success">
                 <span className="view-icon print-icon">
                   <BsCheck />
-                </span>{" "}
+                </span>
                 {isPaid ? "Payment Successful" : "Payment Pending"}
               </p>
             </div>
 
             <div className="view-card print-card">
               <h2 className="view-stall print-stall">
-                {orderDetails.order_details[0]?.stall_name || "Stall Name"}
+                {orderDetails.order_details[0]?.stall_name}
               </h2>
               <p className="view-token print-token">
                 Token No.: <strong>{orderDetails.token_number}</strong>
@@ -206,31 +195,26 @@ export default function QRScannerReceipt() {
                       <td>{item.price.toFixed(2)}</td>
                     </tr>
                   ))}
-
                   <tr>
                     <td>CGST</td>
                     <td></td>
                     <td>{(orderDetails.cgst || 0).toFixed(2)}</td>
                   </tr>
-
                   <tr>
                     <td>SGST</td>
                     <td></td>
                     <td>{(orderDetails.sgst || 0).toFixed(2)}</td>
                   </tr>
-
                   <tr>
                     <td>Total GST</td>
                     <td></td>
                     <td>{(orderDetails.total_gst || 0).toFixed(2)}</td>
                   </tr>
-
                   <tr>
                     <td>Total</td>
                     <td></td>
                     <td>{(orderDetails.total_amount || 0).toFixed(2)}</td>
                   </tr>
-
                   <tr>
                     <td>Round Off</td>
                     <td></td>
@@ -242,7 +226,6 @@ export default function QRScannerReceipt() {
                           )}`}
                     </td>
                   </tr>
-
                   <tr className="view-grand print-grand">
                     <td>
                       <strong>Grand Total</strong>
