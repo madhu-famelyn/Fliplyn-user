@@ -7,7 +7,7 @@ import { SiPhonepe } from 'react-icons/si';
 import { useAuth } from '../../AuthContext/ContextApi';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://admin-aged-field-2794.fly.dev";
 
 export default function PaymentMethodPage() {
   const { user, token } = useAuth();
