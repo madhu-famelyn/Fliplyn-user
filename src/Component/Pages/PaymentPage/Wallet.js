@@ -7,7 +7,7 @@ import { SiPhonepe } from 'react-icons/si';
 import { useAuth } from '../../AuthContext/ContextApi';
 import { useNavigate } from 'react-router-dom';
 
-const API_BASE = "https://admin-aged-field-2794.fly.dev";
+const API_BASE = "http://127.0.0.1:8000";
 
 export default function PaymentMethodPage() {
   const { user, token } = useAuth();
@@ -35,23 +35,33 @@ export default function PaymentMethodPage() {
       document.body.appendChild(script);
     });
 
-  // Load cart
+  // ✅ Load Cart
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartItems(stored);
   }, []);
 
-  // Fetch wallet and user
+  // ✅ Fetch User Details Only Once and Store in LocalStorage
   useEffect(() => {
     if (!userId || !token) return;
 
-    const fetchUserWallet = async () => {
+    const fetchAndStoreUserDetails = async () => {
       try {
         const walletRes = await axios.get(`${API_BASE}/wallets/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setWalletBalance(walletRes.data?.balance_amount || 0);
 
+        // ✅ Check cache first
+        const storedPhone = localStorage.getItem("user_phone");
+        const storedEmail = localStorage.getItem("user_email");
+
+        if (storedPhone && storedEmail) {
+          setUserDetails({ phone: storedPhone, email: storedEmail });
+          return;
+        }
+
+        // ✅ Fetch from API only once
         const userRes = await axios.get(`${API_BASE}/user/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -60,20 +70,23 @@ export default function PaymentMethodPage() {
         const email = userRes.data?.company_email || '';
 
         setUserDetails({ phone, email });
+
+        // ✅ Save to localStorage for future usage
         localStorage.setItem("user_phone", phone);
         localStorage.setItem("user_email", email);
+
       } catch (err) {
-        console.error("❌ Error fetching data:", err?.response?.data || err);
+        console.error("❌ Error fetching user details:", err?.response?.data || err);
       }
     };
 
-    fetchUserWallet();
+    fetchAndStoreUserDetails();
   }, [userId, token]);
 
   const calculateTotalAmount = () =>
     cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  // MAIN PAYMENT
+  // ✅ PAYMENT HANDLER
   const handleConfirmPayment = async () => {
     setErrorMsg("");
 
@@ -83,21 +96,26 @@ export default function PaymentMethodPage() {
     }
 
     const totalAmount = calculateTotalAmount();
+
     const itemsPayload = cartItems.map((item) => ({
       item_id: item.id,
       quantity: item.quantity,
       price: item.price,
     }));
 
+    // ✅ Always use localStorage where possible
+    const phone = userDetails.phone || localStorage.getItem("user_phone");
+    const email = userDetails.email || localStorage.getItem("user_email");
+
     const orderPayload = {
       user_id: userId,
-      user_phone: userDetails.phone || localStorage.getItem("user_phone"),
-      user_email: userDetails.email || localStorage.getItem("user_email"),
+      user_phone: phone,
+      user_email: email,
       items: itemsPayload,
       pay_with_wallet: selectedMethod === 'Wallet',
     };
 
-    if (!orderPayload.user_phone || !orderPayload.user_email) {
+    if (!phone || !email) {
       setErrorMsg("User phone/email missing — update profile");
       return;
     }
@@ -119,6 +137,7 @@ export default function PaymentMethodPage() {
 
         localStorage.removeItem("cartItems");
         navigate('/success', { state: { order: res.data } });
+
       } catch (err) {
         setErrorMsg(err?.response?.data?.detail || "Order Failed");
       } finally {
@@ -135,7 +154,6 @@ export default function PaymentMethodPage() {
         const scriptLoaded = await loadRazorpayScript();
         if (!scriptLoaded) return setErrorMsg("Failed to load Razorpay");
 
-        // Create order first (backend will generate razorpay_order_id)
         const orderRes = await axios.post(`${API_BASE}/orders/place`, orderPayload, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -170,13 +188,14 @@ export default function PaymentMethodPage() {
 
           prefill: {
             name: user?.name || "",
-            email: orderPayload.user_email,
-            contact: orderPayload.user_phone,
+            email: email,
+            contact: phone,
           },
           theme: { color: "#0d6efd" },
         };
 
         new window.Razorpay(options).open();
+
       } catch (err) {
         console.error("❌ Razorpay Error:", err?.response?.data || err);
         setErrorMsg("Payment failed");
@@ -204,11 +223,11 @@ export default function PaymentMethodPage() {
           ))}
         </div>
 
-<h2 className="payment-title">Payment</h2>
+        <h2 className="payment-title">Payment</h2>
 
-<p className="wallet-balance-text">
-  Wallet Balance: <strong>₹ {walletBalance.toFixed(2)}</strong>
-</p>
+        <p className="wallet-balance-text">
+          Wallet Balance: <strong>₹ {walletBalance.toFixed(2)}</strong>
+        </p>
 
         <div className="cart-summary-box">
           <h3 className="cart-title">Cart Items</h3>
