@@ -7,196 +7,188 @@ import { SiPhonepe } from 'react-icons/si';
 import { useAuth } from '../../AuthContext/ContextApi';
 import { useNavigate } from 'react-router-dom';
 
+const API_BASE = "https://admin-aged-field-2794.fly.dev";
+
 export default function PaymentMethodPage() {
   const { user, token } = useAuth();
+  const navigate = useNavigate();
+  const userId = user?.id;
+
   const [selectedMethod, setSelectedMethod] = useState('Wallet');
   const [walletBalance, setWalletBalance] = useState(0);
-  const [userDetails, setUserDetails] = useState({ phone_number: '', company_email: '' });
   const [cartItems, setCartItems] = useState([]);
+  const [userDetails, setUserDetails] = useState({ phone: '', email: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
-  const userId = user?.id;
-  const navigate = useNavigate();
-
   const paymentMethods = [
     { label: 'Wallet', icon: <FaWallet /> },
-    { label: 'Payment Gateway', icon: <SiPhonepe /> }
+    { label: 'Payment Gateway', icon: <SiPhonepe /> },
   ];
 
-  const loadRazorpayScript = () => {
-    return new Promise((resolve) => {
-      if (window.Razorpay) return resolve(true);
+  const loadRazorpayScript = () =>
+    new Promise((resolve) => {
       const script = document.createElement('script');
       script.src = 'https://checkout.razorpay.com/v1/checkout.js';
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
-  };
 
+  // Load cart
   useEffect(() => {
-    if (!userId) return;
+    const stored = JSON.parse(localStorage.getItem("cartItems")) || [];
+    setCartItems(stored);
+  }, []);
 
-    const fetchData = async () => {
+  // Fetch wallet and user
+  useEffect(() => {
+    if (!userId || !token) return;
+
+    const fetchUserWallet = async () => {
       try {
-        const [walletRes, userRes, cartRes] = await Promise.all([
-          axios.get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`),
-          axios.get(`https://admin-aged-field-2794.fly.dev/user/${userId}`),
-          axios.get(`https://admin-aged-field-2794.fly.dev/cart/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-        ]);
-
-        setWalletBalance(walletRes.data.balance_amount || 0);
-        setUserDetails({
-          phone_number: userRes.data.phone_number || '',
-          company_email: userRes.data.company_email || ''
+        const walletRes = await axios.get(`${API_BASE}/wallets/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setCartItems(cartRes.data.items || []);
+        setWalletBalance(walletRes.data?.balance_amount || 0);
+
+        const userRes = await axios.get(`${API_BASE}/user/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const phone = userRes.data?.phone_number || '';
+        const email = userRes.data?.company_email || '';
+
+        setUserDetails({ phone, email });
+        localStorage.setItem("user_phone", phone);
+        localStorage.setItem("user_email", email);
       } catch (err) {
-        console.error('Fetch failed', err);
+        console.error("❌ Error fetching data:", err?.response?.data || err);
       }
     };
 
-    fetchData();
+    fetchUserWallet();
   }, [userId, token]);
 
-  const calculateTotalAmount = () => {
-    return cartItems.reduce((total, item) => {
-      const price = item.price || item.item_price || 0;
-      return total + price * item.quantity;
-    }, 0);
-  };
+  const calculateTotalAmount = () =>
+    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const handleRazorpayPayment = async (orderPayload) => {
-    const scriptLoaded = await loadRazorpayScript();
-    if (!scriptLoaded) {
-      alert('Razorpay SDK failed to load');
+  // MAIN PAYMENT
+  const handleConfirmPayment = async () => {
+    setErrorMsg("");
+
+    if (!userId || cartItems.length === 0) {
+      setErrorMsg("Invalid user or cart.");
       return;
     }
 
-    try {
-      const orderRes = await axios.post(
-        'https://admin-aged-field-2794.fly.dev/orders/place',
-        orderPayload
-      );
-
-      const createdOrder = orderRes.data;
-      const orderId = createdOrder.id;
-
-      const razorpayRes = await axios.post(
-        'https://admin-aged-field-2794.fly.dev/orders/create-razorpay-order',
-        { order_id: orderId }
-      );
-
-      const { razorpay_order_id, amount, currency, key_id } = razorpayRes.data;
-
-      const options = {
-        key: key_id,
-        amount,
-        currency,
-        name: 'Fiplyn',
-        description: 'Order Payment',
-        order_id: razorpay_order_id,
-
-        handler: async function () {
-          try {
-            await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-
-            localStorage.removeItem('cartItems');
-            localStorage.removeItem('cart');
-            setCartItems([]);
-            navigate('/success', { state: { order: createdOrder } });
-          } catch (err) {
-            console.error('Post-payment cleanup failed', err);
-            alert('Payment succeeded but cleanup failed.');
-          }
-        },
-
-        prefill: {
-          contact: userDetails.phone_number,
-          email: userDetails.company_email
-        },
-
-        theme: { color: '#3399cc' }
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
-    } catch (err) {
-      console.error('Razorpay error:', err);
-      setErrorMsg('⚠️ Failed to start UPI payment');
-    }
-  };
-
-  const handleConfirmPayment = async () => {
-    setErrorMsg('');
     const totalAmount = calculateTotalAmount();
-
     const itemsPayload = cartItems.map((item) => ({
-      item_id: item.item_id,
-      quantity: item.quantity
+      item_id: item.id,
+      quantity: item.quantity,
+      price: item.price,
     }));
 
-    // ⛔️ NEW — Correct pay_with_wallet value
     const orderPayload = {
       user_id: userId,
-      user_phone: userDetails.phone_number,
-      user_email: userDetails.company_email,
+      user_phone: userDetails.phone || localStorage.getItem("user_phone"),
+      user_email: userDetails.email || localStorage.getItem("user_email"),
       items: itemsPayload,
-      pay_with_wallet: selectedMethod === 'Wallet' ? true : false
+      pay_with_wallet: selectedMethod === 'Wallet',
     };
 
-    // -------------------------------
-    // WALLET PAYMENT FLOW
-    // -------------------------------
-    if (selectedMethod === 'Wallet') {
+    if (!orderPayload.user_phone || !orderPayload.user_email) {
+      setErrorMsg("User phone/email missing — update profile");
+      return;
+    }
+
+    console.log("📦 FINAL ORDER PAYLOAD:", orderPayload);
+
+    // ---------------- WALLET PAYMENT ----------------
+    if (selectedMethod === "Wallet") {
       if (totalAmount > walletBalance) {
-        setErrorMsg(`❌ Insufficient Wallet Balance`);
+        setErrorMsg("Insufficient Wallet Balance");
         return;
       }
 
-      setIsLoading(true);
       try {
-        const res = await axios.post(
-          'https://admin-aged-field-2794.fly.dev/orders/place',
-          orderPayload
-        );
-
-        await axios.delete(`https://admin-aged-field-2794.fly.dev/cart/clear/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` }
+        setIsLoading(true);
+        const res = await axios.post(`${API_BASE}/orders/place`, orderPayload, {
+          headers: { Authorization: `Bearer ${token}` },
         });
 
-        localStorage.removeItem('cartItems');
-        localStorage.removeItem('cart');
-        setCartItems([]);
+        localStorage.removeItem("cartItems");
         navigate('/success', { state: { order: res.data } });
-
       } catch (err) {
-        console.error(err);
-        const backendErr = err?.response?.data?.detail || "⚠️ Order failed";
-        setErrorMsg(backendErr);
+        setErrorMsg(err?.response?.data?.detail || "Order Failed");
       } finally {
         setIsLoading(false);
       }
       return;
     }
 
-    // -------------------------------
-    // RAZORPAY PAYMENT FLOW
-    // -------------------------------
-    if (selectedMethod === 'Payment Gateway') {
-      handleRazorpayPayment(orderPayload);
+    // ---------------- PAYMENT GATEWAY ----------------
+    if (selectedMethod === "Payment Gateway") {
+      try {
+        setIsLoading(true);
+
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) return setErrorMsg("Failed to load Razorpay");
+
+        // Create order first (backend will generate razorpay_order_id)
+        const orderRes = await axios.post(`${API_BASE}/orders/place`, orderPayload, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const backendOrder = orderRes.data;
+        const rzpOrderId = backendOrder.razorpay_order_id;
+
+        const options = {
+          key: "rzp_live_RhsVZO1LTfyhqQ",
+          amount: backendOrder.total_amount * 100,
+          currency: "INR",
+          name: "My App",
+          description: "Order Payment",
+          order_id: rzpOrderId,
+
+          handler: async function (response) {
+            try {
+              await axios.post(`${API_BASE}/orders/verify-payment`, {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature
+              }, {
+                headers: { Authorization: `Bearer ${token}` }
+              });
+
+              localStorage.removeItem("cartItems");
+              navigate('/success', { state: { order: backendOrder } });
+            } catch {
+              setErrorMsg("Payment verification failed");
+            }
+          },
+
+          prefill: {
+            name: user?.name || "",
+            email: orderPayload.user_email,
+            contact: orderPayload.user_phone,
+          },
+          theme: { color: "#0d6efd" },
+        };
+
+        new window.Razorpay(options).open();
+      } catch (err) {
+        console.error("❌ Razorpay Error:", err?.response?.data || err);
+        setErrorMsg("Payment failed");
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
   return (
     <>
       <Header />
-
       <div className="payment-page-container">
         <h2 className="payment-title">Payment</h2>
 
@@ -206,28 +198,52 @@ export default function PaymentMethodPage() {
               key={label}
               className={`method-btn ${selectedMethod === label ? 'selected' : ''}`}
               onClick={() => setSelectedMethod(label)}
-              disabled={isLoading}
             >
               {icon} {label}
             </button>
           ))}
         </div>
 
-        {selectedMethod === 'Wallet' && (
-          <div className="wallet-section">
-            <p className="wallet-label">Wallet Balance</p>
-            <p className="wallet-amount">₹{walletBalance.toFixed(2)}</p>
-          </div>
-        )}
+<h2 className="payment-title">Payment</h2>
+
+<p className="wallet-balance-text">
+  Wallet Balance: <strong>₹ {walletBalance.toFixed(2)}</strong>
+</p>
+
+        <div className="cart-summary-box">
+          <h3 className="cart-title">Cart Items</h3>
+
+          {cartItems.length === 0 ? (
+            <p className="empty-cart-msg">No items in cart</p>
+          ) : (
+            <>
+              {cartItems.map((item, index) => (
+                <div key={index} className="cart-item-row">
+                  <span>{item.name}</span>
+                  <span>Qty: {item.quantity}</span>
+                  <span>₹{(item.price * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+              <hr />
+              <div className="cart-total-row">
+                <strong>Total:</strong>
+                <strong>₹ {calculateTotalAmount().toFixed(2)}</strong>
+              </div>
+            </>
+          )}
+        </div>
 
         {errorMsg && <p className="error-msg">{errorMsg}</p>}
 
         <div className="payment-buttons">
-          <button className="confirm-btn" onClick={handleConfirmPayment} disabled={isLoading}>
-            {isLoading ? 'Processing...' : 'Confirm Payment'}
+          <button
+            className="confirm-btn"
+            onClick={handleConfirmPayment}
+            disabled={isLoading}
+          >
+            {isLoading ? "Processing..." : "Confirm Payment"}
           </button>
-
-          <button className="continue-btn" onClick={() => navigate(-1)} disabled={isLoading}>
+          <button className="continue-btn" onClick={() => navigate(-1)}>
             Cancel
           </button>
         </div>

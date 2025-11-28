@@ -3,13 +3,13 @@ import './Profile.css';
 import Header from '../Header/Header';
 import { useAuth } from '../../AuthContext/ContextApi';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // ✅ Import useNavigate
+import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate(); // ✅ Initialize navigate
+  const navigate = useNavigate();
   const [fullUser, setFullUser] = useState(null);
-  const [noUserFound, setNoUserFound] = useState(false); // ✅ New state
+  const [noUserFound, setNoUserFound] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -23,9 +23,10 @@ export default function Profile() {
       axios.get(`https://admin-aged-field-2794.fly.dev/user/${user.id}`)
         .then(res => {
           if (!res.data || Object.keys(res.data).length === 0) {
-            setNoUserFound(true); // ✅ No user data
+            setNoUserFound(true);
             return;
           }
+
           setFullUser(res.data);
           setFormData({
             name: res.data.name || '',
@@ -33,13 +34,19 @@ export default function Profile() {
             company_name: res.data.company_name || '',
             company_email: res.data.company_email || ''
           });
+
+          // ✅ Save data to localStorage
+          localStorage.setItem("user_id", res.data.id);
+          localStorage.setItem("user_phone", res.data.phone_number);
+          localStorage.setItem("user_email", res.data.company_email);
+
         })
         .catch(err => {
           console.error("Error fetching user details:", err);
-          setNoUserFound(true); // ✅ On error, mark as not found
+          setNoUserFound(true);
         });
     } else {
-      setNoUserFound(true); // ✅ No user in context
+      setNoUserFound(true);
     }
   }, [user]);
 
@@ -55,6 +62,11 @@ export default function Profile() {
       .then(res => {
         setFullUser(res.data);
         setShowEditModal(false);
+
+        // 🔁 Update localStorage on edit also
+        localStorage.setItem("user_phone", res.data.phone_number);
+        localStorage.setItem("user_email", res.data.company_email);
+
       })
       .catch(err => {
         console.error("Error updating user:", err);
@@ -63,8 +75,13 @@ export default function Profile() {
   };
 
   const handleLogout = () => {
-    logout();              // Clear token + user
-    navigate('/');  // ✅ Redirect to SignIn page
+    // ❌ Remove data from localStorage when logging out
+    localStorage.removeItem("user_id");
+    localStorage.removeItem("user_phone");
+    localStorage.removeItem("user_email");
+
+    logout();
+    navigate('/');
   };
 
   if (noUserFound) {
@@ -111,11 +128,10 @@ export default function Profile() {
 
         <div className="profile-buttons">
           <button className="edit-btn" onClick={() => setShowEditModal(true)}>Edit Profile</button>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button> {/* ✅ Updated */}
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </div>
 
-      {/* ✅ Edit Modal */}
       {showEditModal && (
         <div className="modal-overlay">
           <div className="modal-content">

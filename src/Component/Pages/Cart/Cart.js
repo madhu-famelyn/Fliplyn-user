@@ -18,10 +18,13 @@ export default function Cart() {
   // Load from localStorage
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+    console.log("🛒 Loaded cart items from localStorage:", stored);
+
     setCartItems(stored);
   }, []);
 
-  // Update quantity
+  // Update quantity and log the updates
   const updateQuantity = (itemId, newQty) => {
     let updated = [...cartItems];
 
@@ -35,9 +38,12 @@ export default function Cart() {
 
     setCartItems(updated);
     localStorage.setItem("cartItems", JSON.stringify(updated));
+
+    console.log("🔄 Updated cartItems:", updated);
+    console.log("💾 Updated localStorage.cartItems:", JSON.parse(localStorage.getItem("cartItems")));
   };
 
-  // Send to backend
+  // Send to backend + log
   const handleProceed = async () => {
     if (cartItems.length === 0) return;
 
@@ -52,6 +58,8 @@ export default function Cart() {
           Gst_precentage: i.Gst_precentage || 0,
         })),
       };
+
+      console.log("📦 FINAL Payload sent to backend:", payload);
 
       await axios.post(`${API_BASE_URL}/cart/add-multiple`, payload, {
         headers: { Authorization: `Bearer ${token}` },
@@ -97,109 +105,97 @@ export default function Cart() {
   return (
     <>
       <Header />
-          <div className="cart-page">
+      <div className="cart-page">
+        <h2 className="heading">Your Basket</h2>
 
-      <h2 className="heading">Your Basket</h2>
+        {error && <div className="cart-error">{error}</div>}
 
-      {error && <div className="cart-error">{error}</div>}
+        {cartItems.length === 0 ? (
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            Your cart is empty.
+          </div>
+        ) : (
+          <>
+            <div className="cart-wrapper">
+              <div className="cart-grid">
+                {cartItems.map((item) => {
+                  const imageUrl = item.image_url?.startsWith("http")
+                    ? item.image_url
+                    : `${S3_BASE_URL}${item.image_url}`;
 
-      {cartItems.length === 0 ? (
-        <div style={{ textAlign: "center", marginTop: "2rem" }}>
-          Your cart is empty.
-        </div>
-      ) : (
-        <>
-          <div className="cart-wrapper">
-            <div className="cart-grid">
-              {cartItems.map((item) => {
-                const imageUrl = item.image_url?.startsWith("http")
-                  ? item.image_url
-                  : `${S3_BASE_URL}${item.image_url}`;
+                  return (
+                    <div className="cart-item" key={item.id}>
+                      <div className="cart-item-row">
+                        <img
+                          src={imageUrl}
+                          alt={item.name}
+                          className="item-image"
+                          onError={(e) => (e.target.src = "/fallback-item.jpg")}
+                        />
 
-                // const itemGST =
-                //   (item.price *
-                //     item.quantity *
-                //     (item.Gst_precentage || 0)) /
-                //   100;
+                        <div className="item-info">
+                          <p className="item-name">{item.name}</p>
+                          <p className="item-subtext">
+                            {item.description || "With fries"}
+                          </p>
+                        </div>
 
-                return (
-                  <div className="cart-item" key={item.id}>
-                    <div className="cart-item-row">
-                      <img
-                        src={imageUrl}
-                        alt={item.name}
-                        className="item-image"
-                        onError={(e) => (e.target.src = "/fallback-item.jpg")}
-                      />
+                        <div className="price-and-qty">
+                          <p className="price-text">₹{item.price}</p>
 
-                      <div className="item-info">
-                        <p className="item-name">{item.name}</p>
-                        <p className="item-subtext">{item.description || "With fries"}</p>
-                      </div>
+                          <div className="quantity-box">
+                            <button
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity - 1)
+                              }
+                            >
+                              -
+                            </button>
 
-                      <div className="price-and-qty">
-                        <p className="price-text">₹{item.price}</p>
+                            <span>{item.quantity}</span>
 
-                        <div className="quantity-box">
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
-                            }
-                          >
-                            -
-                          </button>
-
-                          <span>{item.quantity}</span>
-
-                          <button
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
-                            }
-                          >
-                            +
-                          </button>
+                            <button
+                              onClick={() =>
+                                updateQuantity(item.id, item.quantity + 1)
+                              }
+                            >
+                              +
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-              <button className="add-more-btn" onClick={() => navigate(-1)}>
-              ADD MORE ITEMS
-            </button>
+                  );
+                })}
+                <button className="add-more-btn" onClick={() => navigate(-1)}>
+                  ADD MORE ITEMS
+                </button>
+              </div>
             </div>
-          </div>
 
-          {/* Summary section */}
-          <div className="cart-summary">
-            <p>
-              <span>Subtotal</span>
-              <span>₹{subtotal.toFixed(0)}</span>
-            </p>
+            {/* Summary section */}
+            <div className="cart-summary">
+              <p>
+                <span>Subtotal</span>
+                <span>₹{subtotal.toFixed(0)}</span>
+              </p>
 
-            {/* <p>
-              <span>GST/Taxes</span>
-              <span>₹{totalGST.toFixed(0)}</span>
-            </p> */}
+              <hr />
 
-            <hr />
+              <h3>
+                <span>Total</span>
+                <span>₹{finalTotal.toFixed(0)}</span>
+              </h3>
+            </div>
 
-            <h3>
-              <span>Total</span>
-              <span>₹{finalTotal.toFixed(0)}</span>
-            </h3>
-          </div>
-
-          {/* Bottom Buttons */}
-          <div className="sticky-bottom">
-            
-
-            <button className="payment-btn" onClick={handleProceed}>
-              Select Payment
-            </button>
-          </div>
-        </>
-      )}
+            {/* Bottom Buttons */}
+            <div className="sticky-bottom">
+              <button className="payment-btn" onClick={handleProceed}>
+                Select Payment
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
