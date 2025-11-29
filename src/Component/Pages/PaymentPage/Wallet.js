@@ -17,7 +17,6 @@ export default function PaymentMethodPage() {
   const [selectedMethod, setSelectedMethod] = useState('Wallet');
   const [walletBalance, setWalletBalance] = useState(0);
   const [cartItems, setCartItems] = useState([]);
-  const [userDetails, setUserDetails] = useState({ phone: '', email: '' });
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -41,33 +40,22 @@ export default function PaymentMethodPage() {
     setCartItems(stored);
   }, []);
 
-  // Fetch wallet and user
+  // Fetch wallet only (NO user API)
   useEffect(() => {
     if (!userId || !token) return;
 
-    const fetchUserWallet = async () => {
+    const fetchWallet = async () => {
       try {
-        const walletRes = await axios.get(`${API_BASE}/wallets/${userId}`, {
+        const res = await axios.get(`${API_BASE}/wallets/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWalletBalance(walletRes.data?.balance_amount || 0);
-
-        const userRes = await axios.get(`${API_BASE}/user/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const phone = userRes.data?.phone_number || '';
-        const email = userRes.data?.company_email || '';
-
-        setUserDetails({ phone, email });
-        localStorage.setItem("user_phone", phone);
-        localStorage.setItem("user_email", email);
+        setWalletBalance(res.data?.balance_amount || 0);
       } catch (err) {
-        console.error("❌ Error fetching data:", err?.response?.data || err);
+        console.error("❌ Wallet Error:", err?.response?.data || err);
       }
     };
 
-    fetchUserWallet();
+    fetchWallet();
   }, [userId, token]);
 
   const calculateTotalAmount = () =>
@@ -89,16 +77,17 @@ export default function PaymentMethodPage() {
       price: item.price,
     }));
 
+    // ⭐ Take email & phone from context container
     const orderPayload = {
       user_id: userId,
-      user_phone: userDetails.phone || localStorage.getItem("user_phone"),
-      user_email: userDetails.email || localStorage.getItem("user_email"),
+      user_phone: user?.phone_number,
+      user_email: user?.company_email,
       items: itemsPayload,
       pay_with_wallet: selectedMethod === 'Wallet',
     };
 
     if (!orderPayload.user_phone || !orderPayload.user_email) {
-      setErrorMsg("User phone/email missing — update profile");
+      setErrorMsg("Phone/email missing — update profile");
       return;
     }
 
@@ -135,7 +124,6 @@ export default function PaymentMethodPage() {
         const scriptLoaded = await loadRazorpayScript();
         if (!scriptLoaded) return setErrorMsg("Failed to load Razorpay");
 
-        // Create order first (backend will generate razorpay_order_id)
         const orderRes = await axios.post(`${API_BASE}/orders/place`, orderPayload, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -204,11 +192,9 @@ export default function PaymentMethodPage() {
           ))}
         </div>
 
-<h2 className="payment-title">Payment</h2>
-
-<p className="wallet-balance-text">
-  Wallet Balance: <strong>₹ {walletBalance.toFixed(2)}</strong>
-</p>
+        <p className="wallet-balance-text">
+          Wallet Balance: <strong>₹ {walletBalance.toFixed(2)}</strong>
+        </p>
 
         <div className="cart-summary-box">
           <h3 className="cart-title">Cart Items</h3>
