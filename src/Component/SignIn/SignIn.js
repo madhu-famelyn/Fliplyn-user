@@ -40,27 +40,19 @@ export default function EmailLogin() {
         return;
       }
 
-      // ✅ Step 1: Login
+      // API Call
       const response = await initiateLogin({
         company_email: email,
         password
       });
 
       const token = response.access_token;
-      const user = response.user;
+      const user = response.user; // contains email & phone
 
-      // ✅ Store token & user in context
+      // Save token + user in context
       login(token, user);
 
-      // ⭐ Save email, phone & company_id in localStorage
-      localStorage.setItem("user_email", user.company_email);
-      localStorage.setItem("user_phone", user.phone_number);
-      localStorage.setItem("company_id", user.building_id);
-
-      // ⭐ Save token also (optional but recommended)
-      localStorage.setItem("auth_token", token);
-
-      // ✅ Always navigate to stalls
+      // Redirect
       navigate('/stalls');
 
     } catch (err) {

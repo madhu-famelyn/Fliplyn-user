@@ -13,19 +13,27 @@ export const AuthProvider = ({ children }) => {
       return storedUser ? JSON.parse(storedUser) : null;
     } catch (err) {
       console.error('❌ Failed to parse user from localStorage:', err);
-      localStorage.removeItem('user'); // clean up bad value
+      localStorage.removeItem('user');
       return null;
     }
   });
 
-  // ✅ Add derived auth state
   const isAuthenticated = !!token;
 
   const login = (newToken, newUser) => {
     setToken(newToken);
     setUser(newUser);
+
+    // Save to storage
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
+
+    // 🔥 Console log user data
+    console.log("🔐 Login Successful!");
+    console.log("🧑 Name:", newUser.name);
+    console.log("📧 Email:", newUser.email);
+    console.log("📱 Phone:", newUser.phone_number);
+    console.log("🏢 Company:", newUser.company_name);
   };
 
   const logout = () => {
