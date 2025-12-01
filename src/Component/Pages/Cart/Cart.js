@@ -135,9 +135,7 @@ export default function Cart() {
 
                         <div className="item-info">
                           <p className="item-name">{item.name}</p>
-                          <p className="item-subtext">
-                            {item.description || "With fries"}
-                          </p>
+                         
                         </div>
 
                         <div className="price-and-qty">
