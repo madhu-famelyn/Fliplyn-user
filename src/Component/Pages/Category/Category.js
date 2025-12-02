@@ -118,7 +118,7 @@ export default function Category() {
               onClick={() => navigate("/cart")}
             >
               <FiShoppingCart color="#fff" size={16} />
-              {cartCount > 0 ? ` ${cartCount}` : " Cart is empty"}
+              Cart
             </button>
           </div>
 
