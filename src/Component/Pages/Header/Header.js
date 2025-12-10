@@ -33,6 +33,8 @@ export default function Header() {
         <Link to="/cart">Cart</Link>
         <Link to="/transactions-wallet">Wallet</Link>
         <Link to="/trans">Transaction History</Link>
+        <Link to="/policy">Policy</Link>
+
         <Link className='user' to="/profile">
           <FaUserCircle className="user-icon" />
         </Link>

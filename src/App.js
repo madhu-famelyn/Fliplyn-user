@@ -29,6 +29,7 @@ import VerifyOTPPassword from './Component/SignIn/VerifyOTPPassword';
 import ChangePassword from './Component/SignIn/ChangePassword';
 import ReceiptPage from './Component/Pages/Success/RecepitPage';
 import QRScannerPage from './Component/Pages/ScanQR/ScanQR';
+import PolicyReview from './Component/Policy/Policy';
 
 function PublicRoute({ children }) {
   // ✅ Removed token-based redirect logic so `/` always shows SignIn
@@ -71,6 +72,7 @@ function AppContent() {
       <Route path="/verify-otp-password" element={<VerifyOTPPassword />} />
       <Route path="/change-password" element={<ChangePassword />} />
       <Route path="/receipt/:id" element={<ReceiptPage />} />
+      <Route path="/policy" element={<PolicyReview />} />
       {/* Fallback Route */}
 
 
