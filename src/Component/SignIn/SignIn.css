@@ -212,3 +212,212 @@
 .forgot-password-link:hover {
   text-decoration: underline;
 }
+
+
+/* Header container */
+.signin-header-container {
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Duplicate header text animation look */
+.signin-header {
+  font-size: 40px;
+  font-weight: 700;
+  color: #222;
+}
+
+/* POLICY BUTTON STYLING */
+.policy-button {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  background-color: transparent;
+  border: 1px solid #333;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s ease-in-out;
+}
+
+.policy-button:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+/* Main wrapper */
+.signin-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f7;
+}
+
+/* Main area */
+.signin-main {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+/* Card */
+.signin-card {
+  width: 380px;
+  background: #fff;
+  padding: 32px;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+}
+
+/* Text styles */
+.signin-title {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.signin-subtext {
+  text-align: center;
+  color: #666;
+  margin-bottom: 20px;
+  font-size: 15px;
+}
+
+/* Inputs */
+.signin-label {
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.signin-email {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border-radius: 10px;
+  border: 1px solid #bbb;
+  font-size: 15px;
+}
+
+/* Login button */
+.signin-button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 20px;
+  background-color: #222;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.signin-button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.signin-footer {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.signup-link,
+.forgot-password-link {
+  font-weight: 600;
+  color: #222;
+  text-decoration: none;
+}
+
+.signup-link:hover,
+.forgot-password-link:hover {
+  text-decoration: underline;
+}
+
+/* Error message */
+.signin-error {
+  color: red;
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+
+/* MOBILE RESPONSIVE */
+@media (max-width: 600px) {
+  
+  /* Overall wrapper */
+  .signin-wrapper {
+    padding: 0 16px;
+  }
+
+  /* Header */
+  .signin-header-container {
+    padding: 15px;
+  }
+
+  .signin-header {
+    font-size: 28px;
+  }
+
+  /* Policy button reposition */
+  .policy-button {
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  /* Card */
+  .signin-card {
+    width: 100%;
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  /* Title */
+  .signin-title {
+    font-size: 24px;
+  }
+
+  .signin-subtext {
+    font-size: 14px;
+  }
+
+  /* Inputs */
+  .signin-label {
+    font-size: 13px;
+  }
+
+  .signin-email {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  /* Button */
+  .signin-button {
+    font-size: 15px;
+    padding: 12px;
+  }
+
+  /* Footer */
+  .signin-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .signin-footer .left,
+  .signin-footer .right {
+    width: 100%;
+  }
+}

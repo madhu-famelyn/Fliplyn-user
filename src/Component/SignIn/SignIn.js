@@ -40,21 +40,17 @@ export default function EmailLogin() {
         return;
       }
 
-      // API Call
       const response = await initiateLogin({
         company_email: email,
         password
       });
 
       const token = response.access_token;
-      const user = response.user; // contains email & phone
+      const user = response.user;
 
-      // Save token + user in context
       login(token, user);
 
-      // Redirect
       navigate('/stalls');
-
     } catch (err) {
       setError(
         err?.response?.data?.detail ||
@@ -68,12 +64,20 @@ export default function EmailLogin() {
 
   return (
     <div className="signin-wrapper">
+
+      {/* HEADER AREA */}
       <div className="signin-header-container">
         <header className="signin-header">Fliplyn</header>
+
+        {/* NEW POLICY BUTTON */}
+        <button className="policy-button" onClick={() => navigate('/policy')}>
+          Policy
+        </button>
       </div>
 
       <main className="signin-main">
         <div className="signin-card">
+
           <h2 className="signin-title">Welcome Back</h2>
           <p className="signin-subtext">
             Sign in with your company email to continue.
@@ -120,6 +124,7 @@ export default function EmailLogin() {
               </Link>
             </span>
           </p>
+
         </div>
       </main>
     </div>
