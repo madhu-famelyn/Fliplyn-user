@@ -48,6 +48,7 @@ export default function Header() {
         <Link to="/transactions-wallet" onClick={handleLinkClick}>Wallet</Link>
         <Link to="/trans" onClick={handleLinkClick}>Transaction History</Link>
         <Link to="/profile" onClick={handleLinkClick}>
+        <Link to="/policy">Policy</Link>
           <FaUserCircle className="user-icon" />
         </Link>
       </div>
