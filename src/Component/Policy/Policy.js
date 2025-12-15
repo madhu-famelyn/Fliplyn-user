@@ -142,7 +142,7 @@ const PolicyReview = () => {
 
         {/* Shipping & Delivery Policy */}
         <div className="policy-section">
-          <h2>Shipping & Delivery Policy</h2>
+          <h2>Shipping Policy</h2>
           <p>
             For international buyers, orders are shipped through registered
             international courier companies or International Speed Post. For
