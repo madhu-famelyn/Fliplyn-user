@@ -30,6 +30,7 @@ import ChangePassword from './Component/SignIn/ChangePassword';
 import ReceiptPage from './Component/Pages/Success/RecepitPage';
 import QRScannerPage from './Component/Pages/ScanQR/ScanQR';
 import PolicyReview from './Component/Policy/Policy';
+import InstallButton from './installbutton';
 
 function PublicRoute({ children }) {
   // ✅ Removed token-based redirect logic so `/` always shows SignIn
@@ -88,6 +89,7 @@ export default function App() {
     <AuthProvider>
       <Router>
         <AppContent />
+          <InstallButton />
       </Router>
     </AuthProvider>
   );
