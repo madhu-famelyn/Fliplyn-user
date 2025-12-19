@@ -14,12 +14,20 @@ export default function PaymentSuccessCashfree() {
   const [view, setView] = useState("receipt");
   const receiptRef = useRef(null);
 
+  // Utility to get query parameter by name
+  const getQueryParam = (param) => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get(param);
+  };
+
   useEffect(() => {
-    const cfOrderId = location.state?.cashfree_order_id;
-    console.log("Cashfree Order ID received from location.state:", cfOrderId);
+    const cfOrderId = getQueryParam("order_id");
+    console.log("Cashfree Order ID received from query params:", cfOrderId);
 
     if (!cfOrderId) {
-      console.warn("No Cashfree order ID provided in location.state");
+      console.warn("No Cashfree order ID provided in query params");
+      alert("Invalid order ID. Redirecting to stalls page.");
+      navigate("/stalls");
       return;
     }
 
