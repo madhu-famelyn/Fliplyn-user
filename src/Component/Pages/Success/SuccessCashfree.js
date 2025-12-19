@@ -14,14 +14,10 @@ export default function PaymentSuccessCashfree() {
   const [view, setView] = useState("receipt");
   const receiptRef = useRef(null);
 
-  // Utility to get query parameter by name
-  const getQueryParam = (param) => {
-    const searchParams = new URLSearchParams(location.search);
-    return searchParams.get(param);
-  };
-
   useEffect(() => {
-    const cfOrderId = getQueryParam("order_id");
+    // Read Cashfree order ID directly from query param
+    const searchParams = new URLSearchParams(location.search);
+    const cfOrderId = searchParams.get("order_id");
     console.log("Cashfree Order ID received from query params:", cfOrderId);
 
     if (!cfOrderId) {
@@ -55,7 +51,7 @@ export default function PaymentSuccessCashfree() {
         alert("Failed to verify payment or fetch order. Please try again.");
         navigate("/stalls");
       });
-  }, [location, navigate]);
+  }, [location.search, navigate]);
 
   const downloadPDF = () => {
     console.log("Download PDF button clicked");
