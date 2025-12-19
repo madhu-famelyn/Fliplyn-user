@@ -25,20 +25,22 @@ export default function PaymentMethodPage() {
     { label: "Payment Gateway", icon: <SiPhonepe /> },
   ];
 
+  /* ---------------- CART ---------------- */
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("cartItems")) || [];
-    setCartItems(stored);
+    const storedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
+    setCartItems(storedCart);
   }, []);
 
+  /* ---------------- WALLET ---------------- */
   useEffect(() => {
     if (!userId || !token) return;
 
     const fetchWallet = async () => {
       try {
-        const walletRes = await axios.get(`${API_BASE}/wallets/${userId}`, {
+        const res = await axios.get(`${API_BASE}/wallets/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWalletBalance(walletRes.data?.balance_amount || 0);
+        setWalletBalance(res.data?.balance_amount || 0);
       } catch (err) {
         console.error("Wallet fetch error:", err);
       }
@@ -47,40 +49,49 @@ export default function PaymentMethodPage() {
     fetchWallet();
   }, [userId, token]);
 
+  /* ---------------- HELPERS ---------------- */
   const calculateTotalAmount = () =>
-    cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
 
-  const createInternalOrder = async (orderPayload) => {
-    const res = await axios.post(`${API_BASE}/orders/place`, orderPayload, {
+  const createInternalOrder = async (payload) => {
+    const res = await axios.post(`${API_BASE}/orders/place`, payload, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
   };
 
-  // ✅ FIXED: PRODUCTION MODE
+  /* ---------------- CASHFREE ---------------- */
   const openCashfreeCheckout = (paymentSessionId) => {
     if (!window.Cashfree) {
       setErrorMsg("Cashfree SDK not loaded");
       return;
     }
 
-    console.log("Opening Cashfree with session:", paymentSessionId);
-
     const cashfree = new window.Cashfree({
-      mode: "production", // ✅ MUST MATCH BACKEND
+      mode: "production", // MUST MATCH BACKEND
     });
 
     cashfree.checkout({
-      paymentSessionId: paymentSessionId,
+      paymentSessionId,
       redirectTarget: "_self",
     });
   };
 
+  /* ---------------- CONFIRM PAYMENT ---------------- */
   const handleConfirmPayment = async () => {
     setErrorMsg("");
 
+    if (!cartItems.length) {
+      setErrorMsg("Cart is empty");
+      return;
+    }
+    
+
     if (!userId || !user?.phone_number || !user?.email) {
-      setErrorMsg("User phone/email missing — update profile");
+      setErrorMsg("User phone or email missing");
       return;
     }
 
@@ -99,7 +110,7 @@ export default function PaymentMethodPage() {
       pay_with_wallet: selectedMethod === "Wallet",
     };
 
-    // ✅ WALLET FLOW
+    /* ---------- WALLET FLOW ---------- */
     if (selectedMethod === "Wallet") {
       if (totalAmount > walletBalance) {
         setErrorMsg("Insufficient Wallet Balance");
@@ -108,43 +119,40 @@ export default function PaymentMethodPage() {
 
       try {
         setIsLoading(true);
-        const res = await createInternalOrder(orderPayload);
+        const order = await createInternalOrder(orderPayload);
         localStorage.removeItem("cartItems");
-        navigate("/success", { state: { order: res } });
+        navigate("/success", { state: { order } });
       } catch (err) {
-        setErrorMsg(err?.response?.data?.detail || "Order Failed");
+        setErrorMsg(err?.response?.data?.detail || "Order failed");
       } finally {
         setIsLoading(false);
       }
       return;
     }
 
-    // ✅ CASHFREE PAYMENT GATEWAY FLOW
+    /* ---------- CASHFREE FLOW ---------- */
     if (selectedMethod === "Payment Gateway") {
       try {
         setIsLoading(true);
 
-        // 1️⃣ Create backend order
         const backendOrder = await createInternalOrder(orderPayload);
-        console.log("Backend order:", backendOrder);
 
-        // 2️⃣ Validate payment_session_id
         if (!backendOrder.payment_session_id) {
           setErrorMsg("Payment session not created");
           return;
         }
 
-        // 3️⃣ Open Cashfree Checkout
         openCashfreeCheckout(backendOrder.payment_session_id);
       } catch (err) {
-        console.error("Cashfree payment error:", err);
-        setErrorMsg("Payment failed, please try again");
+        console.error(err);
+        setErrorMsg("Payment failed. Try again.");
       } finally {
         setIsLoading(false);
       }
     }
   };
 
+  /* ---------------- UI ---------------- */
   return (
     <>
       <Header />
@@ -174,7 +182,7 @@ export default function PaymentMethodPage() {
         <div className="cart-summary-box">
           <h3 className="cart-title">Cart Items</h3>
 
-          {cartItems.length === 0 ? (
+          {!cartItems.length ? (
             <p className="empty-cart-msg">No items in cart</p>
           ) : (
             <>
@@ -182,9 +190,7 @@ export default function PaymentMethodPage() {
                 <div key={index} className="cart-item-row">
                   <span>{item.name}</span>
                   <span>Qty: {item.quantity}</span>
-                  <span>
-                    ₹{(item.price * item.quantity).toFixed(2)}
-                  </span>
+                  <span>₹ {(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
               <hr />
