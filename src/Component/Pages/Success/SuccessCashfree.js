@@ -16,39 +16,74 @@ export default function PaymentSuccessCashfree() {
 
   useEffect(() => {
     const cfOrderId = location.state?.cashfree_order_id;
-    if (!cfOrderId) return;
+    console.log("Cashfree Order ID received from location.state:", cfOrderId);
+
+    if (!cfOrderId) {
+      console.warn("No Cashfree order ID provided in location.state");
+      return;
+    }
+
+    const verifyEndpoint = `https://admin-aged-field-2794.fly.dev/orders/verify-payment/cashfree/${cfOrderId}`;
+    console.log("Calling verify payment API:", verifyEndpoint);
 
     // 1️⃣ Verify payment first
     axios
-      .get(`https://admin-aged-field-2794.fly.dev/orders/verify-payment/cashfree/${cfOrderId}`)
-      .then(() => {
-        return axios.get(`https://admin-aged-field-2794.fly.dev/orders/by-cashfree/${cfOrderId}`);
+      .get(verifyEndpoint)
+      .then((verifyRes) => {
+        console.log("Verify payment response:", verifyRes.data);
+
+        const fetchOrderEndpoint = `https://admin-aged-field-2794.fly.dev/orders/by-cashfree/${cfOrderId}`;
+        console.log("Calling fetch order API:", fetchOrderEndpoint);
+
+        // 2️⃣ Fetch full order details
+        return axios.get(fetchOrderEndpoint);
       })
-      .then((res) => setOrderDetails(res.data))
+      .then((res) => {
+        console.log("Fetch order details response:", res.data);
+        setOrderDetails(res.data);
+      })
       .catch((err) => {
-        console.error("Error verifying/fetching order:", err);
+        console.error("Error verifying/fetching order:", err.response ?? err);
         alert("Failed to verify payment or fetch order. Please try again.");
         navigate("/stalls");
       });
   }, [location, navigate]);
 
   const downloadPDF = () => {
+    console.log("Download PDF button clicked");
     const input = receiptRef.current;
-    html2canvas(input, { scale: 2 }).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`receipt_${orderDetails.id.slice(0, 6)}.pdf`);
 
-      setTimeout(() => {
-        navigate("/stalls");
-      }, 1000);
-    });
+    if (!input) {
+      console.warn("Receipt ref is null, cannot generate PDF");
+      return;
+    }
+
+    html2canvas(input, { scale: 2 })
+      .then((canvas) => {
+        console.log("Canvas generated for PDF", canvas);
+        const imgData = canvas.toDataURL("image/png");
+        const pdf = new jsPDF("p", "mm", "a4");
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+        const fileName = `receipt_${orderDetails.id.slice(0, 6)}.pdf`;
+        console.log("Saving PDF as:", fileName);
+        pdf.save(fileName);
+
+        console.log("PDF download completed, redirecting to /stalls in 1 second");
+        setTimeout(() => {
+          navigate("/stalls");
+        }, 1000);
+      })
+      .catch((err) => console.error("Error generating PDF:", err));
   };
 
-  if (!orderDetails) return <p className="loading-text">Verifying Payment...</p>;
+  if (!orderDetails) {
+    console.log("Order details not yet loaded, showing loading message");
+    return <p className="loading-text">Verifying Payment...</p>;
+  }
+
+  console.log("Rendering order details for order ID:", orderDetails.id);
 
   const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4);
   const createdAt = new Date(orderDetails.created_datetime).toLocaleString("en-IN", {
@@ -61,8 +96,12 @@ export default function PaymentSuccessCashfree() {
   const totalGst = orderDetails.total_gst ?? totalCgst + totalSgst;
   const roundOff = orderDetails.round_off ?? 0;
   const grandTotal = orderDetails.total_amount ?? 0;
-
   const subtotal = grandTotal - roundOff;
+
+  console.log("Token No:", tokenNo);
+  console.log("Created At:", createdAt);
+  console.log("Total CGST:", totalCgst, "Total SGST:", totalSgst, "Total GST:", totalGst);
+  console.log("Subtotal:", subtotal, "Round Off:", roundOff, "Grand Total:", grandTotal);
 
   return (
     <div className="receipt-wrapper">
@@ -78,13 +117,19 @@ export default function PaymentSuccessCashfree() {
       <div className="toggle-btns">
         <button
           className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
-          onClick={() => setView("receipt")}
+          onClick={() => {
+            console.log("Switching view to receipt");
+            setView("receipt");
+          }}
         >
           Show Receipt
         </button>
         <button
           className={`toggle-btn ${view === "qr" ? "active" : ""}`}
-          onClick={() => setView("qr")}
+          onClick={() => {
+            console.log("Switching view to QR");
+            setView("qr");
+          }}
         >
           Show QR
         </button>
@@ -141,9 +186,7 @@ export default function PaymentSuccessCashfree() {
             <hr className="separator" />
             <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
               <span>Round Off</span>
-              <span>
-                {roundOff >= 0 ? `+${roundOff.toFixed(2)}` : roundOff.toFixed(2)}
-              </span>
+              <span>{roundOff >= 0 ? `+${roundOff.toFixed(2)}` : roundOff.toFixed(2)}</span>
             </p>
             <p
               className="grand-total"
