@@ -32,7 +32,6 @@ export default function PaymentMethodPage() {
 
   useEffect(() => {
     if (!userId || !token) return;
-
     const fetchWallet = async () => {
       try {
         const walletRes = await axios.get(`${API_BASE}/wallets/${userId}`, {
@@ -43,7 +42,6 @@ export default function PaymentMethodPage() {
         console.error("Wallet fetch error:", err);
       }
     };
-
     fetchWallet();
   }, [userId, token]);
 
@@ -57,21 +55,18 @@ export default function PaymentMethodPage() {
     return res.data;
   };
 
-  // ✅ FIXED: PRODUCTION MODE
   const openCashfreeCheckout = (paymentSessionId) => {
     if (!window.Cashfree) {
       setErrorMsg("Cashfree SDK not loaded");
       return;
     }
 
-    console.log("Opening Cashfree with session:", paymentSessionId);
-
     const cashfree = new window.Cashfree({
-      mode: "production", // ✅ MUST MATCH BACKEND
+      mode: "sandbox", // change to "production" later
     });
 
     cashfree.checkout({
-      paymentSessionId: paymentSessionId,
+      paymentSessionId,
       redirectTarget: "_self",
     });
   };
@@ -99,7 +94,7 @@ export default function PaymentMethodPage() {
       pay_with_wallet: selectedMethod === "Wallet",
     };
 
-    // ✅ WALLET FLOW
+    // ✅ WALLET FLOW — UNCHANGED
     if (selectedMethod === "Wallet") {
       if (totalAmount > walletBalance) {
         setErrorMsg("Insufficient Wallet Balance");
@@ -124,17 +119,16 @@ export default function PaymentMethodPage() {
       try {
         setIsLoading(true);
 
-        // 1️⃣ Create backend order
+        // 1️⃣ Create internal order
         const backendOrder = await createInternalOrder(orderPayload);
-        console.log("Backend order:", backendOrder);
+        console.log("Internal order created:", backendOrder);
 
-        // 2️⃣ Validate payment_session_id
+        // 2️⃣ Open Cashfree Checkout using payment_session_id
         if (!backendOrder.payment_session_id) {
           setErrorMsg("Payment session not created");
           return;
         }
 
-        // 3️⃣ Open Cashfree Checkout
         openCashfreeCheckout(backendOrder.payment_session_id);
       } catch (err) {
         console.error("Cashfree payment error:", err);
@@ -148,7 +142,6 @@ export default function PaymentMethodPage() {
   return (
     <>
       <Header />
-
       <div className="payment-page-container">
         <h2 className="payment-title">Payment</h2>
 
@@ -206,7 +199,6 @@ export default function PaymentMethodPage() {
           >
             {isLoading ? "Processing..." : "Confirm Payment"}
           </button>
-
           <button
             className="continue-btn"
             onClick={() => navigate(-1)}
