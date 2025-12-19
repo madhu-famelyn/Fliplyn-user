@@ -30,6 +30,7 @@ import ChangePassword from './Component/SignIn/ChangePassword';
 import ReceiptPage from './Component/Pages/Success/RecepitPage';
 import QRScannerPage from './Component/Pages/ScanQR/ScanQR';
 import PolicyReview from './Component/Policy/Policy';
+import PaymentSuccessCashfree from './Component/Pages/Success/SuccessCashfree';
 // import InstallButton from './installbutton';
 
 function PublicRoute({ children }) {
@@ -67,6 +68,7 @@ function AppContent() {
       <Route path="/wallet" element={<PaymentMethodPage />} />
       <Route path="/transactions-wallet" element={<TransactionHistory />} />
       <Route path="/success" element={<PaymentSuccess />} />
+      <Route path="/success-payment" element={<PaymentSuccessCashfree />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/trans" element={<Transactions />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
