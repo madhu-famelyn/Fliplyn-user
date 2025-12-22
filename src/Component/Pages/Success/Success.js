@@ -12,7 +12,17 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(null);
   const [view, setView] = useState("receipt");
+  const [showToken, setShowToken] = useState(false);
   const receiptRef = useRef(null);
+
+  // ⏱ Show token after 10 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowToken(true);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const order = location.state?.order;
@@ -33,10 +43,6 @@ export default function PaymentSuccess() {
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
       pdf.save(`receipt_${orderDetails.id.slice(0, 6)}.pdf`);
-
-      setTimeout(() => {
-        navigate("/stalls");
-      }, 1000);
     });
   };
 
@@ -53,8 +59,6 @@ export default function PaymentSuccess() {
   const totalGst = orderDetails.total_gst ?? totalCgst + totalSgst;
   const roundOff = orderDetails.round_off ?? 0;
   const grandTotal = orderDetails.total_amount ?? 0;
-
-  // Calculate subtotal before round off
   const subtotal = grandTotal - roundOff;
 
   return (
@@ -68,94 +72,92 @@ export default function PaymentSuccess() {
         </p>
       </div>
 
-      <div className="toggle-btns">
-        <button
-          className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
-          onClick={() => setView("receipt")}
-        >
-          Show Receipt
-        </button>
-        <button
-          className={`toggle-btn ${view === "qr" ? "active" : ""}`}
-          onClick={() => setView("qr")}
-        >
-          Show QR
-        </button>
-      </div>
-
-      {view === "receipt" && (
-        <div className="receipt-card compact-token" ref={receiptRef}>
-          <h2 className="stall-name">
-            {orderDetails.order_details[0]?.stall_name || "Stall Name"}
-          </h2>
-          <p className="token-no">
-            Token No.: <strong>{tokenNo}</strong>
+      {/* ⚠️ Validity Message (First 10 seconds) */}
+      {!showToken && (
+        <div className="order-validity-box">
+          <p className="order-validity-text">
+            This order is valid for <strong>30 minutes</strong>.  
+            After 30 minutes, the order will not be processed and the amount will not be refunded.
           </p>
-          <p className="order-date">Date: {createdAt}</p>
-
-          <hr className="separator" />
-
-          <div className="token-table">
-            <div className="token-header">
-              <span>Item</span>
-              <span>Rs</span>
-            </div>
-
-            {orderDetails.order_details.map((item, index) => (
-              <div key={index} className="token-row">
-                <span className="item-name">{item.name} X {item.quantity}</span>
-                <span>{item.price.toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-
-         
-
-         <div className="token-summary" style={{ maxWidth: "400px", margin: "0 auto" }}>
-  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
-    <span>CGST</span>
-    <span>{totalCgst.toFixed(2)}</span>
-  </p>
-  <hr className="separator" />
-  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
-    <span>SGST</span>
-    <span>{totalSgst.toFixed(2)}</span>
-  </p>
-  <hr className="separator" />
-  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
-    <span>Total GST</span>
-    <span>{totalGst.toFixed(2)}</span>
-  </p>
-  <hr className="separator" />
-  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
-    <span>Total</span>
-    <span>{subtotal.toFixed(2)}</span>
-  </p>
-  <hr className="separator" />
-  <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
-    <span>Round Off</span>
-    <span>{roundOff >= 0 ? `+${roundOff.toFixed(2)}` : roundOff.toFixed(2)}</span>
-  </p>
-  <p
-    className="grand-total"
-    style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" }}
-  >
-    <span>Grand Total</span>
-    <span>{grandTotal.toFixed(2)}</span>
-  </p>
-</div>
-
-
-          <button className="download-btn" onClick={downloadPDF}>
-            Download Receipt
-          </button>
         </div>
       )}
 
-      {view === "qr" && (
-        <div className="qr-wrapper">
-          <QRCodeCanvas value={JSON.stringify(orderDetails)} size={180} />
-        </div>
+      {/* 🎟 Token / Receipt */}
+      {showToken && (
+        <>
+          <div className="toggle-btns">
+            <button
+              className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
+              onClick={() => setView("receipt")}
+            >
+              Show Receipt
+            </button>
+            <button
+              className={`toggle-btn ${view === "qr" ? "active" : ""}`}
+              onClick={() => setView("qr")}
+            >
+              Show QR
+            </button>
+          </div>
+
+          {view === "receipt" && (
+            <div className="receipt-card compact-token" ref={receiptRef}>
+              <h2 className="stall-name">
+                {orderDetails.order_details[0]?.stall_name || "Stall Name"}
+              </h2>
+              <p className="token-no">
+                Token No.: <strong>{tokenNo}</strong>
+              </p>
+              <p className="order-date">Date: {createdAt}</p>
+
+              <hr className="separator" />
+
+              <div className="token-table">
+                <div className="token-header">
+                  <span>Item</span>
+                  <span>Rs</span>
+                </div>
+
+                {orderDetails.order_details.map((item, index) => (
+                  <div key={index} className="token-row">
+                    <span>{item.name} × {item.quantity}</span>
+                    <span>{item.price.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="token-summary">
+                <p><span>CGST</span><span>{totalCgst.toFixed(2)}</span></p>
+                <p><span>SGST</span><span>{totalSgst.toFixed(2)}</span></p>
+                <p><span>Total GST</span><span>{totalGst.toFixed(2)}</span></p>
+                <p><span>Total</span><span>{subtotal.toFixed(2)}</span></p>
+                <p><span>Round Off</span><span>{roundOff.toFixed(2)}</span></p>
+                <p className="grand-total">
+                  <span>Grand Total</span>
+                  <span>{grandTotal.toFixed(2)}</span>
+                </p>
+              </div>
+
+              <button className="download-btn" onClick={downloadPDF}>
+                Download Receipt
+              </button>
+            </div>
+          )}
+
+          {view === "qr" && (
+            <div className="qr-wrapper">
+              <QRCodeCanvas value={JSON.stringify(orderDetails)} size={180} />
+            </div>
+          )}
+
+          {/* 🔙 Back to Stalls */}
+          <button
+            className="back-to-stalls-btn"
+            onClick={() => navigate("/stalls")}
+          >
+            Back to Stalls
+          </button>
+        </>
       )}
     </div>
   );

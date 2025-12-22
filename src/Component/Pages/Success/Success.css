@@ -271,3 +271,43 @@ body {
     padding: 10px;
   }
 }
+
+
+
+
+/* ⚠️ Order Validity Warning */
+.order-validity-box {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 16px;
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 420px;
+  text-align: center;
+}
+
+.order-validity-text {
+  color: #9a3412;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* 🔙 Back to Stalls Button */
+.back-to-stalls-btn {
+  margin: 20px auto 0;
+  display: block;
+  background-color: #0f172a;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.back-to-stalls-btn:hover {
+  background-color: #020617;
+}
