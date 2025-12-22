@@ -11,47 +11,64 @@ export default function Header() {
   const handleLinkClick = () => setMenuOpen(false);
 
   return (
-    <nav className="stall-navbar">
-      {/* ✅ Mobile: Left - User Icon */}
-      <div className="mobile-left mobile">
-        <Link to="/profile">
-          <FaUserCircle className="user-icon" />
-        </Link>
+    <>
+      <nav className="stall-navbar">
+        {/* ✅ Mobile: Left - User Icon */}
+        <div className="mobile-left mobile">
+          <Link to="/profile">
+            <FaUserCircle className="user-icon" />
+          </Link>
+        </div>
+
+        {/* ✅ Center: Logo */}
+        <div className="stall-logo">Fliplyn</div>
+
+        {/* ✅ Mobile: Right - Hamburger */}
+        <div className="mobile-right mobile" onClick={toggleMenu}>
+          {menuOpen ? (
+            <FaTimes className="hamburger" />
+          ) : (
+            <FaBars className="hamburger" />
+          )}
+        </div>
+
+        {/* ✅ Desktop Nav */}
+        <div className="stall-links desktop">
+          <Link to="/stalls">Home</Link>
+          <Link to="/cart">Cart</Link>
+          <Link to="/transactions-wallet">Wallet</Link>
+          <Link to="/trans">Transaction History</Link>
+
+          <Link className="user" to="/profile">
+            <FaUserCircle className="user-icon" />
+          </Link>
+        </div>
+
+        {/* ✅ Mobile Dropdown Nav */}
+        <div className={`stall-links mobile-dropdown ${menuOpen ? 'open' : ''}`}>
+          <Link to="/stalls" onClick={handleLinkClick}>Home</Link>
+          <Link to="/cart" onClick={handleLinkClick}>Cart</Link>
+          <Link to="/transactions-wallet" onClick={handleLinkClick}>Wallet</Link>
+          <Link to="/trans" onClick={handleLinkClick}>Transaction History</Link>
+          <Link to="/profile" onClick={handleLinkClick}>
+            <FaUserCircle className="user-icon" />
+          </Link>
+        </div>
+      </nav>
+
+      {/* ✅ Running Banner BELOW Header */}
+      <div className="announcement-banner">
+        <div className="announcement-track">
+          <span>
+            ✅ Digital payment functionality is now available &nbsp;&nbsp;•&nbsp;&nbsp;
+            ⚠️ For item or stall availability queries, only HR representatives are authorized to contact the Support Team. Employees should not reach out to support directly.
+          </span>
+          <span>
+            ✅ Digital payment functionality is now available &nbsp;&nbsp;•&nbsp;&nbsp;
+            ⚠️ For item or stall availability queries, only HR representatives are authorized to contact the Support Team. Employees should not reach out to support directly.
+          </span>
+        </div>
       </div>
-
-      {/* ✅ Center: Logo */}
-      <div className="stall-logo">Fliplyn</div>
-
-      {/* ✅ Mobile: Right - Hamburger */}
-      <div className="mobile-right mobile" onClick={toggleMenu}>
-        {menuOpen ? <FaTimes className="hamburger" /> : <FaBars className="hamburger" />}
-      </div>
-
-      {/* ✅ Desktop Nav */}
-      <div className="stall-links desktop">
-        <Link to="/stalls">Home</Link>
-        <Link to="/cart">Cart</Link>
-        <Link to="/transactions-wallet">Wallet</Link>
-        <Link to="/trans">Transaction History</Link>
-        {/* <Link to="/policy">Policy</Link> */}
-
-        <Link className='user' to="/profile">
-          <FaUserCircle className="user-icon" />
-        </Link>
-      </div>
-     
-
-      {/* ✅ Mobile Dropdown Nav */}
-      <div className={`stall-links mobile-dropdown ${menuOpen ? 'open' : ''}`}>
-        <Link to="/stalls" onClick={handleLinkClick}>Home</Link>
-        <Link to="/cart" onClick={handleLinkClick}>Cart</Link>
-        <Link to="/transactions-wallet" onClick={handleLinkClick}>Wallet</Link>
-        <Link to="/trans" onClick={handleLinkClick}>Transaction History</Link>
-        <Link to="/profile" onClick={handleLinkClick}>
-        {/* <Link to="/policy">Policy</Link> */}
-          <FaUserCircle className="user-icon" />
-        </Link>
-      </div>
-    </nav>
+    </>
   );
 }

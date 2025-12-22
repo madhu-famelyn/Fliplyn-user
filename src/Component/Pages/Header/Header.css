@@ -142,3 +142,59 @@
     color: #000;
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ===========================
+   Running Announcement Banner
+=========================== */
+
+.announcement-banner {
+  width: 100%;
+  background-color: #0f172a; /* dark blue */
+  color: #ffffff;
+  overflow: hidden;
+  white-space: nowrap;
+  border-bottom: 1px solid #1e293b;
+}
+
+.announcement-track {
+  display: inline-flex;
+  align-items: center;
+  animation: scroll-left 18s linear infinite;
+}
+
+.announcement-track span {
+  padding: 10px 40px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Animation */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .announcement-track span {
+    font-size: 13px;
+    padding: 8px 30px;
+  }
+}
