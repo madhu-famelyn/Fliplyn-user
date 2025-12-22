@@ -154,22 +154,30 @@ export default function Stall() {
           </p>
         ) : (
           <div className="bottom-section">
-            <div className="stalls-grid">
-              {filteredStalls.map((stall) => (
-                <div
-                  className="stall-card"
-                  key={stall.id}
-                  onClick={() => handleStallClick(stall.id)}
-                >
-                  <img
-                    src={stall.image_url}
-                    alt={stall.name}
-                    className="stall-image"
-                  />
-                  <p className="stall-names">{stall.name}</p>
-                </div>
-              ))}
-            </div>
+<div className="stalls-grid">
+  {filteredStalls.map((stall) => (
+    <div
+      className={`stall-card ${!stall.is_available ? "unavailable" : ""}`}
+      key={stall.id}
+      onClick={() => stall.is_available && handleStallClick(stall.id)}
+    >
+      <img
+        src={stall.image_url}
+        alt={stall.name}
+        className="stall-image"
+      />
+
+      {!stall.is_available && (
+        <div className="unavailable-overlay">
+          <p>Stall Unavailable</p>
+        </div>
+      )}
+
+      <p className="stall-names">{stall.name}</p>
+    </div>
+  ))}
+</div>
+
           </div>
         )}
       </div>

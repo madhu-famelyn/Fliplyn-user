@@ -47,7 +47,7 @@
   padding: 8px 18px;
   border-radius: 20px;
   border: 1px solid #ffc2b0;
-  background: #fff4ef;
+  background: #ffffff;
   color: #333;
   font-size: 14px;
   font-weight: 600;
@@ -259,4 +259,106 @@
 .qty-value {
   font-weight: 600;
   font-size: 14px;
+}
+
+
+
+/* ================= SEARCH BAR ================= */
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  margin: 12px auto 16px; /* center horizontally */
+  padding: 10px 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  color: #111827;
+  background: transparent;
+}
+
+.search-bar input::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.search-icon {
+  font-size: 16px;
+  color: #f97316; /* orange */
+}
+
+/* Focus State */
+.search-bar:focus-within {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+
+
+/* ================= EMPTY STATE ================= */
+
+.no-items {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  text-align: center;
+  padding: 24px;
+}
+
+.no-items p {
+  font-size: 15px;
+  font-weight: 500;
+  color: #6b7280;
+  background: #fff7ed;
+  border: 1px dashed #fdba74;
+  padding: 14px 22px;
+  border-radius: 12px;
+}
+
+
+
+.filter-selector {
+  display: flex;
+  gap: 10px;
+  margin: 12px 0 18px;
+}
+
+.filter-option {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 8px;
+  border: 1.5px solid #ddd;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filter-option.active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+.filter-option.veg.active {
+  background: #1a8f3a;
+  border-color: #1a8f3a;
+}
+
+.filter-option.nonveg.active {
+  background: #c62828;
+  border-color: #c62828;
 }

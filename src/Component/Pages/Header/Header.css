@@ -5,7 +5,7 @@
   top: 0;
   z-index: 9999;
   width: 100%;
-  background-color: #ffffff;
+  background-color: #FDF6F6;
   padding: 16px 24px;
   border-bottom: 1px solid #D0D0D0;
   font-family: 'Inter', sans-serif;
@@ -162,7 +162,7 @@
 
 .announcement-banner {
   width: 100%;
-  background-color: #0f172a; /* dark blue */
+  background-color: #ff6b00; /* dark blue */
   color: #ffffff;
   overflow: hidden;
   white-space: nowrap;

@@ -6,7 +6,7 @@ import Header from "../Header/Header";
 
 import CategoryList from "./CategoryList";
 import ItemList from "../Items/ItemList";
-import { FiShoppingCart } from "react-icons/fi";
+import { FiShoppingCart, FiGrid } from "react-icons/fi";
 
 const BASE_URL = "https://admin-aged-field-2794.fly.dev";
 
@@ -17,14 +17,17 @@ export default function Category() {
   const [categories, setCategories] = useState([]);
   const [, setStallDetails] = useState(null);
   const [, setItemCount] = useState(0);
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+
+  // 🔹 Default = ALL ITEMS
+  const [selectedCategoryId, setSelectedCategoryId] = useState("ALL");
+
   const [items, setItems] = useState([]);
   const [itemsLoaded, setItemsLoaded] = useState(false);
   const [, setAllItems] = useState([]);
 
   const [cartCount, setCartCount] = useState(0);
 
-  // Load cart count from localStorage
+  // ================= CART COUNT =================
   const loadLocalCartCount = () => {
     try {
       const storedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
@@ -45,15 +48,23 @@ export default function Category() {
     };
   }, []);
 
-  // Load categories + stall + all items
+  // ================= LOAD CATEGORIES + STALL + ALL ITEMS =================
   useEffect(() => {
     if (!stallId) return;
 
     axios
       .get(`${BASE_URL}/categories/stall/${stallId}`)
       .then((res) => {
-        setCategories(res.data);
-        if (res.data.length > 0) setSelectedCategoryId(res.data[0].id);
+        const updatedCategories = [
+          {
+            id: "ALL",
+            name: "All Items",
+            icon: <FiGrid size={18} color="#f97316" />, // orange
+          },
+          ...res.data,
+        ];
+
+        setCategories(updatedCategories);
       })
       .catch((err) => console.error("❌ Error fetching categories:", err));
 
@@ -62,19 +73,45 @@ export default function Category() {
       .then((res) => setStallDetails(res.data))
       .catch((err) => console.error("❌ Error fetching stall:", err));
 
+    // 🔹 Load all items initially
     axios
       .get(`${BASE_URL}/items/stall/${stallId}`)
       .then((res) => {
         setAllItems(res.data);
+        setItems(res.data);
         setItemCount(res.data.length);
+        setItemsLoaded(true);
       })
-      .catch((err) => console.error("❌ Error fetching all items:", err));
+      .catch((err) => {
+        console.error("❌ Error fetching all items:", err);
+        setItems([]);
+        setItemsLoaded(true);
+      });
   }, [stallId]);
 
-  // Load items for selected category
+  // ================= LOAD ITEMS BASED ON CATEGORY =================
   useEffect(() => {
-    if (!selectedCategoryId) return;
+    if (!stallId || !selectedCategoryId) return;
 
+    setItems([]);
+    setItemsLoaded(false);
+
+    // 🔹 ALL ITEMS
+    if (selectedCategoryId === "ALL") {
+      axios
+        .get(`${BASE_URL}/items/stall/${stallId}`)
+        .then((res) => {
+          setItems(res.data);
+          setItemsLoaded(true);
+        })
+        .catch(() => {
+          setItems([]);
+          setItemsLoaded(true);
+        });
+      return;
+    }
+
+    // 🔹 CATEGORY ITEMS
     axios
       .get(
         `${BASE_URL}/items/items/category/${selectedCategoryId}/availability?is_available=true`
@@ -87,12 +124,10 @@ export default function Category() {
         setItems([]);
         setItemsLoaded(true);
       });
-  }, [selectedCategoryId]);
+  }, [selectedCategoryId, stallId]);
 
   const handleCategoryClick = (id) => {
     setSelectedCategoryId(id);
-    setItems([]);
-    setItemsLoaded(false);
   };
 
   return (

@@ -49,7 +49,6 @@ export default function CategoryList({ categories, selectedCategoryId, onCategor
                 className="category-icon"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = '/fallback-category.jpg';
                 }}
               />
               <span className="category-name">{cat.name}</span>
