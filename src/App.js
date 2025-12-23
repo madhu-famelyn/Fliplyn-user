@@ -5,12 +5,13 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate
+  Navigate,
+  useLocation
 } from "react-router-dom";
 
 import OfflinePopup from "./Component/OffLinePopup/OfflinePopup";
-
 import LoadingScreen from "./Component/LoadingScreen/LoadingScreen";
+
 import SignIn from "./Component/SignIn/SignIn";
 import SignUp from "./Component/SignUp/SignUp";
 import OtpVerify from "./Component/OTP/OTP";
@@ -27,22 +28,34 @@ import PaymentSuccessCashfree from "./Component/Pages/Success/SuccessCashfree";
 import Profile from "./Component/Pages/Profile/Profile";
 import Transactions from "./Component/Pages/Transactions/Transactions";
 import VerifyOTP from "./Component/SignIn/VerifyOTP";
-import { AuthProvider } from "./Component/AuthContext/ContextApi";
 import ForgotPassword from "./Component/SignIn/ForgotPassword";
 import VerifyOTPPassword from "./Component/SignIn/VerifyOTPPassword";
 import ChangePassword from "./Component/SignIn/ChangePassword";
 import ReceiptPage from "./Component/Pages/Success/RecepitPage";
 import QRScannerPage from "./Component/Pages/ScanQR/ScanQR";
 import PolicyReview from "./Component/Policy/Policy";
-// import InstallButton from './installbutton';
 
-function PublicRoute({ children }) {
-  return children;
+import { AuthProvider } from "./Component/AuthContext/ContextApi";
+
+/* -------------------------------------- */
+/* Route Wrapper for SignIn + Loader */
+/* -------------------------------------- */
+function SignInWithLoader() {
+  const [loading, setLoading] = useState(true);
+
+  if (loading) {
+    return <LoadingScreen onFinish={() => setLoading(false)} />;
+  }
+
+  return <SignIn />;
 }
 
-function AppContent() {
-  const [loading, setLoading] = useState(true);
+/* -------------------------------------- */
+/* App Routes */
+/* -------------------------------------- */
+function AppRoutes() {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const location = useLocation();
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -57,25 +70,16 @@ function AppContent() {
     };
   }, []);
 
-  if (loading) {
-    return <LoadingScreen onFinish={() => setLoading(false)} />;
-  }
-
   return (
     <>
-      {/* ✅ Global Offline Popup */}
+      {/* ✅ Offline popup for all pages */}
       <OfflinePopup isOffline={isOffline} />
 
       <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/"
-          element={
-            <PublicRoute>
-              <SignIn />
-            </PublicRoute>
-          }
-        />
+        {/* ✅ SignIn ONLY gets loading screen */}
+        <Route path="/" element={<SignInWithLoader />} />
+
+        {/* Other routes (NO loading screen) */}
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/signup-page" element={<SignUp />} />
         <Route path="/otp" element={<OtpVerify />} />
@@ -105,12 +109,14 @@ function AppContent() {
   );
 }
 
+/* -------------------------------------- */
+/* App Root */
+/* -------------------------------------- */
 export default function App() {
   return (
     <AuthProvider>
       <Router>
-        <AppContent />
-        {/* <InstallButton /> */}
+        <AppRoutes />
       </Router>
     </AuthProvider>
   );

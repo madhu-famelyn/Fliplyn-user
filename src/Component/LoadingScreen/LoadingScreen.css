@@ -1,42 +1,211 @@
-.loading-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
+/* ================= SCREEN ================= */
+.loading-wrapper {
   width: 100vw;
+  height: 100vh;
+  background-color: #FDF2F2;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  transition: background 1s ease-in-out;
+  overflow: hidden;
+
+  animation:
+    bgToOrange 0.3s ease forwards,
+    bgToBlack 0.2s ease forwards;
+
+  animation-delay:
+    0.9s,
+    1.7s;
 }
 
-.loading-container.white {
-  background-color: #F5EFE7;
+/* ================= BLACK CIRCLE ================= */
+.logo-circle {
+  width: 140px;
+  height: 140px;
+  background-color: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: -160px;
+  z-index: 1;
+
+  animation:
+    fallDown 0.3s ease-out forwards,
+    hideBlack 0.1s ease forwards;
+
+  animation-delay:
+    0.3s,
+    0.6s;
 }
 
-.loading-container.orange {
-  background: linear-gradient(0deg, #EF3F24 0%, #FF7661 100%);
+/* ================= ELLIPSE ================= */
+.logo-circle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("../../assets/Images/Ellipse 1705.png");
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+
+  animation:
+    ellipseShow 0.1s ease forwards,
+    ellipseGrow 0.2s ease forwards,
+    ellipseZoomOut 0.3s ease forwards,
+    ellipseFadeOut 0.2s ease forwards;
+
+  animation-delay:
+    0.6s,
+    0.7s,
+    0.9s,
+    1.2s;
+}
+
+/* ================= LOGO ================= */
+.logo-animate {
+  width: 80px;
+  z-index: 2;
+
+  animation:
+    logoWhiteZoom 0.5s ease forwards,
+    logoDisappear 0.1s ease forwards;
+
+  animation-delay:
+    1.2s,
+    1.7s;
+}
+
+/* ================= KEYFRAMES ================= */
+
+@keyframes fallDown {
+  to {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes hideBlack {
+  to {
+    background-color: transparent;
+  }
+}
+
+@keyframes ellipseShow { to { opacity: 1; } }
+@keyframes ellipseGrow { to { transform: scale(3); } }
+@keyframes ellipseZoomOut { to { transform: scale(18); } }
+@keyframes ellipseFadeOut { to { opacity: 0; } }
+
+@keyframes logoWhiteZoom {
+  to {
+    transform: scale(6);
+    filter: brightness(5);
+  }
+}
+
+@keyframes logoDisappear {
+  to { opacity: 0; }
+}
+
+@keyframes bgToOrange {
+  to { background-color: #ff8845; }
+}
+
+@keyframes bgToBlack {
+  to { background-color: #000; }
 }
 
 
-.logo-text {
-  font-size: 3rem;
-  font-weight: bold;
-  transform: scaleX(-1);
-  transition: all 0.6s ease;
+
+
+
+
+
+
+
+
+/* ===================================================== */
+/* ============ FINAL BLACK SCREEN ANIMATION ============ */
+/* ===================================================== */
+
+.loading-wrapper.final-phase {
+  background-color: #000;
+  position: relative;
+  overflow: hidden;
 }
 
-/* Text style for white bg */
-.loading-container.white .logo-text {
-  color: black;
+/* ---------- FINAL IMAGES ---------- */
+.final-img {
+  position: absolute;
+  width: clamp(40px, 5vw, 60px);
+  opacity: 0;
+  transform: translateY(120vh) scale(0.85);
+
+  animation:
+    finalImageIn 0.45s ease-out forwards,
+    finalExitUp 0.6s ease-in forwards;
+
+  animation-delay:
+    var(--enter-delay),
+    2.2s; /* 🔑 exit after 1s visible */
 }
 
-/* Text style for orange bg */
-.loading-container.orange .logo-text {
-  color: white;
+/* ---------- IMAGE POSITIONS ---------- */
+.img-1 { top: 15%; left: 20%; --enter-delay: 0.1s; }
+.img-2 { top: 15%; right: 20%; --enter-delay: 0.15s; }
+.img-3 { top: 40%; left: 10%; --enter-delay: 0.2s; }
+.img-4 { top: 40%; right: 10%; --enter-delay: 0.25s; }
+.img-5 { bottom: 20%; left: 25%; --enter-delay: 0.3s; }
+.img-6 { bottom: 20%; right: 25%; --enter-delay: 0.35s; }
+
+/* ---------- FINAL LOGO ---------- */
+.final-logo {
+  position: absolute;
+  width: clamp(70px, 8vw, 100px);
+  left: 50%;
+  top: -120px;
+  transform: translateX(-50%);
+  opacity: 0;
+  z-index: 10;
+
+  animation:
+    finalLogoIn 0.6s ease-out forwards,
+    finalExitUpLogo 0.6s ease-in forwards;
+
+  animation-delay:
+    1s,
+    2.2s;
 }
 
-.logo-text.flip {
-  transform: scaleX(1) rotateY(360deg);
+/* ---------- KEYFRAMES ---------- */
+
+/* Bottom → position */
+@keyframes finalImageIn {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Logo top → center */
+@keyframes finalLogoIn {
+  to {
+    top: 50%;
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* 🔥 EXIT: Bottom → Top */
+@keyframes finalExitUp {
+  to {
+    transform: translateY(-120vh) scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes finalExitUpLogo {
+  to {
+    top: -120px;
+    opacity: 0;
+    transform: translateX(-50%) scale(0.9);
+  }
 }

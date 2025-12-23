@@ -4,7 +4,7 @@
 
 /* ==== Wrapper ==== */
 .signin-wrapper {
-  background-color: #F5EFE7;
+  background-color: #FDF2F2;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -214,20 +214,6 @@
 }
 
 
-/* Header container */
-.signin-header-container {
-  position: relative;
-  width: 100%;
-  padding: 20px;
-  text-align: center;
-}
-
-/* Duplicate header text animation look */
-.signin-header {
-  font-size: 40px;
-  font-weight: 700;
-  color: #222;
-}
 
 /* POLICY BUTTON STYLING */
 .policy-button {
@@ -354,19 +340,8 @@
 /* MOBILE RESPONSIVE */
 @media (max-width: 600px) {
   
-  /* Overall wrapper */
-  .signin-wrapper {
-    padding: 0 16px;
-  }
 
-  /* Header */
-  .signin-header-container {
-    padding: 15px;
-  }
 
-  .signin-header {
-    font-size: 28px;
-  }
 
   /* Policy button reposition */
   .policy-button {

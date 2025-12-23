@@ -4,6 +4,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { initiateLogin } from '../apis/apis';
 import { useAuth } from '../AuthContext/ContextApi';
 import './SignIn.css';
+import Header from './header';
+
 
 export default function EmailLogin() {
   const [email, setEmail] = useState('');
@@ -64,17 +66,7 @@ export default function EmailLogin() {
 
   return (
     <div className="signin-wrapper">
-
-      {/* HEADER AREA */}
-      <div className="signin-header-container">
-        <header className="signin-header">Fliplyn</header>
-
-        {/* NEW POLICY BUTTON */}
-        <button className="policy-button" onClick={() => navigate('/policy')}>
-          Policy
-        </button>
-      </div>
-
+      <Header/>
       <main className="signin-main">
         <div className="signin-card">
 

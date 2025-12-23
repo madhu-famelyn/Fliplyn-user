@@ -16,22 +16,57 @@ export default function Transactions() {
   const [loading, setLoading] = useState(true);
   const receiptRef = useRef(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
-
   const [qrModal, setQrModal] = useState({ open: false, orderId: null });
 
   useEffect(() => {
-    if (userId) {
-      getOrderDetailsByUserId(userId)
-        .then((data) => {
-          setOrders(data || []);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Error fetching orders:", err);
-          setLoading(false);
-        });
-    }
+    if (!userId) return;
+
+    getOrderDetailsByUserId(userId)
+      .then((data) => {
+        setOrders(data || []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching orders:", err);
+        setLoading(false);
+      });
   }, [userId]);
+
+  /* =======================
+     PAYMENT HELPERS
+  ======================= */
+
+  const isPaymentSuccessful = (order) => {
+    return (
+      order.paid_with_wallet === true ||
+      order.payment_verified === true ||
+      order.payment_status === "SUCCESS"
+    );
+  };
+
+  const getPaymentMethod = (order) => {
+    if (order.paid_with_wallet) return "Paid via Wallet";
+    if (order.payment_verified) return "Paid via Cashfree";
+    return "Payment Failed";
+  };
+
+  const canDownload = (order) => {
+    return isPaymentSuccessful(order);
+  };
+
+  const isQRExpired = (createdAt) => {
+    const createdTime = new Date(createdAt).getTime();
+    const now = Date.now();
+    return (now - createdTime) / (1000 * 60) > 60;
+  };
+
+  const canShowQR = (order) => {
+    return isPaymentSuccessful(order) && !isQRExpired(order.created_datetime);
+  };
+
+  /* =======================
+     RECEIPT DOWNLOAD
+  ======================= */
 
   const fetchAndDownload = async (orderId) => {
     try {
@@ -39,7 +74,7 @@ export default function Transactions() {
         `https://admin-aged-field-2794.fly.dev/orders/${orderId}`
       );
       setSelectedOrder(res.data);
-      setTimeout(() => downloadPDF(res.data.token_number, res.data), 300);
+      setTimeout(() => downloadPDF(res.data.token_number), 300);
     } catch (err) {
       console.error("Failed to fetch order details:", err);
     }
@@ -47,6 +82,8 @@ export default function Transactions() {
 
   const downloadPDF = (tokenNumber) => {
     const input = receiptRef.current;
+    if (!input) return;
+
     html2canvas(input, { scale: 2 }).then((canvas) => {
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
@@ -57,34 +94,14 @@ export default function Transactions() {
     });
   };
 
-  const isQRExpired = (createdAt) => {
-    const createdTime = new Date(createdAt).getTime();
-    const now = new Date().getTime();
-    const diffMinutes = (now - createdTime) / (1000 * 60);
-    return diffMinutes > 60;
-  };
-
-  const getPaymentMethod = (order) => {
-    if (order.paid_with_wallet) return "Paid via Wallet";
-    if (order.payment_status === "PAID") return "Paid via Payment Gateway";
-    return "Payment Failed";
-  };
-
-  const canDownload = (order) => {
-    if (order.paid_with_wallet) return true;
-    if (!order.paid_with_wallet && order.payment_status === "PAID") return true;
-    return false;
-  };
-
-  const canShowQR = (order) => {
-    if (!canDownload(order)) return false;
-    if (isQRExpired(order.created_datetime)) return false;
-    return true;
-  };
+  /* =======================
+     RENDER
+  ======================= */
 
   return (
     <>
       <Header />
+
       <div className="txn-wrapper">
         {loading ? (
           <p className="txn-loading">Loading transactions...</p>
@@ -106,9 +123,7 @@ export default function Transactions() {
               </div>
 
               {orders.map((order) => {
-                const failedPayment =
-                  !order.paid_with_wallet &&
-                  order.payment_status !== "PAID";
+                const success = isPaymentSuccessful(order);
                 const qrExpired = isQRExpired(order.created_datetime);
 
                 return (
@@ -116,28 +131,23 @@ export default function Transactions() {
                     <span>
                       {new Date(order.created_datetime).toLocaleDateString(
                         "en-GB",
-                        {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                        }
+                        { day: "2-digit", month: "short", year: "numeric" }
                       )}
                     </span>
 
                     <span>{order.token_number}</span>
                     <span>₹{order.total_amount.toFixed(2)}</span>
-
                     <span>{getPaymentMethod(order)}</span>
 
                     <span
                       className={`txn-status ${
-                        failedPayment ? "failed" : "success"
+                        success ? "success" : "failed"
                       }`}
                     >
-                      {failedPayment ? "Failed" : "Success"}
+                      {success ? "Success" : "Failed"}
                     </span>
 
-                    {/* DOWNLOAD BUTTON */}
+                    {/* DOWNLOAD */}
                     <span>
                       {canDownload(order) ? (
                         <button
@@ -155,17 +165,17 @@ export default function Transactions() {
                     <span className="txn-qr">
                       {canShowQR(order) ? (
                         <div
+                          style={{ cursor: "pointer" }}
                           onClick={() =>
                             setQrModal({ open: true, orderId: order.id })
                           }
-                          style={{ cursor: "pointer" }}
                         >
                           <QRCodeCanvas
                             value={`https://admin-aged-field-2794.fly.dev/receipt/${order.id}`}
                             size={60}
                           />
                         </div>
-                      ) : failedPayment ? (
+                      ) : !success ? (
                         <p className="qr-expired">Payment Failed</p>
                       ) : qrExpired ? (
                         <p className="qr-expired">QR Expired</p>
@@ -202,27 +212,23 @@ export default function Transactions() {
 
       {/* HIDDEN RECEIPT */}
       {selectedOrder && (
-        <div style={{ position: "absolute", left: "-9999px", top: 0 }}>
+        <div style={{ position: "absolute", left: "-9999px" }}>
           <div ref={receiptRef} className="txn-pdf-receipt-card">
             <h2 className="txn-stall-name">
-              {selectedOrder.order_details[0]?.stall_name || "Stall Name"}
+              {selectedOrder.order_details[0]?.stall_name || "Stall"}
             </h2>
 
-            <p className="txn-pdf-token-no">
-              Token No.: <strong>{selectedOrder.token_number}</strong>
+            <p>
+              Token No: <strong>{selectedOrder.token_number}</strong>
             </p>
-            <p className="txn-pdf-order-date">
+
+            <p>
               Date:{" "}
-              {new Date(selectedOrder.created_datetime).toLocaleString(
-                "en-IN",
-                {
-                  hour12: true,
-                  timeZone: "Asia/Kolkata",
-                }
-              )}
+              {new Date(selectedOrder.created_datetime).toLocaleString("en-IN")}
             </p>
 
             <hr />
+
             <table>
               <thead>
                 <tr>
@@ -241,35 +247,9 @@ export default function Transactions() {
                 ))}
 
                 <tr>
-                  <td>CGST</td>
-                  <td></td>
-                  <td>{selectedOrder.cgst.toFixed(3)}</td>
-                </tr>
-                <tr>
-                  <td>SGST</td>
-                  <td></td>
-                  <td>{selectedOrder.sgst.toFixed(3)}</td>
-                </tr>
-                <tr>
                   <td>Total GST</td>
                   <td></td>
                   <td>{selectedOrder.total_gst.toFixed(2)}</td>
-                </tr>
-
-                <tr>
-                  <td>Total</td>
-                  <td></td>
-                  <td>
-                    {(
-                      selectedOrder.total_amount - selectedOrder.round_off
-                    ).toFixed(2)}
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Round Off</td>
-                  <td></td>
-                  <td>{selectedOrder.round_off.toFixed(2)}</td>
                 </tr>
 
                 <tr className="txn-grand-total-row">
