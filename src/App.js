@@ -55,7 +55,6 @@ function SignInWithLoader() {
 /* -------------------------------------- */
 function AppRoutes() {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-  const location = useLocation();
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
