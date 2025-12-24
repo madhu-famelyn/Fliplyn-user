@@ -1,7 +1,6 @@
 /* ---------- PAGE WRAPPER (Full Screen Layout) ---------- */
 .cart-page {
   min-height: 100vh;
-  background: linear-gradient(to bottom, #ffffff, #f6efe6);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

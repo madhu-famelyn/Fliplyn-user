@@ -6,7 +6,9 @@ import {
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
+import "./App.css"
 
 import OfflinePopup from "./Component/OffLinePopup/OfflinePopup";
 import LoadingScreen from "./Component/LoadingScreen/LoadingScreen";
@@ -36,8 +38,32 @@ import PolicyReview from "./Component/Policy/Policy";
 
 import { AuthProvider } from "./Component/AuthContext/ContextApi";
 
+/* ---------- BACKGROUND IMAGES ---------- */
+import icon1 from "./assets/Images/image1.png";
+import icon2 from "./assets/Images/image2.png";
+import icon3 from "./assets/Images/image3.png";
+import icon4 from "./assets/Images/image4.png";
+import icon5 from "./assets/Images/image5.png";
+import icon6 from "./assets/Images/image6.png";
+
 /* -------------------------------------- */
-/* Route Wrapper for SignIn + Loader */
+/* Background Images Component */
+/* -------------------------------------- */
+function BackgroundImages() {
+  return (
+    <div className="bg-images">
+      <img src={icon1} className="bg-img img-1" alt="" />
+      <img src={icon2} className="bg-img img-2" alt="" />
+      <img src={icon3} className="bg-img img-3" alt="" />
+      <img src={icon4} className="bg-img img-4" alt="" />
+      <img src={icon5} className="bg-img img-5" alt="" />
+      <img src={icon6} className="bg-img img-6" alt="" />
+    </div>
+  );
+}
+
+/* -------------------------------------- */
+/* SignIn + Loader (NO background on loader) */
 /* -------------------------------------- */
 function SignInWithLoader() {
   const [loading, setLoading] = useState(true);
@@ -46,7 +72,12 @@ function SignInWithLoader() {
     return <LoadingScreen onFinish={() => setLoading(false)} />;
   }
 
-  return <SignIn />;
+  return (
+    <>
+      <BackgroundImages />
+      <SignIn />
+    </>
+  );
 }
 
 /* -------------------------------------- */
@@ -54,6 +85,7 @@ function SignInWithLoader() {
 /* -------------------------------------- */
 function AppRoutes() {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const location = useLocation();
 
   useEffect(() => {
     const handleOnline = () => setIsOffline(false);
@@ -68,16 +100,17 @@ function AppRoutes() {
     };
   }, []);
 
+  const hideBgOnLoading = location.pathname === "/";
+
   return (
     <>
-      {/* ✅ Offline popup for all pages */}
       <OfflinePopup isOffline={isOffline} />
 
+      {!hideBgOnLoading && <BackgroundImages />}
+
       <Routes>
-        {/* ✅ SignIn ONLY gets loading screen */}
         <Route path="/" element={<SignInWithLoader />} />
 
-        {/* Other routes (NO loading screen) */}
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/signup-page" element={<SignUp />} />
         <Route path="/otp" element={<OtpVerify />} />
@@ -100,7 +133,6 @@ function AppRoutes() {
         <Route path="/policy" element={<PolicyReview />} />
         <Route path="/qr-scanner" element={<QRScannerPage />} />
 
-        {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
