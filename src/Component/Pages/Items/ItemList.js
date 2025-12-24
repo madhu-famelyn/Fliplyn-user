@@ -102,15 +102,20 @@ export default function ItemList({ items, itemsLoaded }) {
   };
 
   /* ================= FILTER + SEARCH ================= */
-  const filteredItems = items
-    .filter((item) => {
-      if (filterType === "veg") return item.is_veg;
-      if (filterType === "nonveg") return !item.is_veg;
-      return true;
-    })
-    .filter((item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+const filteredItems = items
+  // ✅ SHOW ONLY AVAILABLE ITEMS
+  .filter((item) => item.is_available === true)
+  // VEG / NON-VEG FILTER
+  .filter((item) => {
+    if (filterType === "veg") return item.is_veg;
+    if (filterType === "nonveg") return !item.is_veg;
+    return true;
+  })
+  // SEARCH FILTER
+  .filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
 
   return (
     <div className="items-section">
