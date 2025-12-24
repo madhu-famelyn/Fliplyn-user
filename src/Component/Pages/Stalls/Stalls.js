@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./Stalls.css";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext/ContextApi";
 
@@ -173,7 +174,6 @@ export default function Stall() {
     </div>
   )}
 
-  <p className="stall-names">{stall.name}</p>
 </div>
 
   ))}
@@ -182,6 +182,7 @@ export default function Stall() {
           </div>
         )}
       </div>
+      <Footer/>
     </>
   );
 }

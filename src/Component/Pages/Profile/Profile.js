@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Profile.css';
 import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 import { useAuth } from '../../AuthContext/ContextApi';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -176,6 +177,7 @@ export default function Profile() {
           </div>
         </div>
       )}
+      <Footer/>
     </>
   );
 }

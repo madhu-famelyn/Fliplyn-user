@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 import "./Wallet.css";
 import { FaWallet } from "react-icons/fa";
 import { SiPhonepe } from "react-icons/si";
@@ -222,6 +223,7 @@ export default function PaymentMethodPage() {
           </button>
         </div>
       </div>
+      <Footer/>
     </>
   );
 }

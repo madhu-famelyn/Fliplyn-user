@@ -17,19 +17,6 @@ export default function CategoryList({ categories, selectedCategoryId, onCategor
 
       {/* Sidebar */}
       <div className={`category-sidebar ${isOpen ? 'open' : 'closed'}`}>
-        
-        {/* All Items */}
-        {/* <div
-          className={`category-item ${selectedCategoryId === null ? 'active' : ''}`}
-          onClick={() => handleCategoryClick(null)}
-        >
-          <img
-            src="/all-items-icon.png"
-            alt="All Items"
-            className="category-icon"
-          />
-          <span className="category-name">All Items</span>
-        </div> */}
 
         {/* Categories Loop */}
         {categories.map((cat) => {

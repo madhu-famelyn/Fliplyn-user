@@ -3,6 +3,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  padding-bottom: 108px;
   justify-content: flex-start;
 }
 
@@ -170,7 +171,7 @@
 /* ---------- FIXED BOTTOM BUTTON ---------- */
 .sticky-bottom {
   position: fixed;
-  bottom: 0;
+  bottom: 80px;
   left: 0;
   width: 100%;
   background: white;

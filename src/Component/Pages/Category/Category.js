@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Category.css";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 
 import CategoryList from "./CategoryList";
 import ItemList from "../Items/ItemList";
@@ -161,6 +162,7 @@ export default function Category() {
           <ItemList items={items} itemsLoaded={itemsLoaded} />
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }

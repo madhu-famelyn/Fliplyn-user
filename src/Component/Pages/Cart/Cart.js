@@ -3,6 +3,7 @@ import Header from "../Header/Header";
 import { useAuth } from "../../AuthContext/ContextApi";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Footer from "../Footer/Footer";
 import "./Cart.css";
 
 const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
@@ -195,6 +196,7 @@ export default function Cart() {
           </>
         )}
       </div>
+      <Footer/>
     </>
   );
 }

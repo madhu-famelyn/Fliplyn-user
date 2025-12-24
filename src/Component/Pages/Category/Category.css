@@ -1,8 +1,9 @@
 /* ---------- MAIN WRAPPER ---------- */
 .category-wrapper {
   display: flex;
-
+  padding-bottom: 48px; /* adjust value as needed */
 }
+
 
 /* ---------- FIXED LEFT CATEGORY SIDEBAR ---------- */
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { getOrderDetailsByUserId } from "./Service";
 import { useAuth } from "../../AuthContext/ContextApi";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 import "./Transactions.css";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -268,6 +269,7 @@ export default function Transactions() {
           </div>
         </div>
       )}
+      <Footer/>
     </>
   );
 }

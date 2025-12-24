@@ -1,0 +1,37 @@
+.footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 65px;
+  background: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-top: 1px solid #e0e0e0;
+  z-index: 1000;
+}
+
+.footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  color: #777;
+}
+
+.footer-item img {
+  width: 22px;
+  height: 22px;
+  margin-bottom: 4px;
+}
+
+.footer-item.active {
+  color: #000;
+  font-weight: 600;
+}
+
+.footer-item.active img {
+  transform: scale(1.1);
+}

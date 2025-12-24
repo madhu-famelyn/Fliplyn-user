@@ -1,63 +1,42 @@
-// src/components/Header.js
-import './Header.css';
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { FaUserCircle, FaBars, FaTimes } from 'react-icons/fa';
+// src/components/Header/Header.js
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa";
+import logo from "../../../assets/Images/Logo.png";
+import walletIcon from "../../../assets/Images/image 15.png";
+import "./Header.css";
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-
-  const toggleMenu = () => setMenuOpen((prev) => !prev);
-  const handleLinkClick = () => setMenuOpen(false);
+  const navigate = useNavigate();
 
   return (
     <>
-      <nav className="stall-navbar">
-        {/* ✅ Mobile: Left - User Icon */}
-        <div className="mobile-left mobile">
-          <Link to="/profile">
-            <FaUserCircle className="user-icon" />
-          </Link>
-        </div>
+    <nav className="simple-header">
+      {/* Left: Logo + Brand */}
+      <div
+        className="header-left"
+        onClick={() => navigate("/stalls")}
+      >
+        <img src={logo} alt="Fliplyn Logo" className="header-logo" />
+        <span className="header-brand">Fliplyn</span>
+      </div>
 
-        {/* ✅ Center: Logo */}
-        <div className="stall-logo">Fliplyn</div>
+      {/* Right: Wallet + Cart */}
+      <div className="header-right">
+        <img
+          src={walletIcon}
+          alt="Wallet"
+          className="wallet-icon"
+          onClick={() => navigate("/transactions-wallet")}
+        />
 
-        {/* ✅ Mobile: Right - Hamburger */}
-        <div className="mobile-right mobile" onClick={toggleMenu}>
-          {menuOpen ? (
-            <FaTimes className="hamburger" />
-          ) : (
-            <FaBars className="hamburger" />
-          )}
-        </div>
-
-        {/* ✅ Desktop Nav */}
-        <div className="stall-links desktop">
-          <Link to="/stalls">Home</Link>
-          <Link to="/cart">Cart</Link>
-          <Link to="/transactions-wallet">Wallet</Link>
-          <Link to="/trans">Transaction History</Link>
-
-          <Link className="user" to="/profile">
-            <FaUserCircle className="user-icon" />
-          </Link>
-        </div>
-
-        {/* ✅ Mobile Dropdown Nav */}
-        <div className={`stall-links mobile-dropdown ${menuOpen ? 'open' : ''}`}>
-          <Link to="/stalls" onClick={handleLinkClick}>Home</Link>
-          <Link to="/cart" onClick={handleLinkClick}>Cart</Link>
-          <Link to="/transactions-wallet" onClick={handleLinkClick}>Wallet</Link>
-          <Link to="/trans" onClick={handleLinkClick}>Transaction History</Link>
-          <Link to="/profile" onClick={handleLinkClick}>
-            <FaUserCircle className="user-icon" />
-          </Link>
-        </div>
-      </nav>
-
-      {/* ✅ Running Banner BELOW Header */}
-      <div className="announcement-banner">
+        <FaShoppingCart
+          className="cart-icon"
+          onClick={() => navigate("/cart")}
+        />
+      </div>
+    </nav>
+     <div className="announcement-banner">
         <div className="announcement-track">
           <span>
             ✅ Digital payment functionality is now available &nbsp;&nbsp;•&nbsp;&nbsp;
@@ -69,6 +48,6 @@ export default function Header() {
           </span>
         </div>
       </div>
-    </>
+      </>
   );
 }
