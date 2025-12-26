@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./Footer.css";
 
 import HomeIcon from "../../../assets/Images/Home.png";
-// import CartIcon from "../../../assets/Images/Cart.png";
 import DocIcon from "../../../assets/Images/Transactions.png";
 import ProfileIcon from "../../../assets/Images/profile.png";
 

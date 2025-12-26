@@ -6,178 +6,108 @@ import { useAuth } from '../../AuthContext/ContextApi';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
+import profileIcon from '../../../assets/Images/Profile/profile.png';
+import personalIcon from '../../../assets/Images/Profile/Profile Icon (1).png';
+import orgIcon from '../../../assets/Images/Profile/organization.png';
+import memberIcon from '../../../assets/Images/Profile/member since.png';
+
 export default function Profile() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [fullUser, setFullUser] = useState(null);
   const [noUserFound, setNoUserFound] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    phone_number: '',
-    company_name: '',
-    company_email: '',
-  });
 
   useEffect(() => {
-    if (user?.id) {
-      axios.get(`https://admin-aged-field-2794.fly.dev/user/${user.id}`)
-        .then(res => {
-          if (!res.data || Object.keys(res.data).length === 0) {
-            setNoUserFound(true);
-            return;
-          }
-
-          setFullUser(res.data);
-          setFormData({
-            name: res.data.name || '',
-            phone_number: res.data.phone_number || '',
-            company_name: res.data.company_name || '',
-            company_email: res.data.company_email || ''
-          });
-
-          // ✅ Save data to localStorage
-          localStorage.setItem("user_id", res.data.id);
-          localStorage.setItem("user_phone", res.data.phone_number);
-          localStorage.setItem("user_email", res.data.company_email);
-
-        })
-        .catch(err => {
-          console.error("Error fetching user details:", err);
-          setNoUserFound(true);
-        });
-    } else {
+    if (!user?.id) {
       setNoUserFound(true);
+      return;
     }
+
+    axios.get(`https://admin-aged-field-2794.fly.dev/user/${user.id}`)
+      .then(res => {
+        if (!res.data) {
+          setNoUserFound(true);
+          return;
+        }
+        setFullUser(res.data);
+      })
+      .catch(() => setNoUserFound(true));
   }, [user]);
 
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleUpdateSubmit = () => {
-    axios.put(`https://admin-aged-field-2794.fly.dev/user/${user.id}`, formData)
-      .then(res => {
-        setFullUser(res.data);
-        setShowEditModal(false);
-
-        // 🔁 Update localStorage on edit also
-        localStorage.setItem("user_phone", res.data.phone_number);
-        localStorage.setItem("user_email", res.data.company_email);
-
-      })
-      .catch(err => {
-        console.error("Error updating user:", err);
-        alert("Update failed. Try again.");
-      });
-  };
-
   const handleLogout = () => {
-    // ❌ Remove data from localStorage when logging out
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("user_phone");
-    localStorage.removeItem("user_email");
-
     logout();
     navigate('/');
   };
 
   if (noUserFound) {
-    return (
-      <div className="profile-container" style={{ textAlign: 'center', padding: '20px' }}>
-        <p>No user found</p>
-        <button onClick={() => navigate('/')}>Login</button>
-      </div>
-    );
+    return <p style={{ textAlign: 'center' }}>No user found</p>;
   }
 
   if (!fullUser) {
-    return <p className="profile-loading">Loading...</p>;
+    return <p style={{ textAlign: 'center' }}>Loading...</p>;
   }
 
   return (
     <>
       <Header />
-      <div className="profile-container">
-        <h2 className="profile-title">Profile</h2>
-        <hr className="profile-divider" />
-        <div className="profile-info">
-          <div className="profile-row">
-            <span className="label">Name</span>
-            <span className="value">{fullUser.name || 'N/A'}</span>
-          </div>
-          <div className="profile-row">
-            <span className="label">Phone Number</span>
-            <span className="value">{fullUser.phone_number || 'N/A'}</span>
-          </div>
-          <div className="profile-row">
-            <span className="label">Company Name</span>
-            <span className="value">{fullUser.company_name || 'N/A'}</span>
-          </div>
-          <div className="profile-row">
-            <span className="label">Company Email</span>
-            <span className="value">{fullUser.company_email || 'N/A'}</span>
-          </div>
-          <div className="profile-row">
-            <span className="label">Created At</span>
-            <span className="value">{new Date(fullUser.created_datetime).toLocaleString()}</span>
-          </div>
+
+      <div className="profile-page">
+        {/* HEADER */}
+        <div className="profile-header">
+          <img src={profileIcon} alt="Profile" className="profile-avatar" />
+          <h2>{fullUser.name}</h2>
+          <p>Profile</p>
         </div>
 
-        <div className="profile-buttons">
-          <button className="edit-btn" onClick={() => setShowEditModal(true)}>Edit Profile</button>
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        {/* CARD : PERSONAL INFO */}
+        <div className="profile-card">
+          <div className="card-left">
+            <img src={personalIcon} alt="Personal" />
+          </div>
+          <div className="card-center">
+            <h4>Personal Info</h4>
+            <p>Name</p>
+            <strong>{fullUser.name}</strong>
+            <span>{fullUser.phone_number}</span>
+          </div>
+          <div className="card-right">›</div>
         </div>
+
+        {/* CARD : ORGANIZATION */}
+        <div className="profile-card">
+          <div className="card-left">
+            <img src={orgIcon} alt="Organization" />
+          </div>
+          <div className="card-center">
+            <h4>Organization</h4>
+            <p>Name</p>
+            <strong>{fullUser.company_name}</strong>
+            <span>{fullUser.company_email}</span>
+          </div>
+          <div className="card-right">›</div>
+        </div>
+
+        {/* CARD : MEMBER SINCE */}
+        <div className="profile-card">
+          <div className="card-left">
+            <img src={memberIcon} alt="Member" />
+          </div>
+          <div className="card-center">
+            <h4>Member Since</h4>
+            <strong>
+              {new Date(fullUser.created_datetime).toLocaleString()}
+            </strong>
+          </div>
+          <div className="card-right">›</div>
+        </div>
+
+        {/* BUTTONS */}
+        <button className="logout-profile-btn" onClick={handleLogout}>
+          ⎋ Logout
+        </button>
       </div>
 
-      {showEditModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Edit Profile</h3>
-
-            <label>Name</label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-            />
-
-            <label>Phone Number</label>
-            <input
-              type="text"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleInputChange}
-            />
-
-            <label>Company Name</label>
-            <input
-              type="text"
-              name="company_name"
-              value={formData.company_name}
-              onChange={handleInputChange}
-            />
-
-            <label>Company Email</label>
-            <input
-              type="email"
-              name="company_email"
-              value={formData.company_email}
-              onChange={handleInputChange}
-            />
-
-            <div className="modal-buttons">
-              <button onClick={handleUpdateSubmit}>Save</button>
-              <button onClick={() => setShowEditModal(false)}>Cancel</button>
-            </div>
-          </div>
-        </div>
-      )}
-      <Footer/>
+      <Footer />
     </>
   );
 }
