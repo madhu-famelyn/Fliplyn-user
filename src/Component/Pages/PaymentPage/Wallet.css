@@ -70,8 +70,7 @@
 .payment-page-container {
   max-width: 600px;
   margin: 40px auto;
-  padding-bottom: 108px;
-  padding: 0 24px;
+  padding-bottom: 20vh;
   font-family: 'Inter', sans-serif;
 }
 

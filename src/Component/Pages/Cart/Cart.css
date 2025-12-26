@@ -3,7 +3,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-bottom: 108px;
+  padding-bottom: 45vh;
   justify-content: flex-start;
 }
 
@@ -126,6 +126,7 @@
 .cart-summary {
   background: white;
   padding: 1rem;
+  padding-bottom: 15vh;
   margin: 0 1rem;
   border-radius: 12px;
   font-size: 15px;
