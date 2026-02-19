@@ -162,6 +162,10 @@ export default function PaymentSuccessCashfree() {
                 <span>{item.price.toFixed(2)}</span>
               </div>
             ))}
+
+
+
+            
           </div>
 
           <div
