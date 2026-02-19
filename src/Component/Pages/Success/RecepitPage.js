@@ -16,7 +16,6 @@ export default function ReceiptPage() {
       .catch((err) => console.error(err));
   }, [id]);
 
-  // ✅ Trigger print AFTER details are loaded
   useEffect(() => {
     if (orderDetails) {
       setTimeout(() => {
@@ -33,7 +32,6 @@ export default function ReceiptPage() {
     { hour12: true, timeZone: "Asia/Kolkata" }
   );
 
-  // ✅ Extract backend values
   const {
     cgst = 0,
     sgst = 0,

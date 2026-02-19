@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "./Success.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BsCheck } from "react-icons/bs";
+import { BsXCircle } from "react-icons/bs";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axios from "axios";
@@ -15,82 +16,86 @@ export default function PaymentSuccessCashfree() {
   const receiptRef = useRef(null);
 
   useEffect(() => {
-    // Read Cashfree order ID directly from query param
     const searchParams = new URLSearchParams(location.search);
     const cfOrderId = searchParams.get("order_id");
-    console.log("Cashfree Order ID received from query params:", cfOrderId);
 
     if (!cfOrderId) {
-      console.warn("No Cashfree order ID provided in query params");
-      alert("Invalid order ID. Redirecting to stalls page.");
+      alert("Invalid order ID.");
       navigate("/stalls");
       return;
     }
 
     const verifyEndpoint = `https://admin-aged-field-2794.fly.dev/orders/verify-payment/cashfree/${cfOrderId}`;
-    console.log("Calling verify payment API:", verifyEndpoint);
 
-    // 1️⃣ Verify payment first
     axios
       .get(verifyEndpoint)
-      .then((verifyRes) => {
-        console.log("Verify payment response:", verifyRes.data);
-
-        const fetchOrderEndpoint = `https://admin-aged-field-2794.fly.dev/orders/by-cashfree/${cfOrderId}`;
-        console.log("Calling fetch order API:", fetchOrderEndpoint);
-
-        // 2️⃣ Fetch full order details
-        return axios.get(fetchOrderEndpoint);
+      .then(() => {
+        return axios.get(
+          `https://admin-aged-field-2794.fly.dev/orders/by-cashfree/${cfOrderId}`
+        );
       })
       .then((res) => {
-        console.log("Fetch order details response:", res.data);
         setOrderDetails(res.data);
       })
-      .catch((err) => {
-        console.error("Error verifying/fetching order:", err.response ?? err);
-        alert("Failed to verify payment or fetch order. Please try again.");
+      .catch(() => {
+        alert("Payment verification failed.");
         navigate("/stalls");
       });
   }, [location.search, navigate]);
 
   const downloadPDF = () => {
-    console.log("Download PDF button clicked");
     const input = receiptRef.current;
+    if (!input) return;
 
-    if (!input) {
-      console.warn("Receipt ref is null, cannot generate PDF");
-      return;
-    }
+    html2canvas(input, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`receipt_${orderDetails.id.slice(0, 6)}.pdf`);
 
-    html2canvas(input, { scale: 2 })
-      .then((canvas) => {
-        console.log("Canvas generated for PDF", canvas);
-        const imgData = canvas.toDataURL("image/png");
-        const pdf = new jsPDF("p", "mm", "a4");
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-        const fileName = `receipt_${orderDetails.id.slice(0, 6)}.pdf`;
-        console.log("Saving PDF as:", fileName);
-        pdf.save(fileName);
-
-        console.log("PDF download completed, redirecting to /stalls in 1 second");
-        setTimeout(() => {
-          navigate("/stalls");
-        }, 1000);
-      })
-      .catch((err) => console.error("Error generating PDF:", err));
+      setTimeout(() => navigate("/stalls"), 1000);
+    });
   };
 
   if (!orderDetails) {
-    console.log("Order details not yet loaded, showing loading message");
     return <p className="loading-text">Verifying Payment...</p>;
   }
 
-  console.log("Rendering order details for order ID:", orderDetails.id);
+  // ✅ IMPORTANT CHECK
+  const isPaymentSuccessful =
+    orderDetails.payment_status === "SUCCESS" &&
+    orderDetails.payment_verified === true;
 
+  // ❌ If payment failed or pending → show failure screen
+  if (!isPaymentSuccessful) {
+    return (
+      <div className="receipt-wrapper">
+        <div className="status-wrapper">
+          <p className="failed-status" style={{ color: "red", fontWeight: "bold" }}>
+            <span style={{ fontSize: "22px", marginRight: "8px" }}>
+              <BsXCircle />
+            </span>
+            Payment Failed or Pending
+          </p>
+          <button
+            style={{ marginTop: "20px" }}
+            onClick={() => navigate("/stalls")}
+          >
+            Back to Stalls
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ✅ Only reach here if payment is SUCCESS
   const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4);
-  const createdAt = new Date(orderDetails.created_datetime).toLocaleString("en-IN", {
+
+  const createdAt = new Date(
+    orderDetails.created_datetime
+  ).toLocaleString("en-IN", {
     hour12: true,
     timeZone: "Asia/Kolkata",
   });
@@ -101,11 +106,6 @@ export default function PaymentSuccessCashfree() {
   const roundOff = orderDetails.round_off ?? 0;
   const grandTotal = orderDetails.total_amount ?? 0;
   const subtotal = grandTotal - roundOff;
-
-  console.log("Token No:", tokenNo);
-  console.log("Created At:", createdAt);
-  console.log("Total CGST:", totalCgst, "Total SGST:", totalSgst, "Total GST:", totalGst);
-  console.log("Subtotal:", subtotal, "Round Off:", roundOff, "Grand Total:", grandTotal);
 
   return (
     <div className="receipt-wrapper">
@@ -121,19 +121,13 @@ export default function PaymentSuccessCashfree() {
       <div className="toggle-btns">
         <button
           className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
-          onClick={() => {
-            console.log("Switching view to receipt");
-            setView("receipt");
-          }}
+          onClick={() => setView("receipt")}
         >
           Show Receipt
         </button>
         <button
           className={`toggle-btn ${view === "qr" ? "active" : ""}`}
-          onClick={() => {
-            console.log("Switching view to QR");
-            setView("qr");
-          }}
+          onClick={() => setView("qr")}
         >
           Show QR
         </button>
@@ -144,9 +138,12 @@ export default function PaymentSuccessCashfree() {
           <h2 className="stall-name">
             {orderDetails.order_details[0]?.stall_name || "Stall Name"}
           </h2>
+
+          {/* ✅ Token only shown for successful payment */}
           <p className="token-no">
             Token No.: <strong>{tokenNo}</strong>
           </p>
+
           <p className="order-date">Date: {createdAt}</p>
 
           <hr className="separator" />
@@ -167,34 +164,41 @@ export default function PaymentSuccessCashfree() {
             ))}
           </div>
 
-          <div className="token-summary" style={{ maxWidth: "400px", margin: "0 auto" }}>
-            <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+          <div
+            className="token-summary"
+            style={{ maxWidth: "400px", margin: "0 auto" }}
+          >
+            <p style={{ display: "flex", justifyContent: "space-between" }}>
               <span>CGST</span>
               <span>{totalCgst.toFixed(2)}</span>
             </p>
-            <hr className="separator" />
-            <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+            <p style={{ display: "flex", justifyContent: "space-between" }}>
               <span>SGST</span>
               <span>{totalSgst.toFixed(2)}</span>
             </p>
-            <hr className="separator" />
-            <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+            <p style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Total GST</span>
               <span>{totalGst.toFixed(2)}</span>
             </p>
-            <hr className="separator" />
-            <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+            <p style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Total</span>
               <span>{subtotal.toFixed(2)}</span>
             </p>
-            <hr className="separator" />
-            <p style={{ display: "flex", justifyContent: "space-between", margin: "4px 0" }}>
+            <p style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Round Off</span>
-              <span>{roundOff >= 0 ? `+${roundOff.toFixed(2)}` : roundOff.toFixed(2)}</span>
+              <span>
+                {roundOff >= 0
+                  ? `+${roundOff.toFixed(2)}`
+                  : roundOff.toFixed(2)}
+              </span>
             </p>
             <p
               className="grand-total"
-              style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", marginTop: "8px" }}
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                fontWeight: "bold",
+              }}
             >
               <span>Grand Total</span>
               <span>{grandTotal.toFixed(2)}</span>
