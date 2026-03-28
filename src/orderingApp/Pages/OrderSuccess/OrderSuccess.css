@@ -1,0 +1,120 @@
+.success-page {
+  min-height: 100vh;
+  background: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.success-container {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ✅ Icon */
+.success-icon {
+  width: 90px;
+  height: 90px;
+  background: #e6f4ea;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 40px;
+  color: #22c55e;
+}
+
+/* ✅ Titles */
+.main-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.sub-title {
+  color: #777;
+  margin-bottom: 25px;
+}
+
+/* ✅ Card */
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+  border: 1px solid #eee;
+}
+
+/* ✅ Token Card */
+.token-card {
+  text-align: center;
+}
+
+.label {
+  color: #888;
+  font-size: 14px;
+}
+
+.token-number {
+  font-size: 48px;
+  font-weight: 700;
+  color: #ff7a00;
+  margin: 10px 0;
+}
+
+.date {
+  color: #888;
+  font-size: 14px;
+}
+
+/* ✅ Items */
+.items-title {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #444;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 15px 0;
+}
+
+/* ✅ Total */
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.total-amount {
+  color: #ff7a00;
+}
+
+/* ✅ Button */
+.home-btn {
+  width: 100%;
+  background: #ff7a00;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.home-btn:hover {
+  background: #e66a00;
+}

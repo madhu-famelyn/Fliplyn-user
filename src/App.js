@@ -43,6 +43,7 @@ import OutletSelection from './orderingApp/Pages/OutletSelection/OutletSelection
 import CategorySelection from './orderingApp/Pages/CategorySelection/CategorySelection'
 import MenuPage from "./orderingApp/Pages/MenuPage/MenuPage";
 import OrderingCart from "./orderingApp/Pages/Cart/Cart";
+import OrderSuccess from "./orderingApp/Pages/OrderSuccess/OrderSuccess";
 import { AuthProvider } from "./Component/AuthContext/ContextApi";
 
 /* ---------- BACKGROUND IMAGES ---------- */
@@ -155,6 +156,8 @@ function AppRoutes() {
   element={<MenuPage />}
 />
 <Route path="/ordering-cart" element={<OrderingCart/>}></Route>
+<Route path="/ordering-success" element={<OrderSuccess/>}></Route>
+
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
