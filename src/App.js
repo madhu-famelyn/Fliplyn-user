@@ -36,6 +36,13 @@ import ReceiptPage from "./Component/Pages/Success/RecepitPage";
 import QRScannerPage from "./Component/Pages/ScanQR/ScanQR";
 import PolicyReview from "./Component/Policy/Policy";
 
+
+import LandingPage from './orderingApp/Pages/LandingPage/LandingPage'
+import CustomerDetails from './orderingApp/Pages/CustomerDetails/CustomerDetails'
+import OutletSelection from './orderingApp/Pages/OutletSelection/OutletSelection'
+import CategorySelection from './orderingApp/Pages/CategorySelection/CategorySelection'
+import MenuPage from "./orderingApp/Pages/MenuPage/MenuPage";
+import OrderingCart from "./orderingApp/Pages/Cart/Cart";
 import { AuthProvider } from "./Component/AuthContext/ContextApi";
 
 /* ---------- BACKGROUND IMAGES ---------- */
@@ -132,6 +139,22 @@ function AppRoutes() {
         <Route path="/receipt/:id" element={<ReceiptPage />} />
         <Route path="/policy" element={<PolicyReview />} />
         <Route path="/qr-scanner" element={<QRScannerPage />} />
+
+
+              <Route path="/orderingpage" element={<LandingPage />} />
+
+      <Route path="/customer-details" element={<CustomerDetails />} />
+      <Route path="/outlets" element={<OutletSelection/>}/>
+      <Route path="/categories/ordering/:stallId" element={<CategorySelection />} />
+      <Route
+  path="/items/:categoryId"
+  element={<MenuPage />}
+/>
+<Route
+  path="/items/all/:stallId"
+  element={<MenuPage />}
+/>
+<Route path="/ordering-cart" element={<OrderingCart/>}></Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

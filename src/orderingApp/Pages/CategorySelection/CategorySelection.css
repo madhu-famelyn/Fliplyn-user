@@ -1,0 +1,105 @@
+.category-page {
+  max-width: 420px;
+  margin: auto;
+  padding: 24px;
+}
+
+/* Back button */
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #8b6f5a;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* Titles */
+
+.page-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.page-subtitle {
+  color: #8b6f5a;
+  margin-bottom: 24px;
+}
+
+/* Grid */
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Category cards */
+
+.category-card {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #eee;
+  padding: 28px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-card:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* Category image */
+
+.category-image {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Category name */
+
+.category-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Cart indicator */
+
+.cart-indicator {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #3a2b1d;
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 12px 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,0.4);
+}
+
+.cart-price {
+  font-weight: 700;
+}

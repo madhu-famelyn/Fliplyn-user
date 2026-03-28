@@ -1,0 +1,52 @@
+.btn {
+  width: 100%;
+  height: 56px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+/* Default */
+.btn.default {
+  background-color: #f97316;
+  color: white;
+}
+
+.btn.default:hover {
+  background-color: #ea580c;
+}
+
+/* Hero (Primary Big Button) */
+.btn.hero {
+  background-color: #f97316;
+  color: white;
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.25);
+}
+
+.btn.hero:hover {
+  background-color: #ea580c;
+}
+
+/* Outline */
+.btn.outline {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  color: black;
+}
+
+.btn.outline:hover {
+  background-color: #f3f4f6;
+}
+.icon {
+  width: 20px;
+  height: 20px;
+}
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; /* space between icon and text */
+}

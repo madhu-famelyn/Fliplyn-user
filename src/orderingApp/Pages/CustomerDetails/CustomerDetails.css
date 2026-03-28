@@ -1,0 +1,39 @@
+.details-page {
+  max-width: 420px;
+  margin: auto;
+  padding: 32px 24px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #8b6f5a;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.page-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.page-subtitle {
+  color: #8b6f5a;
+  margin-bottom: 30px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
