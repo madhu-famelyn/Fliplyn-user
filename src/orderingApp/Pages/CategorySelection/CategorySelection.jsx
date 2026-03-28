@@ -64,7 +64,11 @@ const CategorySelection = () => {
             className="category-card"
             onClick={() => navigate(`/items/all/${stallId}`)}
           >
-            <img src={allItemsImage} className="category-image" />
+            <img
+              src={allItemsImage}
+              className="category-image"
+              alt="All menu items"
+            />
             <span className="category-name">All Items</span>
           </button>
 
@@ -81,6 +85,7 @@ const CategorySelection = () => {
                   fallbackImages[index % fallbackImages.length]
                 }
                 className="category-image"
+                alt={c.name ? `${c.name} category` : "Food category"}
               />
               <span className="category-name">{c.name}</span>
             </button>
