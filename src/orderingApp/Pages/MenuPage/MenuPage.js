@@ -15,21 +15,14 @@ function MenuPage() {
   const fallbackImage =
     "https://images.unsplash.com/photo-1600891964599-f61ba0e24092";
 
-  // ✅ Get logged-in user email
   const email = localStorage.getItem("customerEmail");
 
-  // ✅ Load cart for this user
+  // ✅ Load cart
   useEffect(() => {
-    if (!email) {
-      console.warn("⚠️ No email found in localStorage");
-      return;
-    }
+    if (!email) return;
 
     const storedCart = JSON.parse(localStorage.getItem("cart")) || {};
-
     const userCart = storedCart[email] || [];
-
-    console.log("🛒 Loaded cart for:", email, userCart);
 
     setCart(userCart);
   }, [email]);
@@ -46,12 +39,7 @@ function MenuPage() {
           url = `https://admin-aged-field-2794.fly.dev/items/stall/${stallId}`;
         }
 
-        console.log("📡 Fetching items from:", url);
-
         const res = await axios.get(url);
-
-        console.log("📦 Items data:", res.data);
-
         setItems(res.data);
       } catch (err) {
         console.error("❌ Error fetching items:", err);
@@ -63,15 +51,11 @@ function MenuPage() {
     fetchItems();
   }, [categoryId, stallId]);
 
-  // ✅ Save cart to localStorage
+  // ✅ Save cart
   const saveCart = (updatedCart) => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || {};
-
     storedCart[email] = updatedCart;
-
     localStorage.setItem("cart", JSON.stringify(storedCart));
-
-    console.log("💾 Cart saved for:", email, updatedCart);
   };
 
   // ✅ Add to cart
@@ -80,13 +64,11 @@ function MenuPage() {
 
     if (!exists) {
       const updatedCart = [...cart, item];
-
       setCart(updatedCart);
       saveCart(updatedCart);
     }
   };
 
-  // ✅ Check if item exists
   const isInCart = (id) => {
     return cart.some((item) => item.id === id);
   };
@@ -104,11 +86,6 @@ function MenuPage() {
         </span>
         <h1>Menu</h1>
       </div>
-
-      {/* 👤 Debug User */}
-      <p style={{ fontSize: "12px", color: "gray" }}>
-        Logged in as: {email}
-      </p>
 
       {/* ⏳ Loading */}
       {loading && <p>Loading items...</p>}
@@ -149,9 +126,13 @@ function MenuPage() {
         })}
       </div>
 
-      {/* 🛒 Cart */}
+      {/* 🛒 Cart Bar → NOW CLICKABLE */}
       {cart.length > 0 && (
-        <div className="cart-bar">
+        <div
+          className="cart-bar"
+          onClick={() => navigate("/ordering-cart")}
+          style={{ cursor: "pointer" }}
+        >
           <span>{cart.length} items</span>
           <span>₹{total}</span>
         </div>
