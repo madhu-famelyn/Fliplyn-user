@@ -111,7 +111,7 @@ export default function PaymentSuccessCashfree() {
     <div className="receipt-wrapper">
       <div className="status-wrapper">
         <p className="success-status">
-          <span className="success-icon">
+          <span className="success-icon-success">
             <BsCheck />
           </span>{" "}
           Payment Successful

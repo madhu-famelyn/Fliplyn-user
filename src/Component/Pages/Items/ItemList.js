@@ -196,7 +196,7 @@ const filteredItems = items
 
                     {!isInCart ? (
                       <button
-                        className="add-btn"
+                        className="add-btn-btn"
                         onClick={() => handleAddToCart(item)}
                       >
                         + Add

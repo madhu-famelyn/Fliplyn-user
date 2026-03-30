@@ -217,7 +217,7 @@
 /* -----------------------------
    ADD BUTTON (Your Gradient)
 ------------------------------ */
-.add-btn {
+.add-btn-btn {
   background: linear-gradient(90deg, #F84D25 0%, #FF9047 100%);
   border: none;
   padding: 6px 14px;
@@ -230,7 +230,7 @@
   box-shadow: 0 3px 8px rgba(255, 125, 80, 0.4);
 }
 
-.add-btn:hover {
+.add-btn-btn:hover {
   opacity: 0.9;
   transform: scale(1.05);
 }

@@ -35,7 +35,7 @@ body {
   color: #000000;
 }
 
-.success-icon {
+.success-icon-success {
   background-color: #0FBB0F;
   border-radius: 50%;
   padding: 6px;
@@ -45,7 +45,7 @@ body {
   margin-right: 8px;
 }
 
-.success-icon svg {
+.success-icon-success svg {
   color: white;
   width: 14px;
   height: 14px;
