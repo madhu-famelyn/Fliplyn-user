@@ -12,6 +12,10 @@ function MenuPage() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ NEW STATES
+  const [showAlert, setShowAlert] = useState(false);
+  const [pendingItem, setPendingItem] = useState(null);
+
   const fallbackImage =
     "https://images.unsplash.com/photo-1600891964599-f61ba0e24092";
 
@@ -60,13 +64,43 @@ function MenuPage() {
 
   // ✅ Add to cart
   const addToCart = (item) => {
+    if (cart.length === 0) {
+      const updatedCart = [{ ...item, stall_id: item.stall_id || stallId }];
+      setCart(updatedCart);
+      saveCart(updatedCart);
+      return;
+    }
+
+    const existingStallId = cart[0].stall_id;
+
+    // ❌ Different stall → show popup
+    if (existingStallId !== (item.stall_id || stallId)) {
+      setPendingItem(item);
+      setShowAlert(true);
+      return;
+    }
+
     const exists = cart.find((i) => i.id === item.id);
 
     if (!exists) {
-      const updatedCart = [...cart, item];
+      const updatedCart = [
+        ...cart,
+        { ...item, stall_id: item.stall_id || stallId },
+      ];
       setCart(updatedCart);
       saveCart(updatedCart);
     }
+  };
+
+  // ✅ Handle clear + add new item
+  const handleClearAndAdd = () => {
+    const updatedCart = [
+      { ...pendingItem, stall_id: pendingItem.stall_id || stallId },
+    ];
+    setCart(updatedCart);
+    saveCart(updatedCart);
+    setShowAlert(false);
+    setPendingItem(null);
   };
 
   const isInCart = (id) => {
@@ -79,7 +113,7 @@ function MenuPage() {
 
   return (
     <div className="menu-container">
-      {/* 🔙 Back */}
+      {/* Header */}
       <div className="header">
         <span className="back" onClick={() => navigate(-1)}>
           ← Back
@@ -87,13 +121,9 @@ function MenuPage() {
         <h1>Menu</h1>
       </div>
 
-      {/* ⏳ Loading */}
       {loading && <p>Loading items...</p>}
-
-      {/* ❌ Empty */}
       {!loading && items.length === 0 && <p>No items found</p>}
 
-      {/* ✅ Items */}
       <div className="menu-list">
         {items.map((item) => {
           const added = isInCart(item.id);
@@ -126,15 +156,43 @@ function MenuPage() {
         })}
       </div>
 
-      {/* 🛒 Cart Bar → NOW CLICKABLE */}
+      {/* Cart Bar */}
       {cart.length > 0 && (
         <div
           className="cart-bar"
           onClick={() => navigate("/ordering-cart")}
-          style={{ cursor: "pointer" }}
         >
           <span>{cart.length} items</span>
           <span>₹{total}</span>
+        </div>
+      )}
+
+      {/* ✅ CUSTOM POPUP */}
+      {showAlert && (
+        <div className="popup-overlay">
+          <div className="popup-box">
+            <h3>⚠️ Different Stall</h3>
+            <p>
+              Your cart contains items from another stall. Clear cart to add
+              this item.
+            </p>
+
+            <div className="popup-actions">
+              <button
+                className="popup-cancel"
+                onClick={() => setShowAlert(false)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="popup-confirm"
+                onClick={handleClearAndAdd}
+              >
+                Clear & Add
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

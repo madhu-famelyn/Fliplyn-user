@@ -121,3 +121,80 @@
   margin: 0 12px;
   border-right: 1px solid rgba(255, 255, 255, 0.5);
 }
+
+/* 🔲 Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* 📦 Popup Box */
+.popup-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeInScale 0.25s ease;
+}
+
+/* ✨ Animation */
+@keyframes fadeInScale {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 🧾 Text */
+.popup-box h3 {
+  margin-bottom: 10px;
+}
+
+.popup-box p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+/* 🔘 Buttons */
+.popup-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.popup-cancel {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.popup-confirm {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: #ff4d4f;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.popup-confirm:hover {
+  background: #e63b3d;
+}

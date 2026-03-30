@@ -95,7 +95,7 @@ const CategorySelection = () => {
 
       {!loading && categories.length === 0 && <p>No categories found</p>}
 
-      <CartIndicator />
+      {/* <CartIndicator /> */}
     </div>
   );
 };
