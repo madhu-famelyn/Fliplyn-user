@@ -16,10 +16,15 @@ const OrderSuccess = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
 
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     let retryCount = 0;
+    const maxRetries = 10;
 
     const verifyOrder = async () => {
 
@@ -31,35 +36,34 @@ const OrderSuccess = () => {
 
         const data = res.data;
 
-        if (data.payment_status === "SUCCESS") {
+        if (data) {
 
           setOrder(data);
-          setLoading(false);
-          return;
+
+          if (data.payment_status === "SUCCESS") {
+            setLoading(false);
+            return;
+          }
 
         }
 
-        if (retryCount < 10) {
-
+        if (retryCount < maxRetries) {
           retryCount++;
           setTimeout(verifyOrder, 2000);
-
         } else {
-
           setLoading(false);
-
         }
 
       } catch (err) {
 
-        console.error(err);
+        console.error("Order verification failed", err);
         setLoading(false);
 
       }
 
     };
 
-    if (token) verifyOrder();
+    verifyOrder();
 
   }, [token]);
 
@@ -74,6 +78,7 @@ const OrderSuccess = () => {
 
   }
 
+
   if (!order) {
 
     return (
@@ -83,7 +88,6 @@ const OrderSuccess = () => {
     );
 
   }
-
 
   const formattedDate = new Date(order.created_datetime).toLocaleString();
 
@@ -96,8 +100,18 @@ const OrderSuccess = () => {
 
         <div className="success-icon">✓</div>
 
-        <h1 className="main-title">Payment Successful!</h1>
-        <p className="sub-title">Your order has been placed</p>
+        <h1 className="main-title">
+          {order.payment_status === "SUCCESS"
+            ? "Payment Successful!"
+            : "Payment Processing"}
+        </h1>
+
+        <p className="sub-title">
+          {order.payment_status === "SUCCESS"
+            ? "Your order has been placed"
+            : "We are confirming your payment"}
+        </p>
+
 
         <div className="card token-card">
 
