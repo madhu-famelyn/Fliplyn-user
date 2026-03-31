@@ -6,17 +6,29 @@ import axios from "axios";
 function OrderingCart() {
 
   const navigate = useNavigate();
+
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const email = localStorage.getItem("customerEmail");
 
+
   useEffect(() => {
 
-    if (!email) return;
+    console.log("==== CART PAGE LOADED ====");
+
+    if (!email) {
+      console.log("No customer email found in localStorage");
+      return;
+    }
+
+    console.log("Customer Email:", email);
 
     const storedCart = JSON.parse(localStorage.getItem("cart")) || {};
+    console.log("Stored Cart Object:", storedCart);
+
     let userCart = storedCart[email] || [];
+    console.log("User Cart Before Formatting:", userCart);
 
     userCart = userCart.map((item) => ({
       ...item,
@@ -24,19 +36,28 @@ function OrderingCart() {
       price: item.final_price || item.price
     }));
 
+    console.log("User Cart After Formatting:", userCart);
+
     setCart(userCart);
 
   }, [email]);
 
 
   const saveCart = (updatedCart) => {
+
+    console.log("Saving Updated Cart:", updatedCart);
+
     const storedCart = JSON.parse(localStorage.getItem("cart")) || {};
     storedCart[email] = updatedCart;
+
     localStorage.setItem("cart", JSON.stringify(storedCart));
+
   };
 
 
   const increaseQty = (id) => {
+
+    console.log("Increasing Quantity for item:", id);
 
     const updated = cart.map((item) =>
       item.id === id ? { ...item, qty: item.qty + 1 } : item
@@ -49,6 +70,8 @@ function OrderingCart() {
 
 
   const decreaseQty = (id) => {
+
+    console.log("Decreasing Quantity for item:", id);
 
     const updated = cart
       .map((item) =>
@@ -63,6 +86,8 @@ function OrderingCart() {
 
 
   const removeItem = (id) => {
+
+    console.log("Removing item:", id);
 
     const updated = cart.filter((item) => item.id !== id);
 
@@ -79,9 +104,14 @@ function OrderingCart() {
 
   const handlePayment = async () => {
 
-    if (loading) return;
+    if (loading) {
+      console.log("Payment already processing...");
+      return;
+    }
 
     try {
+
+      console.log("==== STARTING PAYMENT ====");
 
       setLoading(true);
 
@@ -90,47 +120,70 @@ function OrderingCart() {
         quantity: item.qty
       }));
 
+      console.log("Order Items:", orderItems);
+
       const payload = {
         user_email: email,
         items: orderItems
       };
+
+      console.log("Payload sent to backend:", payload);
 
       const res = await axios.post(
         "https://admin-aged-field-2794.fly.dev/cashfree-orders/",
         payload
       );
 
+      console.log("Backend Response:", res);
+
       const data = res.data;
+
+      console.log("Parsed Backend Data:", data);
 
       const token = data.token_number;
 
+      console.log("Generated Token:", token);
+
       sessionStorage.setItem("current_token", token);
+
+      console.log("Token stored in sessionStorage");
 
       if (!window.Cashfree) {
 
+        console.error("Cashfree SDK not loaded");
         alert("Cashfree SDK not loaded");
+
         setLoading(false);
         return;
 
       }
 
+      console.log("Initializing Cashfree Checkout...");
+
       const cashfree = new window.Cashfree({
         mode: "production"
       });
 
-      await cashfree.checkout({
+      console.log("Payment Session ID:", data.payment_session_id);
+
+      console.log("Opening Cashfree Checkout...");
+
+      const checkoutResponse = await cashfree.checkout({
         paymentSessionId: data.payment_session_id,
         redirectTarget: "_self"
       });
 
+      console.log("Checkout Response:", checkoutResponse);
+
     } catch (err) {
 
-      console.error(err);
+      console.error("Payment Error:", err);
       alert("Payment failed");
 
     } finally {
 
       setLoading(false);
+      console.log("==== PAYMENT PROCESS FINISHED ====");
 
     }
 
