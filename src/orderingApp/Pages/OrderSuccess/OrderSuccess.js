@@ -8,13 +8,18 @@ const OrderSuccess = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const token = searchParams.get("token");
+  const urlToken = searchParams.get("token");
+  const storedToken = sessionStorage.getItem("current_token");
+
+  const token = urlToken || storedToken;
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
 
   useEffect(() => {
+
+    let retryCount = 0;
 
     const verifyOrder = async () => {
 
@@ -26,39 +31,57 @@ const OrderSuccess = () => {
 
         const data = res.data;
 
-        if (data.payment_status !== "SUCCESS") {
+        if (data.payment_status === "SUCCESS") {
 
-          alert("Payment not completed yet");
-          navigate("/");
-
+          setOrder(data);
+          setLoading(false);
           return;
+
         }
 
-        setOrder(data);
+        if (retryCount < 10) {
+
+          retryCount++;
+          setTimeout(verifyOrder, 2000);
+
+        } else {
+
+          setLoading(false);
+
+        }
 
       } catch (err) {
 
         console.error(err);
-        alert("Unable to fetch order");
-
-      } finally {
-
         setLoading(false);
 
       }
+
     };
 
     if (token) verifyOrder();
 
-  }, [token, navigate]);
+  }, [token]);
 
 
   if (loading) {
-    return <p style={{ textAlign: "center" }}>Checking payment...</p>;
+
+    return (
+      <div style={{ textAlign: "center", marginTop: "100px" }}>
+        🔄 Verifying Payment...
+      </div>
+    );
+
   }
 
   if (!order) {
-    return <p style={{ textAlign: "center" }}>Order not found</p>;
+
+    return (
+      <div style={{ textAlign: "center", marginTop: "100px" }}>
+        ❌ Order not found
+      </div>
+    );
+
   }
 
 
@@ -66,6 +89,7 @@ const OrderSuccess = () => {
 
 
   return (
+
     <div className="success-page">
 
       <div className="success-container">
@@ -80,7 +104,7 @@ const OrderSuccess = () => {
           <p className="label">Your Token Number</p>
 
           <h1 className="token-number">
-            #{order.token_number.slice(-3)}
+            #{order.token_number?.slice(-3)}
           </h1>
 
           <p className="date">{formattedDate}</p>
@@ -92,7 +116,7 @@ const OrderSuccess = () => {
 
           <h3 className="items-title">Items Ordered</h3>
 
-          {order.order_details.map((item, index) => (
+          {order.order_details?.map((item, index) => (
 
             <div key={index} className="item-row">
 
@@ -123,7 +147,7 @@ const OrderSuccess = () => {
 
         <button
           className="home-btn"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/orderingpage")}
         >
           🏠 Back to Home
         </button>
@@ -131,7 +155,9 @@ const OrderSuccess = () => {
       </div>
 
     </div>
+
   );
+
 };
 
 export default OrderSuccess;

@@ -37,12 +37,14 @@ function OrderingCart() {
 
 
   const increaseQty = (id) => {
+
     const updated = cart.map((item) =>
       item.id === id ? { ...item, qty: item.qty + 1 } : item
     );
 
     setCart(updated);
     saveCart(updated);
+
   };
 
 
@@ -56,6 +58,7 @@ function OrderingCart() {
 
     setCart(updated);
     saveCart(updated);
+
   };
 
 
@@ -65,6 +68,7 @@ function OrderingCart() {
 
     setCart(updated);
     saveCart(updated);
+
   };
 
 
@@ -100,10 +104,14 @@ function OrderingCart() {
 
       const token = data.token_number;
 
+      sessionStorage.setItem("current_token", token);
+
       if (!window.Cashfree) {
+
         alert("Cashfree SDK not loaded");
         setLoading(false);
         return;
+
       }
 
       const cashfree = new window.Cashfree({
@@ -115,8 +123,6 @@ function OrderingCart() {
         redirectTarget: "_self"
       });
 
-      navigate(`/order-success?token=${token}`);
-
     } catch (err) {
 
       console.error(err);
@@ -127,10 +133,12 @@ function OrderingCart() {
       setLoading(false);
 
     }
+
   };
 
 
   return (
+
     <div className="cart-container">
 
       <div className="cart-header">
@@ -200,6 +208,7 @@ function OrderingCart() {
       )}
 
     </div>
+
   );
 }
 
