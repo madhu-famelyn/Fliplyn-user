@@ -12,7 +12,6 @@ import "./App.css"
 
 import OfflinePopup from "./Component/OffLinePopup/OfflinePopup";
 import LoadingScreen from "./Component/LoadingScreen/LoadingScreen";
-
 import SignIn from "./Component/SignIn/SignIn";
 import SignUp from "./Component/SignUp/SignUp";
 import OtpVerify from "./Component/OTP/OTP";
@@ -35,8 +34,6 @@ import ChangePassword from "./Component/SignIn/ChangePassword";
 import ReceiptPage from "./Component/Pages/Success/RecepitPage";
 import QRScannerPage from "./Component/Pages/ScanQR/ScanQR";
 import PolicyReview from "./Component/Policy/Policy";
-
-
 import LandingPage from './orderingApp/Pages/LandingPage/LandingPage'
 import CustomerDetails from './orderingApp/Pages/CustomerDetails/CustomerDetails'
 import OutletSelection from './orderingApp/Pages/OutletSelection/OutletSelection'

@@ -177,8 +177,8 @@
 }
 
 .popup-cancel {
-  flex: 1;
-  padding: 10px;
+  flex: 1;                      
+  padding: 10px; 
   border: none;
   background: #ddd;
   border-radius: 8px;

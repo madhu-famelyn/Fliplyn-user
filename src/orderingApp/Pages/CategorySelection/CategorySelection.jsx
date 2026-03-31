@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import CartIndicator from "../../Components/CartIndicator";
+// import CartIndicator from "../../Components/CartIndicator";
 
 import "./CategorySelection.css";
 
