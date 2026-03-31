@@ -11,27 +11,16 @@ const OrderSuccess = () => {
   const urlToken = searchParams.get("token");
   const storedToken = sessionStorage.getItem("current_token");
 
-  console.log("URL token:", urlToken);
-  console.log("Session token:", storedToken);
-
   const token = urlToken || storedToken;
-
-  console.log("Final token used:", token);
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
 
-    console.log("OrderSuccess useEffect triggered");
-
     if (!token) {
-
-      console.log("No token found. Stopping verification.");
-
       setLoading(false);
       return;
-
     }
 
     let retryCount = 0;
@@ -39,61 +28,31 @@ const OrderSuccess = () => {
 
     const verifyOrder = async () => {
 
-      console.log("Verifying order... Attempt:", retryCount + 1);
-
       try {
 
         const url = `https://admin-aged-field-2794.fly.dev/cashfree-orders/by-token/${token}`;
-
-        console.log("Calling API:", url);
-
         const res = await axios.get(url);
-
-        console.log("API response:", res);
-
         const data = res.data;
 
-        console.log("Order data:", data);
-
         if (data) {
-
           setOrder(data);
 
-          console.log("Payment status:", data.payment_status);
-
           if (data.payment_status === "SUCCESS") {
-
-            console.log("Payment SUCCESS. Stopping polling.");
-
             setLoading(false);
             return;
-
           }
-
         }
 
         if (retryCount < maxRetries) {
-
           retryCount++;
-
-          console.log("Retrying in 2 seconds... Retry:", retryCount);
-
           setTimeout(verifyOrder, 2000);
-
         } else {
-
-          console.log("Max retries reached. Stopping.");
-
           setLoading(false);
-
         }
 
       } catch (err) {
-
         console.error("Order verification failed:", err);
-
         setLoading(false);
-
       }
 
     };
@@ -104,33 +63,22 @@ const OrderSuccess = () => {
 
 
   if (loading) {
-
-    console.log("Loading state active");
-
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         🔄 Verifying Payment...
       </div>
     );
-
   }
 
-
   if (!order) {
-
-    console.log("Order not found after verification");
-
     return (
       <div style={{ textAlign: "center", marginTop: "100px" }}>
         ❌ Order not found
       </div>
     );
-
   }
 
   const formattedDate = new Date(order.created_datetime).toLocaleString();
-
-  console.log("Rendering order success page");
 
   return (
 
@@ -152,7 +100,7 @@ const OrderSuccess = () => {
             : "We are confirming your payment"}
         </p>
 
-
+        {/* TOKEN CARD */}
         <div className="card token-card">
 
           <p className="label">Your Token Number</p>
@@ -165,7 +113,7 @@ const OrderSuccess = () => {
 
         </div>
 
-
+        {/* ITEMS CARD */}
         <div className="card items-card">
 
           <h3 className="items-title">Items Ordered</h3>
@@ -176,6 +124,8 @@ const OrderSuccess = () => {
 
               <span>
                 {item.name} × {item.quantity}
+                <br />
+                <small>₹{item.price} each</small>
               </span>
 
               <span>₹{item.total}</span>
@@ -186,9 +136,34 @@ const OrderSuccess = () => {
 
           <hr />
 
+          {/* GST BREAKDOWN */}
+          <div className="item-row">
+            <span>CGST</span>
+            <span>₹{order.cgst}</span>
+          </div>
+
+          <div className="item-row">
+            <span>SGST</span>
+            <span>₹{order.sgst}</span>
+          </div>
+
+          <div className="item-row">
+            <span>Total GST</span>
+            <span>₹{order.total_gst}</span>
+          </div>
+
+          {/* ROUND OFF */}
+          <div className="item-row">
+            <span>Round Off</span>
+            <span>₹{order.round_off}</span>
+          </div>
+
+          <hr />
+
+          {/* FINAL TOTAL */}
           <div className="total-row">
 
-            <span>Total</span>
+            <span>Total Payable</span>
 
             <span className="total-amount">
               ₹{order.total_amount}
@@ -198,13 +173,9 @@ const OrderSuccess = () => {
 
         </div>
 
-
         <button
           className="home-btn"
-          onClick={() => {
-            console.log("Back to home clicked");
-            navigate("/orderingpage");
-          }}
+          onClick={() => navigate("/orderingpage")}
         >
           🏠 Back to Home
         </button>

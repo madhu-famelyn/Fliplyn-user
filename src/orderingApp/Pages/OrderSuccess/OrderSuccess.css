@@ -26,6 +26,7 @@
   margin: 0 auto 20px;
   font-size: 40px;
   color: #22c55e;
+  box-shadow: 0 8px 20px rgba(34, 197, 94, 0.2);
 }
 
 /* ✅ Titles */
@@ -33,11 +34,13 @@
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 5px;
+  color: #222;
 }
 
 .sub-title {
   color: #777;
   margin-bottom: 25px;
+  font-size: 14px;
 }
 
 /* ✅ Card */
@@ -48,6 +51,7 @@
   margin-bottom: 20px;
   text-align: left;
   border: 1px solid #eee;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* ✅ Token Card */
@@ -57,7 +61,8 @@
 
 .label {
   color: #888;
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0.5px;
 }
 
 .token-number {
@@ -69,13 +74,15 @@
 
 .date {
   color: #888;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 /* ✅ Items */
 .items-title {
   font-size: 18px;
   margin-bottom: 15px;
+  font-weight: 600;
+  color: #222;
 }
 
 .item-row {
@@ -83,38 +90,84 @@
   justify-content: space-between;
   margin-bottom: 10px;
   color: #444;
+  font-size: 14px;
+  align-items: flex-start;
 }
 
+.item-row span:first-child {
+  max-width: 70%;
+  line-height: 1.4;
+}
+
+.item-row small {
+  color: #999;
+  font-size: 12px;
+}
+
+/* ✅ Divider */
 hr {
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px dashed #e5e5e5;
   margin: 15px 0;
+}
+
+/* ✅ GST & Charges styling */
+.item-row:nth-last-child(5),
+.item-row:nth-last-child(4),
+.item-row:nth-last-child(3),
+.item-row:nth-last-child(2) {
+  color: #666;
+  font-size: 13px;
 }
 
 /* ✅ Total */
 .total-row {
   display: flex;
   justify-content: space-between;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: 16px;
+  margin-top: 10px;
 }
 
 .total-amount {
   color: #ff7a00;
+  font-size: 18px;
 }
 
 /* ✅ Button */
 .home-btn {
   width: 100%;
-  background: #ff7a00;
+  background: linear-gradient(135deg, #ff7a00, #ff9a3c);
   color: white;
   border: none;
   padding: 14px;
   border-radius: 12px;
   font-size: 16px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.25s ease;
+  font-weight: 500;
 }
 
 .home-btn:hover {
-  background: #e66a00;
+  background: linear-gradient(135deg, #e66a00, #ff8c1a);
+  transform: translateY(-1px);
+}
+
+/* ✅ Mobile polish */
+@media (max-width: 480px) {
+  .success-container {
+    padding: 15px;
+  }
+
+  .card {
+    padding: 16px;
+  }
+
+  .token-number {
+    font-size: 40px;
+  }
+
+  .main-title {
+    font-size: 24px;
+  }
 }
