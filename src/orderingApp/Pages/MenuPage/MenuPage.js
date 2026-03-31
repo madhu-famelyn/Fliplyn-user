@@ -12,7 +12,6 @@ function MenuPage() {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ NEW STATES
   const [showAlert, setShowAlert] = useState(false);
   const [pendingItem, setPendingItem] = useState(null);
 
@@ -62,10 +61,21 @@ function MenuPage() {
     localStorage.setItem("cart", JSON.stringify(storedCart));
   };
 
+  // ✅ Clean item (ONLY required fields)
+  const formatItem = (item) => ({
+    id: item.id,
+    name: item.name,
+    price: item.price, // ✅ ONLY base price
+    image_url: item.image_url,
+    stall_id: item.stall_id || stallId,
+  });
+
   // ✅ Add to cart
   const addToCart = (item) => {
+    const cleanItem = formatItem(item);
+
     if (cart.length === 0) {
-      const updatedCart = [{ ...item, stall_id: item.stall_id || stallId }];
+      const updatedCart = [cleanItem];
       setCart(updatedCart);
       saveCart(updatedCart);
       return;
@@ -74,7 +84,7 @@ function MenuPage() {
     const existingStallId = cart[0].stall_id;
 
     // ❌ Different stall → show popup
-    if (existingStallId !== (item.stall_id || stallId)) {
+    if (existingStallId !== cleanItem.stall_id) {
       setPendingItem(item);
       setShowAlert(true);
       return;
@@ -83,10 +93,7 @@ function MenuPage() {
     const exists = cart.find((i) => i.id === item.id);
 
     if (!exists) {
-      const updatedCart = [
-        ...cart,
-        { ...item, stall_id: item.stall_id || stallId },
-      ];
+      const updatedCart = [...cart, cleanItem];
       setCart(updatedCart);
       saveCart(updatedCart);
     }
@@ -94,11 +101,12 @@ function MenuPage() {
 
   // ✅ Handle clear + add new item
   const handleClearAndAdd = () => {
-    const updatedCart = [
-      { ...pendingItem, stall_id: pendingItem.stall_id || stallId },
-    ];
+    const cleanItem = formatItem(pendingItem);
+
+    const updatedCart = [cleanItem];
     setCart(updatedCart);
     saveCart(updatedCart);
+
     setShowAlert(false);
     setPendingItem(null);
   };
@@ -107,12 +115,14 @@ function MenuPage() {
     return cart.some((item) => item.id === id);
   };
 
+  // ✅ TOTAL using ONLY price
   const total = cart
-    .reduce((sum, i) => sum + (i.final_price || i.price), 0)
+    .reduce((sum, i) => sum + i.price, 0)
     .toFixed(2);
 
   return (
     <div className="menu-container">
+
       {/* Header */}
       <div className="header">
         <span className="back" onClick={() => navigate(-1)}>
@@ -139,9 +149,18 @@ function MenuPage() {
               <div>
                 <h3>{item.name}</h3>
                 <p>{item.description}</p>
+
+                {/* ✅ ONLY BASE PRICE */}
                 <span className="price">
-                  ₹{item.final_price || item.price}
+                  ₹{item.price}
                 </span>
+
+                {/* ✅ Optional GST info */}
+                {!item.tax_included && (
+                  <p style={{ fontSize: "12px", color: "#888" }}>
+                    + {item.Gst_precentage}% GST
+                  </p>
+                )}
               </div>
 
               <button
@@ -167,7 +186,7 @@ function MenuPage() {
         </div>
       )}
 
-      {/* ✅ CUSTOM POPUP */}
+      {/* Popup */}
       {showAlert && (
         <div className="popup-overlay">
           <div className="popup-box">
