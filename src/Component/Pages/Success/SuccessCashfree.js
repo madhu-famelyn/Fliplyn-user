@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./Success.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { BsCheck } from "react-icons/bs";
-import { BsXCircle } from "react-icons/bs";
+import { BsCheck, BsXCircle } from "react-icons/bs";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axios from "axios";
@@ -25,22 +24,37 @@ export default function PaymentSuccessCashfree() {
       return;
     }
 
-    const verifyEndpoint = `https://admin-aged-field-2794.fly.dev/orders/verify-payment/cashfree/${cfOrderId}`;
+    let interval;
 
-    axios
-      .get(verifyEndpoint)
-      .then(() => {
-        return axios.get(
+    const fetchOrder = async () => {
+      try {
+        const res = await axios.get(
           `https://admin-aged-field-2794.fly.dev/orders/by-cashfree/${cfOrderId}`
         );
-      })
-      .then((res) => {
+
         setOrderDetails(res.data);
-      })
-      .catch(() => {
-        alert("Payment verification failed.");
-        navigate("/stalls");
-      });
+
+        // ✅ Stop polling when success
+        if (res.data?.payment_status === "SUCCESS") {
+          clearInterval(interval);
+        }
+
+        // ❌ Stop polling if failed
+        if (res.data?.payment_status === "FAILED") {
+          clearInterval(interval);
+        }
+      } catch (err) {
+        console.error("Fetch error:", err);
+      }
+    };
+
+    // Initial call
+    fetchOrder();
+
+    // 🔁 Poll every 2 seconds
+    interval = setInterval(fetchOrder, 2000);
+
+    return () => clearInterval(interval);
   }, [location.search, navigate]);
 
   const downloadPDF = () => {
@@ -60,29 +74,29 @@ export default function PaymentSuccessCashfree() {
   };
 
   if (!orderDetails) {
-    return <p className="loading-text">Verifying Payment...</p>;
+    return <p className="loading-text">Checking Payment Status...</p>;
   }
 
-  // ✅ IMPORTANT CHECK
-  const isPaymentSuccessful =
-    orderDetails.payment_status === "SUCCESS" &&
-    orderDetails.payment_verified === true;
+  const status = orderDetails.payment_status;
 
-  // ❌ If payment failed or pending → show failure screen
-  if (!isPaymentSuccessful) {
+  // ⏳ PENDING STATE
+  if (status === "PENDING") {
+    return (
+      <div className="receipt-wrapper">
+        <p className="loading-text">⏳ Waiting for payment confirmation...</p>
+      </div>
+    );
+  }
+
+  // ❌ FAILED STATE
+  if (status === "FAILED") {
     return (
       <div className="receipt-wrapper">
         <div className="status-wrapper">
-          <p className="failed-status" style={{ color: "red", fontWeight: "bold" }}>
-            <span style={{ fontSize: "22px", marginRight: "8px" }}>
-              <BsXCircle />
-            </span>
-            Payment Failed or Pending
+          <p className="failed-status">
+            <BsXCircle /> Payment Failed
           </p>
-          <button
-            style={{ marginTop: "20px" }}
-            onClick={() => navigate("/stalls")}
-          >
+          <button onClick={() => navigate("/stalls")}>
             Back to Stalls
           </button>
         </div>
@@ -90,15 +104,16 @@ export default function PaymentSuccessCashfree() {
     );
   }
 
-  // ✅ Only reach here if payment is SUCCESS
+  // ✅ SUCCESS STATE
   const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4);
 
-  const createdAt = new Date(
-    orderDetails.created_datetime
-  ).toLocaleString("en-IN", {
-    hour12: true,
-    timeZone: "Asia/Kolkata",
-  });
+  const createdAt = new Date(orderDetails.created_datetime).toLocaleString(
+    "en-IN",
+    {
+      hour12: true,
+      timeZone: "Asia/Kolkata",
+    }
+  );
 
   const totalCgst = orderDetails.cgst ?? 0;
   const totalSgst = orderDetails.sgst ?? 0;
@@ -139,7 +154,6 @@ export default function PaymentSuccessCashfree() {
             {orderDetails.order_details[0]?.stall_name || "Stall Name"}
           </h2>
 
-          {/* ✅ Token only shown for successful payment */}
           <p className="token-no">
             Token No.: <strong>{tokenNo}</strong>
           </p>
@@ -164,42 +178,13 @@ export default function PaymentSuccessCashfree() {
             ))}
           </div>
 
-          <div
-            className="token-summary"
-            style={{ maxWidth: "400px", margin: "0 auto" }}
-          >
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>CGST</span>
-              <span>{totalCgst.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>SGST</span>
-              <span>{totalSgst.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Total GST</span>
-              <span>{totalGst.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Total</span>
-              <span>{subtotal.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Round Off</span>
-              <span>
-                {roundOff >= 0
-                  ? `+${roundOff.toFixed(2)}`
-                  : roundOff.toFixed(2)}
-              </span>
-            </p>
-            <p
-              className="grand-total"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontWeight: "bold",
-              }}
-            >
+          <div className="token-summary">
+            <p><span>CGST</span><span>{totalCgst.toFixed(2)}</span></p>
+            <p><span>SGST</span><span>{totalSgst.toFixed(2)}</span></p>
+            <p><span>Total GST</span><span>{totalGst.toFixed(2)}</span></p>
+            <p><span>Total</span><span>{subtotal.toFixed(2)}</span></p>
+            <p><span>Round Off</span><span>{roundOff.toFixed(2)}</span></p>
+            <p className="grand-total">
               <span>Grand Total</span>
               <span>{grandTotal.toFixed(2)}</span>
             </p>
