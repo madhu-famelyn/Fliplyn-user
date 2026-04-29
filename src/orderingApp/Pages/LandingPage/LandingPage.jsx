@@ -34,7 +34,7 @@ const LandingPage = () => {
 
         <Button
           variant="outline"
-          onClick={() => navigate("/email-login")}
+          onClick={() => navigate("/get-orders")}
         >
           <ClipboardList className="icon" />
           Get My Orders

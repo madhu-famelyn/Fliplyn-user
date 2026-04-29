@@ -1,0 +1,107 @@
+.history-container {
+  min-height: 100vh;
+  background: #f4f4f4;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Header */
+.header {
+  padding: 16px 20px;
+}
+
+.back {
+  font-size: 16px;
+  cursor: pointer;
+  color: #444;
+}
+
+/* Content */
+.content {
+  padding: 20px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: #777;
+  margin-bottom: 20px;
+}
+
+/* Card */
+.order-card {
+  background: #fff;
+  border-radius: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #eee;
+  overflow: hidden;
+}
+
+/* Top */
+.order-top {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  cursor: pointer;
+}
+
+.order-id-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.order-id-row h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+/* Status */
+.status {
+  background: #e6f4ea;
+  color: #16a34a;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Sub */
+.order-sub {
+  color: #777;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+/* Right */
+.right {
+  text-align: right;
+}
+
+.amount {
+  color: #ff7a00;
+  font-weight: 600;
+  display: block;
+}
+
+.arrow {
+  font-size: 12px;
+  color: #777;
+}
+
+/* Items */
+.order-items {
+  border-top: 1px solid #eee;
+  padding: 12px 16px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #444;
+  font-size: 14px;
+}

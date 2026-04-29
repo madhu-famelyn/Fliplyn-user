@@ -42,6 +42,8 @@ import MenuPage from "./orderingApp/Pages/MenuPage/MenuPage";
 import OrderingCart from "./orderingApp/Pages/Cart/Cart";
 import OrderSuccess from "./orderingApp/Pages/OrderSuccess/OrderSuccess";
 import { AuthProvider } from "./Component/AuthContext/ContextApi";
+import GetOrders from "./orderingApp/Pages/GetOrders/GetOrders";
+import OrderHistory from "./orderingApp/Pages/OrderHistory/OrderHistory";
 
 /* ---------- BACKGROUND IMAGES ---------- */
 import icon1 from "./assets/Images/image1.png";
@@ -154,6 +156,8 @@ function AppRoutes() {
 />
 <Route path="/ordering-cart" element={<OrderingCart/>}></Route>
 <Route path="/ordering-success" element={<OrderSuccess/>}></Route>
+<Route path="/get-orders" element={<GetOrders/>}/>
+<Route path="/order-by-email" element={<OrderHistory/>}/>
 
 
         <Route path="*" element={<Navigate to="/" replace />} />

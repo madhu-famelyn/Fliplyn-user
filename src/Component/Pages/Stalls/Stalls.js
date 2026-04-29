@@ -52,14 +52,11 @@ export default function Stall() {
           return;
         }
 
-        let userWallet = null;
-
-        // ------------------ FETCH WALLET ------------------
+        // ------------------ FETCH WALLET (kept, but not used for filtering) ------------------
         try {
           const walletRes = await axios.get(
             `https://admin-aged-field-2794.fly.dev/wallets/${userId}`
           );
-          userWallet = walletRes.data;
           setWallet(walletRes.data);
         } catch {
           console.warn("⚠️ Wallet not found → showing all stalls");
@@ -74,21 +71,8 @@ export default function Stall() {
 
         let fetched = res.data || [];
 
-        // ------------------ FILTER BASED ON PAYMENT TYPE ------------------
-        const prepaid = fetched.filter(
-          (s) => s.payment_type?.toUpperCase() === "PREPAID"
-        );
-        const postpaid = fetched.filter(
-          (s) => s.payment_type?.toUpperCase() === "POSTPAID"
-        );
-
-        if (userWallet?.payment_method?.toUpperCase() === "PREPAID") {
-          fetched = prepaid;
-        } else if (userWallet?.payment_method?.toUpperCase() === "POSTPAID") {
-          fetched = postpaid;
-        } else {
-          fetched = [...prepaid, ...postpaid];
-        }
+        // ❌ REMOVED: prepaid/postpaid filtering logic
+        // ✅ Now showing ALL stalls
 
         setStalls(fetched);
       } catch (err) {
@@ -155,34 +139,35 @@ export default function Stall() {
           </p>
         ) : (
           <div className="bottom-section">
-<div className="stalls-grid">
-  {filteredStalls.map((stall) => (
-<div
-  className={`stall-card ${!stall.is_available ? "unavailable" : ""}`}
-  key={stall.id}
-  onClick={() => stall.is_available && handleStallClick(stall.id)}
->
-  <img
-    src={stall.image_url}
-    alt={stall.name}
-    className="stall-image"
-  />
+            <div className="stalls-grid">
+              {filteredStalls.map((stall) => (
+                <div
+                  className={`stall-card ${
+                    !stall.is_available ? "unavailable" : ""
+                  }`}
+                  key={stall.id}
+                  onClick={() =>
+                    stall.is_available && handleStallClick(stall.id)
+                  }
+                >
+                  <img
+                    src={stall.image_url}
+                    alt={stall.name}
+                    className="stall-image"
+                  />
 
-  {!stall.is_available && (
-    <div className="unavailable-overlay">
-      <p>Stall Unavailable</p>
-    </div>
-  )}
-
-</div>
-
-  ))}
-</div>
-
+                  {!stall.is_available && (
+                    <div className="unavailable-overlay">
+                      <p>Stall Unavailable</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }
