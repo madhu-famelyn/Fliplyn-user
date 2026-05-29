@@ -381,7 +381,9 @@ function OrderingCart() {
             <h2>Scan & Pay</h2>
             <p>Scan using any UPI App (GPay, PhonePe, Paytm)</p>
             <div className="qr-canvas-container">
-              <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
+              <a href={qrValue} onClick={(e) => handleUpiAppClick(e, "generic")} style={{ display: "inline-block", cursor: "pointer" }}>
+                <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
+              </a>
             </div>
             <p className="payee-name-sub">Paying to: <strong>{getPayeeName()}</strong></p>
             <p className="qr-amount">Amount: ₹{total}</p>
