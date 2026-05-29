@@ -247,12 +247,6 @@ export default function PaymentMethodPage() {
         setModalError(""); // Clear any previous error
         setShowQrModal(true);
 
-        // Auto-redirect if mobile
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (isMobile) {
-          window.location.href = backendOrder.payment_session_id;
-        }
-
       } catch (err) {
         console.error(err);
         setErrorMsg("Payment failed. Try again.");

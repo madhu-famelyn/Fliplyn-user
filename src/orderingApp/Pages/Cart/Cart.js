@@ -286,12 +286,6 @@ function OrderingCart() {
         setTimeLeft(180); // Reset timer to 180 seconds
         setModalError(""); // Clear any previous error
         setShowQrModal(true);
-
-        // Auto-redirect if mobile
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-        if (isMobile) {
-          window.location.href = data.payment_session_id;
-        }
       } else {
         alert("Failed to generate payment QR code");
       }
