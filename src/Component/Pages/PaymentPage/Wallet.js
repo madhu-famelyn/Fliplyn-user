@@ -9,7 +9,9 @@ import { useAuth } from "../../AuthContext/ContextApi";
 import { useNavigate } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 
-const API_BASE = "http://localhost:8000";
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:8000"
+  : "https://admin-aged-field-2794.fly.dev";
 
 export default function PaymentMethodPage() {
   const { user, token } = useAuth();

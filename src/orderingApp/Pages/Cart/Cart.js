@@ -4,6 +4,10 @@ import "./Cart.css";
 import axios from "axios";
 import { QRCodeCanvas } from "qrcode.react";
 
+const API_BASE = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://localhost:8000"
+  : "https://admin-aged-field-2794.fly.dev";
+
 function OrderingCart() {
 
   const navigate = useNavigate();
@@ -136,7 +140,7 @@ function OrderingCart() {
     console.log("=== STARTING QR STATUS POLLING ===");
     const intervalId = setInterval(async () => {
       try {
-        const url = `http://localhost:8000/cashfree-orders/by-token/${token}`;
+        const url = `${API_BASE}/cashfree-orders/by-token/${token}`;
         const res = await axios.get(url);
         if (res.data && res.data.payment_status === "SUCCESS") {
           console.log("=== PAYMENT DETECTED SUCCESS ===");
@@ -249,7 +253,7 @@ function OrderingCart() {
       console.log("Payload sent to backend:", payload);
 
       const res = await axios.post(
-        "http://localhost:8000/cashfree-orders/",
+        `${API_BASE}/cashfree-orders/`,
         payload
       );
 
