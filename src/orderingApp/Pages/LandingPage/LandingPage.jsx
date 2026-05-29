@@ -11,7 +11,7 @@ const LandingPage = () => {
   return (
     <div className="page-container">
       <div className="logo-section">
-        
+
         {/* Logo */}
         <img src={Logo} alt="Fliplyn Logo" className="logo-image" />
 

@@ -90,10 +90,17 @@ export default function Stall() {
     navigate(`/categories/${stallId}`);
   };
 
-  // ------------------ SEARCH FILTER ------------------
-  const filteredStalls = stalls.filter((stall) =>
-    stall.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  // ------------------ SEARCH FILTER & ACTIVE SORT ------------------
+  const filteredStalls = stalls
+    .filter((stall) =>
+      stall.name?.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Available stalls first, unavailable stalls at the bottom
+      if (a.is_available && !b.is_available) return -1;
+      if (!a.is_available && b.is_available) return 1;
+      return 0;
+    });
 
   // ------------------ LOADING ------------------
   if (loading) {

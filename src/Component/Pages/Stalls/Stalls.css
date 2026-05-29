@@ -1,4 +1,3 @@
-/* =================== Base Layout =================== */
 .stalls-page-container {
   display: flex;
   flex-direction: column;
@@ -6,7 +5,9 @@
   padding: 24px 16px 108px 16px;
   font-family: "Poppins", sans-serif;
   box-sizing: border-box;
-  margin-bottom: 100vh;
+  position: relative; /* Anchor absolute elements like .back-btn */
+  overflow-x: hidden; /* Prevent horizontal slide/wiggle in mobile viewports */
+  width: 100%;
 }
 
 /* =================== Header Section =================== */
@@ -154,7 +155,17 @@
   }
 
   .stall-names {
-    font-size: 14px;
+    font-size: 13px;
+    word-break: break-word;
+    line-height: 1.25;
+  }
+
+  .page-title {
+    font-size: 24px !important;
+  }
+
+  .page-subtitle {
+    font-size: 14px !important;
   }
 }
 
@@ -229,6 +240,10 @@
   font-size: 15px;
   font-weight: 500;
   color: #222;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
 }
 
 /* =================== Hover (only available) =================== */

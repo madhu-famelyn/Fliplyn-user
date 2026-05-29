@@ -141,23 +141,23 @@ function AppRoutes() {
         <Route path="/qr-scanner" element={<QRScannerPage />} />
 
 
-              <Route path="/orderingpage" element={<LandingPage />} />
+        <Route path="/orderingpage" element={<LandingPage />} />
 
-      <Route path="/customer-details" element={<CustomerDetails />} />
-      <Route path="/outlets" element={<OutletSelection/>}/>
-      <Route path="/categories/ordering/:stallId" element={<CategorySelection />} />
-      <Route
-  path="/items/:categoryId"
-  element={<MenuPage />}
-/>
-<Route
-  path="/items/all/:stallId"
-  element={<MenuPage />}
-/>
-<Route path="/ordering-cart" element={<OrderingCart/>}></Route>
-<Route path="/ordering-success" element={<OrderSuccess/>}></Route>
-<Route path="/get-orders" element={<GetOrders/>}/>
-<Route path="/order-by-email" element={<OrderHistory/>}/>
+        <Route path="/customer-details" element={<CustomerDetails />} />
+        <Route path="/outlets" element={<OutletSelection />} />
+        <Route path="/categories/ordering/:stallId" element={<CategorySelection />} />
+        <Route
+          path="/items/:categoryId"
+          element={<MenuPage />}
+        />
+        <Route
+          path="/items/all/:stallId"
+          element={<MenuPage />}
+        />
+        <Route path="/ordering-cart" element={<OrderingCart />}></Route>
+        <Route path="/ordering-success" element={<OrderSuccess />}></Route>
+        <Route path="/get-orders" element={<GetOrders />} />
+        <Route path="/order-by-email" element={<OrderHistory />} />
 
 
         <Route path="*" element={<Navigate to="/" replace />} />
