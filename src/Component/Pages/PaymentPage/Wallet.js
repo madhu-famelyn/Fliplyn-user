@@ -30,6 +30,7 @@ export default function PaymentMethodPage() {
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  // eslint-disable-next-line no-unused-vars
   const [qrValue, setQrValue] = useState("");
   const [showQrModal, setShowQrModal] = useState(false);
   const [cfOrderId, setCfOrderId] = useState("");
@@ -164,12 +165,13 @@ export default function PaymentMethodPage() {
   // eslint-disable-next-line no-unused-vars
   const openCashfreeCheckout = (paymentSessionId) => {
     if (!window.Cashfree) {
-      setErrorMsg("Cashfree SDK not loaded");
+      setErrorMsg("Cashfree SDK not loaded. Please refresh the page.");
       return;
     }
 
-    const cashfree = new window.Cashfree({
-      mode: "production", // MUST MATCH BACKEND
+    // Cashfree SDK v3: use as factory function (NO 'new' keyword)
+    const cashfree = window.Cashfree({
+      mode: "production",
     });
 
     cashfree.checkout({
@@ -206,6 +208,7 @@ export default function PaymentMethodPage() {
       user_email: user.email,
       items: itemsPayload,
       pay_with_wallet: selectedMethod === "Wallet",
+      cashfree_return_url: `${window.location.origin}/success`,
     };
 
     /* ---------- WALLET FLOW ---------- */
@@ -228,24 +231,26 @@ export default function PaymentMethodPage() {
       return;
     }
 
-    /* ---------- PHONEPE GATEWAY FLOW ---------- */
+    /* ---------- CASHFREE GATEWAY FLOW ---------- */
     if (selectedMethod === "Payment Gateway") {
       try {
         setIsLoading(true);
 
         const backendOrder = await createInternalOrder(orderPayload);
 
-        // PhonePe flow: Show the beautiful QR modal on screen and allow the user to scan & pay!
+        // Cashfree flow: Use the Cashfree JS SDK to open the payment UI
         if (!backendOrder.payment_session_id) {
-          setErrorMsg("Failed to generate payment QR code");
+          setErrorMsg("Failed to generate payment session");
           return;
         }
-        console.log("PhonePe Dynamic QR String generated:", backendOrder.payment_session_id);
-        setQrValue(backendOrder.payment_session_id);
+        console.log("Cashfree payment_session_id:", backendOrder.payment_session_id);
+        console.log("Cashfree order_id:", backendOrder.cashfree_order_id);
+
+        // Store cfOrderId so polling can pick it up after redirect/callback
         setCfOrderId(backendOrder.cashfree_order_id);
-        setTimeLeft(180); // Reset timer to 180 seconds
-        setModalError(""); // Clear any previous error
-        setShowQrModal(true);
+
+        // Open Cashfree checkout
+        openCashfreeCheckout(backendOrder.payment_session_id);
 
       } catch (err) {
         console.error(err);
