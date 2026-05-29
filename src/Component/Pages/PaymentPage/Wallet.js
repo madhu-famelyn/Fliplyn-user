@@ -35,36 +35,7 @@ export default function PaymentMethodPage() {
   const [cfOrderId, setCfOrderId] = useState("");
 
   const getAppUpiLink = (app) => {
-    if (!qrValue) return "";
-    const query = qrValue.replace(/^upi:\/\/pay\??/, "");
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-      switch (app) {
-        case "gpay":
-          return `intent://pay?${query}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
-        case "phonepe":
-          return `intent://pay?${query}#Intent;scheme=upi;package=com.phonepe.app;end`;
-        case "paytm":
-          return `intent://pay?${query}#Intent;scheme=upi;package=net.one97.paytm;end`;
-        default:
-          return qrValue;
-      }
-    } else if (isIOS) {
-      switch (app) {
-        case "gpay":
-          return `gpay://upi/pay?${query}`;
-        case "phonepe":
-          return `phonepe://pay?${query}`;
-        case "paytm":
-          return `paytmmp://pay?${query}`;
-        default:
-          return qrValue;
-      }
-    } else {
-      return qrValue;
-    }
+    return qrValue;
   };
 
   const [modalError, setModalError] = useState("");
@@ -275,6 +246,12 @@ export default function PaymentMethodPage() {
         setTimeLeft(180); // Reset timer to 180 seconds
         setModalError(""); // Clear any previous error
         setShowQrModal(true);
+
+        // Auto-redirect if mobile
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (isMobile) {
+          window.location.href = backendOrder.payment_session_id;
+        }
 
       } catch (err) {
         console.error(err);
