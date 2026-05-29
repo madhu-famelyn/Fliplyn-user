@@ -4,10 +4,10 @@ import "./Cart.css";
 import axios from "axios";
 import { QRCodeCanvas } from "qrcode.react";
 
-const isLocal = 
-  window.location.hostname === "localhost" || 
-  window.location.hostname === "127.0.0.1" || 
-  window.location.hostname.startsWith("192.168.") || 
+const isLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname.startsWith("192.168.") ||
   window.location.hostname.startsWith("10.") ||
   window.location.hostname.startsWith("172.");
 
@@ -26,58 +26,87 @@ function OrderingCart() {
 
   const email = localStorage.getItem("customerEmail");
 
-   const getAppUpiLink = (app) => {
-     return qrValue;
-   };
+  const getAppUpiLink = (app) => {
+    if (!qrValue) return "";
+    const query = qrValue.replace(/^upi:\/\/pay\??/, "");
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    const [modalError, setModalError] = useState("");
-
-    const handleUpiAppClick = (e, app) => {
-      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (!isMobile) {
-        e.preventDefault();
-        let appName = "UPI";
-        if (app === "gpay") appName = "Google Pay";
-        if (app === "phonepe") appName = "PhonePe";
-        if (app === "paytm") appName = "Paytm";
-        setModalError(`To pay via ${appName} on a laptop, please scan the QR code above using your phone's ${appName} app!`);
+    if (isAndroid) {
+      switch (app) {
+        case "gpay":
+          return `intent://pay?${query}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
+        case "phonepe":
+          return `intent://pay?${query}#Intent;scheme=upi;package=com.phonepe.app;end`;
+        case "paytm":
+          return `intent://pay?${query}#Intent;scheme=upi;package=net.one97.paytm;end`;
+        default:
+          return qrValue;
       }
-    };
-
-   const [timeLeft, setTimeLeft] = useState(180);
-
-   useEffect(() => {
-     if (!showQrModal) return;
-
-     if (timeLeft <= 0) {
-       alert("Payment session expired. Please try again.");
-       setShowQrModal(false);
-       return;
-     }
-
-     const timerId = setTimeout(() => {
-       setTimeLeft(timeLeft - 1);
-     }, 1000);
-
-     return () => clearTimeout(timerId);
-   }, [showQrModal, timeLeft]);
-
-   const formatTime = (seconds) => {
-     const mins = Math.floor(seconds / 60);
-     const secs = seconds % 60;
-     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-   };
-
-    const getPayeeName = () => {
-      if (!qrValue) return "Neos Group";
-      try {
-        const urlParams = new URLSearchParams(qrValue.replace(/^upi:\/\/pay\?/, ""));
-        const pn = urlParams.get("pn");
-        return pn ? decodeURIComponent(pn) : "Neos Group";
-      } catch (e) {
-        return "Neos Group";
+    } else if (isIOS) {
+      switch (app) {
+        case "gpay":
+          return `gpay://upi/pay?${query}`;
+        case "phonepe":
+          return `phonepe://pay?${query}`;
+        case "paytm":
+          return `paytmmp://pay?${query}`;
+        default:
+          return qrValue;
       }
-    };
+    } else {
+      return qrValue;
+    }
+  };
+
+  const [modalError, setModalError] = useState("");
+
+  const handleUpiAppClick = (e, app) => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isMobile) {
+      e.preventDefault();
+      let appName = "UPI";
+      if (app === "gpay") appName = "Google Pay";
+      if (app === "phonepe") appName = "PhonePe";
+      if (app === "paytm") appName = "Paytm";
+      setModalError(`To pay via ${appName} on a laptop, please scan the QR code above using your phone's ${appName} app!`);
+    }
+  };
+
+  const [timeLeft, setTimeLeft] = useState(180);
+
+  useEffect(() => {
+    if (!showQrModal) return;
+
+    if (timeLeft <= 0) {
+      alert("Payment session expired. Please try again.");
+      setShowQrModal(false);
+      return;
+    }
+
+    const timerId = setTimeout(() => {
+      setTimeLeft(timeLeft - 1);
+    }, 1000);
+
+    return () => clearTimeout(timerId);
+  }, [showQrModal, timeLeft]);
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  const getPayeeName = () => {
+    if (!qrValue) return "Neos Group";
+    try {
+      const urlParams = new URLSearchParams(qrValue.replace(/^upi:\/\/pay\?/, ""));
+      const pn = urlParams.get("pn");
+      return pn ? decodeURIComponent(pn) : "Neos Group";
+    } catch (e) {
+      return "Neos Group";
+    }
+  };
 
 
   useEffect(() => {
@@ -381,29 +410,27 @@ function OrderingCart() {
             <h2>Scan & Pay</h2>
             <p>Scan using any UPI App (GPay, PhonePe, Paytm)</p>
             <div className="qr-canvas-container">
-              <a href={qrValue} onClick={(e) => handleUpiAppClick(e, "generic")} style={{ display: "inline-block", cursor: "pointer" }}>
-                <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
-              </a>
+              <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
             </div>
             <p className="payee-name-sub">Paying to: <strong>{getPayeeName()}</strong></p>
             <p className="qr-amount">Amount: ₹{total}</p>
 
-             {modalError && (
-               <div className="modal-error-callout" style={{
-                 background: "#fff9db",
-                 border: "1px solid #ffe066",
-                 color: "#856404",
-                 padding: "10px 14px",
-                 borderRadius: "14px",
-                 fontSize: "12px",
-                 fontWeight: "600",
-                 marginBottom: "16px",
-                 textAlign: "left",
-                 lineHeight: "1.4"
-               }}>
-                 ⚠️ {modalError}
-               </div>
-             )}
+            {modalError && (
+              <div className="modal-error-callout" style={{
+                background: "#fff9db",
+                border: "1px solid #ffe066",
+                color: "#856404",
+                padding: "10px 14px",
+                borderRadius: "14px",
+                fontSize: "12px",
+                fontWeight: "600",
+                marginBottom: "16px",
+                textAlign: "left",
+                lineHeight: "1.4"
+              }}>
+                ⚠️ {modalError}
+              </div>
+            )}
 
             <div className="upi-payment-section">
               <p className="upi-section-title">Pay Via UPI</p>
