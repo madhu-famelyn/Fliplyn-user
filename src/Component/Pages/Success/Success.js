@@ -7,6 +7,17 @@ import jsPDF from "jspdf";
 import axios from "axios";
 import { QRCodeCanvas } from "qrcode.react";
 
+const isLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname.startsWith("192.168.") ||
+  window.location.hostname.startsWith("10.") ||
+  window.location.hostname.startsWith("172.");
+
+const API_BASE = isLocal
+  ? `http://${window.location.hostname}:8000`
+  : "https://admin-aged-field-2794.fly.dev";
+
 export default function PaymentSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,9 +39,18 @@ export default function PaymentSuccess() {
     const order = location.state?.order;
     if (order?.id) {
       axios
-        .get(`https://admin-aged-field-2794.fly.dev/orders/${order.id}`)
+        .get(`${API_BASE}/orders/${order.id}`)
         .then((res) => setOrderDetails(res.data))
         .catch((err) => console.error("Error fetching order:", err));
+    } else {
+      const searchParams = new URLSearchParams(location.search);
+      const cfOrderId = searchParams.get("cf_order_id") || searchParams.get("order_id");
+      if (cfOrderId) {
+        axios
+          .get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`)
+          .then((res) => setOrderDetails(res.data))
+          .catch((err) => console.error("Error fetching order by cashfree:", err));
+      }
     }
   }, [location]);
 
