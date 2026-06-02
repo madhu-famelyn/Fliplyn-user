@@ -1,103 +1,130 @@
-/* -----------------------------
-   PAGE LAYOUT FIX (IMPORTANT)
------------------------------- */
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
 
-.filter-buttons {
-
-  display: flex;
-  justify-content: center; /* Centers horizontally */
-  align-items: center;
-  gap: 10px; /* space between buttons */
-  margin: 15px 0;
-}
-
+/* =================== POPUP =================== */
 .stall-popup {
   position: fixed;
-  top: 20px;
+  top: 90px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ff4d4d;
+  background: linear-gradient(135deg, #f84d25, #ff7043);
   color: white;
-  padding: 12px 22px;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
-  z-index: 9999;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  animation: popupSlide 0.3s ease-out;
-}
-
-/* Slide animation */
-@keyframes popupSlide {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0px);
-  }
-}
-
-
-/* -----------------------------
-   FILTER BUTTONS (All / Veg / Non-Veg)
------------------------------- */
-.filter-btn {
-  padding: 8px 18px;
-  border-radius: 20px;
-  border: 1px solid #ffc2b0;
-  background: #ffffff;
-  color: #333;
+  padding: 11px 22px;
+  border-radius: 14px;
   font-size: 14px;
   font-weight: 600;
+  font-family: "Outfit", sans-serif;
+  z-index: 9999;
+  box-shadow: 0 6px 20px rgba(248, 77, 37, 0.35);
+  animation: popupSlide 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  white-space: nowrap;
+}
+
+@keyframes popupSlide {
+  from { opacity: 0; transform: translateX(-50%) translateY(-14px) scale(0.92); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+/* =================== SEARCH BAR =================== */
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 440px;
+  margin: 14px auto 12px;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1.5px solid #f0f0f4;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-bar:focus-within {
+  border-color: rgba(248, 77, 37, 0.4);
+  box-shadow: 0 2px 14px rgba(248, 77, 37, 0.12), 0 0 0 3px rgba(248, 77, 37, 0.06);
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  font-family: "Inter", sans-serif;
+  color: #1a1a2e;
+  background: transparent;
+}
+
+.search-bar input::placeholder {
+  color: #b0b8cc;
+  font-weight: 400;
+}
+
+.search-icon {
+  font-size: 16px;
+  color: #f97316;
+  flex-shrink: 0;
+}
+
+/* =================== FILTER BUTTONS =================== */
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 16px;
+}
+
+.filter-btn {
+  padding: 7px 18px;
+  border-radius: 999px;
+  border: 1.5px solid #ede8e4;
+  background: #ffffff;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: "Outfit", sans-serif;
   cursor: pointer;
-  transition: 0.2s ease-in-out;
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
 }
 
-/* Hover */
 .filter-btn:hover {
-  background: #ffe6de;
+  background: #fff5f0;
+  border-color: rgba(248, 77, 37, 0.25);
+  color: #f84d25;
 }
 
-/* Active State */
 .filter-btn.active {
-  background: linear-gradient(90deg, #F84D25 0%, #FF9047 100%);
+  background: linear-gradient(90deg, #f84d25 0%, #ff9047 100%);
   color: white;
   border-color: transparent;
-  box-shadow: 0 3px 6px rgba(255, 125, 80, 0.35);
-  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(248, 77, 37, 0.3);
+  transform: scale(1.04);
 }
 
-
+/* =================== PAGE CONTAINER =================== */
 .page-container {
   display: flex;
   position: relative;
 }
 
-/* Sidebar always stays on top, items never move */
-
-
-/* Item grid container never shifts */
+/* =================== ITEM GRID WRAPPER =================== */
 .item-grid-wrapper {
-  margin-left: 260px;           /* same width as sidebar */
+  margin-left: 260px;
   padding: 20px;
   position: relative;
-  z-index: 1;                   /* stays behind sidebar */
+  z-index: 1;
 }
 
-/* When sidebar is hidden (mobile case) */
 .sidebar-hidden .item-grid-wrapper {
   margin-left: 0;
 }
 
-/* -----------------------------
-   GRID SYSTEM (Responsive)
------------------------------- */
+/* =================== GRID SYSTEM =================== */
 .item-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;                    /* more spacing */
+  gap: 16px;
 }
 
 @media (min-width: 1024px) {
@@ -106,29 +133,60 @@
   }
 }
 
-/* -----------------------------
-   ITEM CARD
------------------------------- */
+/* =================== ITEM CARD =================== */
 .item-card {
-  background: #fff;
-  border-radius: 18px;
+  background: #ffffff;
+  border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-  border: none;
-  transition: 0.25s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07), 0 1px 4px rgba(0,0,0,0.04);
+  border: 1px solid #f5f5f7;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .item-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 12px 32px rgba(248, 77, 37, 0.14), 0 4px 10px rgba(0,0,0,0.07);
 }
 
-/* Image spacing (ADDED) */
+/* Mobile tap feedback */
+.item-card:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* =================== IMAGE WRAPPER =================== */
 .item-img-wrapper {
   position: relative;
   height: 140px;
   overflow: hidden;
   border-radius: 16px;
-  margin: 10px;                 /* Space around image */
+  margin: 10px 10px 0;
+}
+
+/* Shine on hover */
+.item-img-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.item-card:hover .item-img-wrapper::after {
+  left: 130%;
 }
 
 .item-img {
@@ -136,199 +194,228 @@
   height: 100%;
   object-fit: cover;
   border-radius: 14px;
+  transition: transform 0.35s ease;
 }
 
-/* ----------------------------------------
-   Veg / Non-Veg Badge
------------------------------------------ */
+.item-card:hover .item-img {
+  transform: scale(1.05);
+}
+
+/* =================== VEG / NON-VEG BADGE =================== */
 .food-icon {
   position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 22px;
-  height: 22px;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
   border-radius: 4px;
   background: white;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 3px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .food-icon .dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
 }
 
 .food-icon.veg {
-  border: 2px solid #2ecc71;
+  border: 2px solid #22c55e;
 }
 
 .food-icon.veg .dot {
-  background: #2ecc71;
+  background: #22c55e;
 }
 
 .food-icon.nonveg {
-  border: 2px solid #e74c3c;
+  border: 2px solid #ef4444;
 }
 
 .food-icon.nonveg .dot {
-  background: #e74c3c;
+  background: #ef4444;
 }
 
-/* -----------------------------
-   ITEM INFO
------------------------------- */
+/* =================== ITEM INFO =================== */
 .item-info {
-  padding: 12px;
+  padding: 10px 12px 12px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .item-name {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0;
-  color: #333;
+  font-family: "Outfit", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #1a1a2e;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
 }
 
 .item-desc {
-  font-size: 13px;
-  color: #777;
-  margin-top: 3px;
+  font-size: 12px;
+  color: #a0a8b8;
+  margin-top: 2px;
   margin-bottom: 8px;
+  font-family: "Inter", sans-serif;
+  line-height: 1.4;
 }
 
-/* -----------------------------
-   PRICE + BUTTON
------------------------------- */
+/* =================== PRICE + BUTTON ROW =================== */
 .price-add-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 4px;
 }
 
 .price {
-  font-size: 16px;
-  font-weight: 700;
-  color: #222;
+  font-family: "Outfit", sans-serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1a1a2e;
 }
 
-/* -----------------------------
-   ADD BUTTON (Your Gradient)
------------------------------- */
+/* =================== ADD BUTTON =================== */
 .add-btn-btn {
-  background: linear-gradient(90deg, #F84D25 0%, #FF9047 100%);
+  background: linear-gradient(90deg, #f84d25 0%, #ff9047 100%);
   border: none;
-  padding: 6px 14px;
-  border-radius: 12px;
+  padding: 6px 13px;
+  border-radius: 10px;
   color: white;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: "Outfit", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
-  transition: 0.15s ease-in-out;
-  box-shadow: 0 3px 8px rgba(255, 125, 80, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 3px 10px rgba(248, 77, 37, 0.35);
+  touch-action: manipulation;
 }
 
 .add-btn-btn:hover {
-  opacity: 0.9;
-  transform: scale(1.05);
+  transform: scale(1.07);
+  box-shadow: 0 5px 14px rgba(248, 77, 37, 0.45);
 }
 
-/* -----------------------------
-   QUANTITY BOX
------------------------------- */
+.add-btn-btn:active {
+  transform: scale(0.96);
+}
+
+/* =================== QUANTITY BOX =================== */
 .qty-box {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: #fff7f4;
-  padding: 4px 10px;
-  border-radius: 12px;
-  border: 1px solid #ffd1c0;
+  gap: 0;
+  background: #fff5f0;
+  border: 1.5px solid rgba(248, 77, 37, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .qty-btn {
-  background: none;
+  background: transparent;
   border: none;
-  font-size: 18px;
-  color: #F84D25;
+  width: 32px;
+  height: 32px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #f84d25;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  touch-action: manipulation;
+}
+
+.qty-btn:active {
+  background: rgba(248, 77, 37, 0.15);
 }
 
 .qty-value {
-  font-weight: 600;
-  font-size: 14px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #1a1a2e;
+  min-width: 18px;
+  text-align: center;
 }
 
-
-
-/* ================= SEARCH BAR ================= */
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  max-width: 420px;
-  margin: 12px auto 16px; /* center horizontally */
-  padding: 10px 14px;
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-
-.search-bar input {
-  border: none;
-  outline: none;
-  width: 100%;
-  font-size: 14px;
-  color: #111827;
-  background: transparent;
-}
-
-.search-bar input::placeholder {
-  color: #9ca3af;
-  font-weight: 400;
-}
-
-.search-icon {
-  font-size: 16px;
-  color: #f97316; /* orange */
-}
-
-/* Focus State */
-.search-bar:focus-within {
-  border-color: #f97316;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
-}
-
-
-
-/* ================= EMPTY STATE ================= */
-
+/* =================== EMPTY STATE =================== */
 .no-items {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 220px;
+  min-height: 200px;
   text-align: center;
   padding: 24px;
 }
 
 .no-items p {
-  font-size: 15px;
+  font-family: "Outfit", sans-serif;
+  font-size: 14px;
   font-weight: 500;
-  color: #6b7280;
-  background: #fff7ed;
-  border: 1px dashed #fdba74;
-  padding: 14px 22px;
-  border-radius: 12px;
+  color: #a0a8b8;
+  background: #fff9f5;
+  border: 1.5px dashed rgba(248, 77, 37, 0.2);
+  padding: 14px 24px;
+  border-radius: 14px;
 }
 
+/* =================== MOBILE RESPONSIVE =================== */
+@media (max-width: 480px) {
+  .item-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
 
+  .item-img-wrapper {
+    height: 120px;
+  }
 
+  .item-name {
+    font-size: 13px;
+  }
+
+  .price {
+    font-size: 14px;
+  }
+
+  .add-btn-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .filter-btn {
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+
+  .stall-popup {
+    font-size: 13px;
+    padding: 10px 16px;
+    max-width: 85vw;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+@media (max-width: 360px) {
+  .item-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .item-img-wrapper {
+    height: 100px;
+  }
+}
 .filter-selector {
   display: flex;
   gap: 10px;
@@ -354,11 +441,11 @@
 }
 
 .filter-option.veg.active {
-  background: #1a8f3a;
-  border-color: #1a8f3a;
+  background: #16a34a;
+  border-color: #16a34a;
 }
 
 .filter-option.nonveg.active {
-  background: #c62828;
-  border-color: #c62828;
+  background: #dc2626;
+  border-color: #dc2626;
 }

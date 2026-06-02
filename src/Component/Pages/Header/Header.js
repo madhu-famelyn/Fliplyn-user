@@ -1,5 +1,5 @@
 // src/components/Header/Header.js
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import logo from "../../../assets/Images/Logo.png";
@@ -8,6 +8,27 @@ import "./Header.css";
 
 export default function Header() {
   const navigate = useNavigate();
+  const [cartCount, setCartCount] = useState(0);
+
+  const loadCartCount = () => {
+    try {
+      const items = JSON.parse(localStorage.getItem("cartItems")) || [];
+      const total = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+      setCartCount(total);
+    } catch {
+      setCartCount(0);
+    }
+  };
+
+  useEffect(() => {
+    loadCartCount();
+    window.addEventListener("storage", loadCartCount);
+    window.addEventListener("cart-updated", loadCartCount);
+    return () => {
+      window.removeEventListener("storage", loadCartCount);
+      window.removeEventListener("cart-updated", loadCartCount);
+    };
+  }, []);
 
   return (
     <>
@@ -30,10 +51,12 @@ export default function Header() {
           onClick={() => navigate("/transactions-wallet")}
         />
 
-        <FaShoppingCart
-          className="cart-icon"
-          onClick={() => navigate("/cart")}
-        />
+        <div className="cart-icon-wrapper" onClick={() => navigate("/cart")}>
+          <FaShoppingCart className="cart-icon" />
+          {cartCount > 0 && (
+            <span className="cart-badge">{cartCount}</span>
+          )}
+        </div>
       </div>
     </nav>
      <div className="announcement-banner">

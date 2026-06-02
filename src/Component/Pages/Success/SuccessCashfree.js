@@ -6,13 +6,12 @@ import { BsXCircle } from "react-icons/bs";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axios from "axios";
-import { QRCodeCanvas } from "qrcode.react";
 
 export default function PaymentSuccessCashfree() {
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(null);
-  const [view, setView] = useState("receipt");
+  const view = "receipt";
   const receiptRef = useRef(null);
 
   useEffect(() => {
@@ -109,16 +108,17 @@ export default function PaymentSuccessCashfree() {
 
   return (
     <div className="receipt-wrapper">
-      <div className="status-wrapper">
-        <p className="success-status">
-          <span className="success-icon-success">
+      <div className="payment-success-header">
+        <div className="success-checkmark-glow">
+          <span className="success-checkmark-icon">
             <BsCheck />
-          </span>{" "}
-          Payment Successful
-        </p>
+          </span>
+        </div>
+        <h1 className="success-title">Payment Successful</h1>
+        <p className="success-subtitle">Thank you for your order!</p>
       </div>
 
-      <div className="toggle-btns">
+      {/* <div className="toggle-btns">
         <button
           className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
           onClick={() => setView("receipt")}
@@ -131,91 +131,92 @@ export default function PaymentSuccessCashfree() {
         >
           Show QR
         </button>
-      </div>
+      </div> */}
 
       {view === "receipt" && (
-        <div className="receipt-card compact-token" ref={receiptRef}>
-          <h2 className="stall-name">
-            {orderDetails.order_details[0]?.stall_name || "Stall Name"}
-          </h2>
+        <>
+          <div className="receipt-card compact-token" ref={receiptRef}>
+            <h2 className="stall-name">
+              {orderDetails.order_details[0]?.stall_name || "Stall Name"}
+            </h2>
 
-          {/* ✅ Token only shown for successful payment */}
-          <p className="token-no">
-            Token No.: <strong>{tokenNo}</strong>
-          </p>
-
-          <p className="order-date">Date: {createdAt}</p>
-
-          <hr className="separator" />
-
-          <div className="token-table">
-            <div className="token-header">
-              <span>Item</span>
-              <span>Rs</span>
+            <div className="token-hero-badge">
+              <span className="token-hero-label">YOUR TOKEN NUMBER</span>
+              <h3 className="token-hero-number">{tokenNo}</h3>
             </div>
 
-            {orderDetails.order_details.map((item, index) => (
-              <div key={index} className="token-row">
-                <span className="item-name">
-                  {item.name} X {item.quantity}
-                </span>
-                <span>{item.price.toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
+            <p className="order-date">Date: {createdAt}</p>
 
-          <div
-            className="token-summary"
-            style={{ maxWidth: "400px", margin: "0 auto" }}
-          >
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>CGST</span>
-              <span>{totalCgst.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>SGST</span>
-              <span>{totalSgst.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Total GST</span>
-              <span>{totalGst.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Total</span>
-              <span>{subtotal.toFixed(2)}</span>
-            </p>
-            <p style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Round Off</span>
-              <span>
-                {roundOff >= 0
-                  ? `+${roundOff.toFixed(2)}`
-                  : roundOff.toFixed(2)}
-              </span>
-            </p>
-            <p
-              className="grand-total"
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                fontWeight: "bold",
-              }}
-            >
-              <span>Grand Total</span>
-              <span>{grandTotal.toFixed(2)}</span>
-            </p>
+            <hr className="separator" />
+
+            <div className="token-table">
+              <div className="token-header">
+                <span>Item</span>
+                <span>Rs</span>
+              </div>
+
+              {orderDetails.order_details.map((item, index) => (
+                <div key={index} className="token-row">
+                  <span className="item-name">
+                    {item.name} × {item.quantity}
+                  </span>
+                  <span>{item.price.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="token-summary">
+              <p>
+                <span>CGST</span>
+                <span>{totalCgst.toFixed(2)}</span>
+              </p>
+              <p>
+                <span>SGST</span>
+                <span>{totalSgst.toFixed(2)}</span>
+              </p>
+              <p>
+                <span>Total GST</span>
+                <span>{totalGst.toFixed(2)}</span>
+              </p>
+              <p>
+                <span>Total</span>
+                <span>{subtotal.toFixed(2)}</span>
+              </p>
+              <p>
+                <span>Round Off</span>
+                <span>
+                  {roundOff >= 0
+                    ? `+${roundOff.toFixed(2)}`
+                    : roundOff.toFixed(2)}
+                </span>
+              </p>
+              <div className="separator" style={{ margin: "10px 0" }}></div>
+              <p className="grand-total">
+                <span>Grand Total</span>
+                <span>₹ {grandTotal.toFixed(2)}</span>
+              </p>
+            </div>
           </div>
 
           <button className="download-btn" onClick={downloadPDF}>
             Download Receipt
           </button>
-        </div>
+        </>
       )}
 
-      {view === "qr" && (
+      {/* {view === "qr" && (
         <div className="qr-wrapper">
           <QRCodeCanvas value={JSON.stringify(orderDetails)} size={180} />
         </div>
-      )}
+      )} */}
+
+      {/* 🔙 Back to Stalls */}
+      <button
+        className="back-to-stalls-btn"
+        onClick={() => navigate("/stalls")}
+      >
+        Back to Stalls
+      </button>
     </div>
   );
 }

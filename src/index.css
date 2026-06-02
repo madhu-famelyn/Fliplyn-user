@@ -1,22 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap');
 
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif, 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  /* Updated Background */
-  background: #FDF2F2;
+/* ===================================================
+   MOBILE-FIRST GLOBAL RESET
+   =================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  /* Remove tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
 }
 
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html {
+  /* Smooth scrolling */
+  scroll-behavior: smooth;
+  /* Prevent font scaling on orientation change */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 html,
@@ -30,6 +31,70 @@ body,
   padding: 0 !important;
 }
 
+body {
+  font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #FDF2F2;
+  /* Prevent overscroll bounce on iOS */
+  overscroll-behavior-y: none;
+}
+
+/* ===================================================
+   TOUCH TARGET MINIMUM SIZE
+   All interactive elements must be at least 44×44px
+   =================================================== */
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"] {
+  min-height: 44px;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+/* ===================================================
+   PREVENT INPUT ZOOM ON iOS (font-size must be ≥ 16px)
+   =================================================== */
+input,
+select,
+textarea {
+  font-size: 16px !important;
+}
+
+/* ===================================================
+   PREVENT TEXT SELECTION ON INTERACTIVE ELEMENTS
+   =================================================== */
+button,
+.stall-card,
+.footer-item,
+.category-item,
+.item-card,
+.cart-icon-wrapper {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ===================================================
+   SMOOTH SCROLLING FOR ALL SCROLL CONTAINERS
+   =================================================== */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ===================================================
+   SAFE AREA INSETS FOR NOTCHED PHONES (iPhone X+)
+   =================================================== */
+.footer-container {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  height: calc(68px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ===================================================
+   CSS CUSTOM PROPERTIES
+   =================================================== */
 :root {
   --cafe-success: #2D8A4E;
   --cafe-success-bg: #EDFBF2;
@@ -45,38 +110,13 @@ body,
   --shadow-lg: 0 12px 36px rgba(44, 28, 8, 0.13);
   --shadow-primary: 0 8px 24px rgba(200, 82, 26, 0.28);
 
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
-
+  --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
-}
 
-/* =====================================================
-   GLOBAL BASE
-   ===================================================== */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  height: 100%;
-  width: 100% !important;
-  max-width: 100% !important;
-  overflow-x: hidden !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
-    'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background: #FDF2F2;
+  /* Orange brand */
+  --orange: #f84d25;
+  --orange-light: #ff9047;
+  --orange-bg: #fff5f0;
 }
 
 code {

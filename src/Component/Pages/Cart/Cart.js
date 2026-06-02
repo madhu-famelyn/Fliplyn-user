@@ -112,8 +112,10 @@ export default function Cart() {
         {error && <div className="cart-error">{error}</div>}
 
         {cartItems.length === 0 ? (
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
-            Your cart is empty.
+          <div className="cart-empty-state">
+            <div className="empty-emoji">🛒</div>
+            <h3>Your basket is empty</h3>
+            <p>Add items from a stall to get started</p>
           </div>
         ) : (
           <>

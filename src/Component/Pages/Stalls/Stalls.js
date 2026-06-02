@@ -6,6 +6,16 @@ import Footer from "../Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext/ContextApi";
 
+// Skeleton loader card
+function SkeletonCard() {
+  return (
+    <div className="skeleton-card">
+      <div className="skeleton-image" />
+      <div className="skeleton-text" />
+    </div>
+  );
+}
+
 export default function Stall() {
   const [stalls, setStalls] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -52,7 +62,7 @@ export default function Stall() {
           return;
         }
 
-        // ------------------ FETCH WALLET (kept, but not used for filtering) ------------------
+        // ------------------ FETCH WALLET ------------------
         try {
           const walletRes = await axios.get(
             `https://admin-aged-field-2794.fly.dev/wallets/${userId}`
@@ -70,10 +80,6 @@ export default function Stall() {
         );
 
         let fetched = res.data || [];
-
-        // ❌ REMOVED: prepaid/postpaid filtering logic
-        // ✅ Now showing ALL stalls
-
         setStalls(fetched);
       } catch (err) {
         console.error("❌ Stall fetch error:", err);
@@ -93,35 +99,26 @@ export default function Stall() {
   // ------------------ SEARCH FILTER & ACTIVE SORT ------------------
   const filteredStalls = stalls
     .filter((stall) =>
-      stall.name?.toLowerCase().includes(search.toLowerCase())
+      stall.name?.toLowerCase().includes(search.toLowerCase()) && stall.is_available
     )
     .sort((a, b) => {
-      // Available stalls first, unavailable stalls at the bottom
       if (a.is_available && !b.is_available) return -1;
       if (!a.is_available && b.is_available) return 1;
       return 0;
     });
-
-  // ------------------ LOADING ------------------
-  if (loading) {
-    return (
-      <>
-        <Header />
-        <div className="stall-wrapper">
-          <p className="stall-empty">Loading stalls...</p>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
       <Header />
 
       <div className="stalls-page-container">
-        <button className="back-btn" onClick={() => navigate(-1)}></button>
-
+        {/* Hero Header */}
         <div className="top-section">
+          <div className="hero-badge">
+            <span></span>
+            {loading ? "Fetching outlets" : `${filteredStalls.length} Outlets`}
+          </div>
+
           <h1 className="page-title">Explore Outlets</h1>
           <p className="page-subtitle">
             Browse menus and order your favorite meals.
@@ -129,8 +126,9 @@ export default function Stall() {
 
           <div className="search-bar-container">
             <input
+              id="stall-search"
               type="text"
-              placeholder="Search Stalls"
+              placeholder="Search stalls..."
               className="search-bar"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -138,7 +136,16 @@ export default function Stall() {
           </div>
         </div>
 
-        {filteredStalls.length === 0 ? (
+        {/* Loading Skeleton */}
+        {loading ? (
+          <div className="bottom-section">
+            <div className="stalls-skeleton-grid">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <SkeletonCard key={i} />
+              ))}
+            </div>
+          </div>
+        ) : filteredStalls.length === 0 ? (
           <p className="no-stalls">
             {search
               ? "No stalls match your search."
@@ -149,31 +156,34 @@ export default function Stall() {
             <div className="stalls-grid">
               {filteredStalls.map((stall) => (
                 <div
-                  className={`stall-card ${
-                    !stall.is_available ? "unavailable" : ""
-                  }`}
+                  className={`stall-card ${!stall.is_available ? "unavailable" : ""}`}
                   key={stall.id}
-                  onClick={() =>
-                    stall.is_available && handleStallClick(stall.id)
-                  }
+                  onClick={() => stall.is_available && handleStallClick(stall.id)}
                 >
-                  <img
-                    src={stall.image_url}
-                    alt={stall.name}
-                    className="stall-image"
-                  />
+                  {/* Image wrapper with shine + open badge */}
+                  <div className="stall-image-wrapper">
+                    <img
+                      src={stall.image_url}
+                      alt={stall.name}
+                      className="stall-image"
+                      loading="lazy"
+                    />
 
-                  {!stall.is_available && (
-                    <div className="unavailable-overlay">
-                      <p>Stall Unavailable</p>
-                    </div>
-                  )}
+                    {!stall.is_available && (
+                      <div className="unavailable-overlay">
+                        <p>Closed</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <p className="stall-names">{stall.name}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
+
       <Footer />
     </>
   );
