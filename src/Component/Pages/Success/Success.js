@@ -95,7 +95,12 @@ export default function PaymentSuccess() {
       {/* ⚠️ Validity Message (First 10 seconds) */}
       {!showToken && (
         <div className="order-validity-box">
-          <p className="order-validity-text">
+          <div className="token-generation-alert">
+            <div className="token-spinner-ring"></div>
+            <p className="token-alert-title">Generating Your Order Token...</p>
+            <p className="token-alert-subtitle">Please do not close this window or refresh the page.</p>
+          </div>
+          <p className="order-validity-text" style={{ marginTop: "12px", borderTop: "1px solid #fde68a", paddingTop: "8px" }}>
             This order is valid for <strong>30 minutes</strong>.  
             After 30 minutes, the order will not be processed and the amount will not be refunded.
           </p>
