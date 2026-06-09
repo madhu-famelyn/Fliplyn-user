@@ -36,36 +36,7 @@ export default function PaymentMethodPage() {
   const [cfOrderId, setCfOrderId] = useState("");
 
   const getAppUpiLink = (app) => {
-    if (!qrValue) return "";
-    const query = qrValue.replace(/^upi:\/\/pay\??/, "");
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-      switch (app) {
-        case "gpay":
-          return `intent://pay?${query}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end`;
-        case "phonepe":
-          return `intent://pay?${query}#Intent;scheme=upi;package=com.phonepe.app;end`;
-        case "paytm":
-          return `intent://pay?${query}#Intent;scheme=upi;package=net.one97.paytm;end`;
-        default:
-          return qrValue;
-      }
-    } else if (isIOS) {
-      switch (app) {
-        case "gpay":
-          return `gpay://upi/pay?${query}`;
-        case "phonepe":
-          return `phonepe://pay?${query}`;
-        case "paytm":
-          return `paytmmp://pay?${query}`;
-        default:
-          return qrValue;
-      }
-    } else {
-      return qrValue;
-    }
+    return qrValue;
   };
 
   const [modalError, setModalError] = useState("");
@@ -134,7 +105,7 @@ export default function PaymentMethodPage() {
     console.log("=== STARTING QR STATUS POLLING (WALLET) ===");
     const intervalId = setInterval(async () => {
       try {
-        const url = `${API_BASE}/orders/verify-payment/phonepe/${cfOrderId}`;
+        const url = `${API_BASE}/orders/verify-payment/cashfree/${cfOrderId}`;
         const res = await axios.get(url);
         if (res.data && res.data.payment_status === "SUCCESS") {
           console.log("=== PAYMENT DETECTED SUCCESS ===");
@@ -190,9 +161,8 @@ export default function PaymentMethodPage() {
     return res.data;
   };
 
-  /* ---------------- CASHFREE (DISABLED) ---------------- */
+  /* ---------------- CASHFREE ---------------- */
   // eslint-disable-next-line no-unused-vars
-  /*
   const openCashfreeCheckout = (paymentSessionId) => {
     if (!window.Cashfree) {
       setErrorMsg("Cashfree SDK not loaded. Please refresh the page.");
@@ -209,7 +179,6 @@ export default function PaymentMethodPage() {
       redirectTarget: "_self",
     });
   };
-  */
 
   /* ---------------- CONFIRM PAYMENT ---------------- */
   const handleConfirmPayment = async () => {
@@ -240,7 +209,6 @@ export default function PaymentMethodPage() {
       items: itemsPayload,
       pay_with_wallet: selectedMethod === "Wallet",
       cashfree_return_url: `${window.location.origin}/success`,
-      payment_gateway: "phonepe",
     };
 
     /* ---------- WALLET FLOW ---------- */
@@ -263,24 +231,26 @@ export default function PaymentMethodPage() {
       return;
     }
 
-    /* ---------- PHONEPE GATEWAY FLOW ---------- */
+    /* ---------- CASHFREE GATEWAY FLOW ---------- */
     if (selectedMethod === "Payment Gateway") {
       try {
         setIsLoading(true);
 
         const backendOrder = await createInternalOrder(orderPayload);
 
-        // PhonePe flow: Show the beautiful QR modal on screen and allow the user to scan & pay!
+        // Cashfree flow: Use the Cashfree JS SDK to open the payment UI
         if (!backendOrder.payment_session_id) {
-          setErrorMsg("Failed to generate payment QR code");
+          setErrorMsg("Failed to generate payment session");
           return;
         }
-        console.log("PhonePe Dynamic QR String generated:", backendOrder.payment_session_id);
-        setQrValue(backendOrder.payment_session_id);
+        console.log("Cashfree payment_session_id:", backendOrder.payment_session_id);
+        console.log("Cashfree order_id:", backendOrder.cashfree_order_id);
+
+        // Store cfOrderId so polling can pick it up after redirect/callback
         setCfOrderId(backendOrder.cashfree_order_id);
-        setTimeLeft(180); // Reset timer to 180 seconds
-        setModalError(""); // Clear any previous error
-        setShowQrModal(true);
+
+        // Open Cashfree checkout
+        openCashfreeCheckout(backendOrder.payment_session_id);
 
       } catch (err) {
         console.error(err);
@@ -367,9 +337,7 @@ export default function PaymentMethodPage() {
             <h2>Scan & Pay</h2>
             <p>Scan using any UPI App (GPay, PhonePe, Paytm)</p>
             <div className="qr-canvas-container">
-              <a href={qrValue} onClick={(e) => handleUpiAppClick(e, "generic")} style={{ display: "inline-block", cursor: "pointer" }}>
-                <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
-              </a>
+              <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
             </div>
             <p className="payee-name-sub">Paying to: <strong>{getPayeeName()}</strong></p>
             <p className="qr-amount">Amount: ₹{calculateTotalAmount().toFixed(2)}</p>
