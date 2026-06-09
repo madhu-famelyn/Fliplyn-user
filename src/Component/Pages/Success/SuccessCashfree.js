@@ -35,6 +35,7 @@ export default function PaymentSuccessCashfree() {
       })
       .then((res) => {
         setOrderDetails(res.data);
+        localStorage.removeItem("cartItems");
       })
       .catch(() => {
         alert("Payment verification failed.");

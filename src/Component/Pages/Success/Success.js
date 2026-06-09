@@ -39,7 +39,10 @@ export default function PaymentSuccess() {
     if (order?.id) {
       axios
         .get(`${API_BASE}/orders/${order.id}`)
-        .then((res) => setOrderDetails(res.data))
+        .then((res) => {
+          setOrderDetails(res.data);
+          localStorage.removeItem("cartItems");
+        })
         .catch((err) => console.error("Error fetching order:", err));
     } else {
       const searchParams = new URLSearchParams(location.search);
@@ -47,7 +50,10 @@ export default function PaymentSuccess() {
       if (cfOrderId) {
         axios
           .get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`)
-          .then((res) => setOrderDetails(res.data))
+          .then((res) => {
+            setOrderDetails(res.data);
+            localStorage.removeItem("cartItems");
+          })
           .catch((err) => console.error("Error fetching order by cashfree:", err));
       }
     }
