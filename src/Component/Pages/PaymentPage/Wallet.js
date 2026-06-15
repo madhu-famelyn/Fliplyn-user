@@ -36,18 +36,24 @@ export default function PaymentMethodPage() {
   const [cfOrderId, setCfOrderId] = useState("");
 
   const getAppUpiLink = (app) => {
-    return qrValue;
+    if (!qrValue) return qrValue;
+    if (app === "generic") return qrValue;
+    const upiParams = qrValue.replace(/^upi:\/\/pay\?/, "");
+    switch (app) {
+      case "phonepe": return `phonepe://pay?${upiParams}`;
+      case "gpay":    return `tez://upi/pay?${upiParams}`;
+      case "paytm":   return `paytmmp://pay?${upiParams}`;
+      default:        return qrValue;
+    }
   };
 
   const [modalError, setModalError] = useState("");
 
   const handleUpiAppClick = (e, app) => {
-    e.preventDefault(); // Always prevent default to avoid SPA navigation / login redirect
+    e.preventDefault();
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (isMobile) {
-      // On mobile: trigger the UPI deep link manually so the browser doesn't
-      // treat qrValue as a relative path and redirect to the login page
-      window.location.href = qrValue;
+      window.location.href = getAppUpiLink(app);
     } else {
       let appName = "UPI";
       if (app === "gpay") appName = "Google Pay";
@@ -280,131 +286,218 @@ export default function PaymentMethodPage() {
     <>
       <Header />
 
-      <div className="payment-page-container">
-        <h2 className="payment-title">Payment</h2>
+      <div className="pay-page-wrapper">
 
-        <div className="payment-methods">
-          {paymentMethods.map(({ label, icon }) => (
+        {/* ── Page Header ── */}
+        <div className="pay-page-hero">
+          <button className="pay-back-btn" onClick={() => navigate(-1)} disabled={isLoading}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M19 12H5M5 12l7-7M5 12l7 7"/>
+            </svg>
+          </button>
+          <div>
+            <h1 className="pay-page-title">Checkout</h1>
+            <p className="pay-page-sub">Choose how you'd like to pay</p>
+          </div>
+          <div className="pay-secure-badge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+            Secure
+          </div>
+        </div>
+
+        <div className="pay-page-body">
+
+          {/* ── Wallet Balance Chip ── */}
+          <div className="wallet-balance-card">
+            <div className="wbc-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="2" y="7" width="20" height="14" rx="3"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+              </svg>
+            </div>
+            <div className="wbc-info">
+              <span className="wbc-label">Wallet Balance</span>
+              <span className="wbc-amount">₹ {walletBalance.toFixed(2)}</span>
+            </div>
+          </div>
+
+          {/* ── Payment Method Selector ── */}
+          <div className="pay-method-section">
+            <p className="pay-section-label">Payment Method</p>
+            <div className="pay-method-grid">
+              {paymentMethods.map(({ label, icon }) => (
+                <button
+                  key={label}
+                  className={`pay-method-card ${selectedMethod === label ? "active" : ""}`}
+                  onClick={() => setSelectedMethod(label)}
+                  disabled={isLoading}
+                >
+                  <div className="pmc-icon">{icon}</div>
+                  <span className="pmc-label">{label}</span>
+                  {selectedMethod === label && (
+                    <div className="pmc-check">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <path d="M20 6L9 17l-5-5"/>
+                      </svg>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Order Summary ── */}
+          <div className="order-summary-card">
+            <div className="osc-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+              </svg>
+              <span>Order Summary</span>
+            </div>
+
+            {!cartItems.length ? (
+              <p className="empty-cart-msg">No items in cart</p>
+            ) : (
+              <>
+                <div className="osc-items">
+                  {cartItems.map((item, index) => (
+                    <div key={index} className="osc-item-row">
+                      <div className="osc-item-info">
+                        <span className="osc-item-name">{item.name}</span>
+                        <span className="osc-item-qty">× {item.quantity}</span>
+                      </div>
+                      <span className="osc-item-price">₹ {(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="osc-divider" />
+                <div className="osc-total-row">
+                  <span>Total Payable</span>
+                  <strong>₹ {calculateTotalAmount().toFixed(2)}</strong>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* ── Error ── */}
+          {errorMsg && (
+            <div className="pay-error-msg">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              {errorMsg}
+            </div>
+          )}
+
+          {/* ── CTA Buttons ── */}
+          <div className="pay-cta-section">
             <button
-              key={label}
-              className={`method-btn ${selectedMethod === label ? "selected" : ""
-                }`}
-              onClick={() => setSelectedMethod(label)}
+              className={`pay-confirm-btn ${isLoading ? "loading" : ""}`}
+              onClick={handleConfirmPayment}
               disabled={isLoading}
             >
-              {icon} {label}
+              {isLoading ? (
+                <><span className="pay-spinner" /> Processing…</>
+              ) : (
+                <>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                  </svg>
+                  Pay ₹ {calculateTotalAmount().toFixed(2)}
+                </>
+              )}
             </button>
-          ))}
-        </div>
+            <button
+              className="pay-cancel-btn"
+              onClick={() => navigate(-1)}
+              disabled={isLoading}
+            >
+              Cancel
+            </button>
+          </div>
 
-        <p className="wallet-balance-text">
-          Wallet Balance: <strong>₹ {walletBalance.toFixed(2)}</strong>
-        </p>
-
-        <div className="cart-summary-box">
-          <h3 className="cart-title">Cart Items</h3>
-
-          {!cartItems.length ? (
-            <p className="empty-cart-msg">No items in cart</p>
-          ) : (
-            <>
-              {cartItems.map((item, index) => (
-                <div key={index} className="cart-item-row">
-                  <span>{item.name}</span>
-                  <span>Qty: {item.quantity}</span>
-                  <span>₹ {(item.price * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
-              <hr />
-              <div className="cart-total-row">
-                <strong>Total:</strong>
-                <strong>₹ {calculateTotalAmount().toFixed(2)}</strong>
-              </div>
-            </>
-          )}
-        </div>
-
-        {errorMsg && <p className="error-msg">{errorMsg}</p>}
-
-        <div className="payment-buttons">
-          <button
-            className="confirm-btn"
-            onClick={handleConfirmPayment}
-            disabled={isLoading}
-          >
-            {isLoading ? "Processing..." : "Confirm Payment"}
-          </button>
-
-          <button
-            className="continue-btn"
-            onClick={() => navigate(-1)}
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
         </div>
       </div>
 
       {showQrModal && (
         <div className="qr-modal-overlay">
           <div className="qr-modal-card">
-            <h2>Scan & Pay</h2>
-            <p>Scan using any UPI App (GPay, PhonePe, Paytm)</p>
-            <div className="qr-canvas-container">
-              <QRCodeCanvas value={qrValue} size={200} includeMargin={true} level="H" />
-            </div>
-            <p className="payee-name-sub">Paying to: <strong>{getPayeeName()}</strong></p>
-            <p className="qr-amount">Amount: ₹{calculateTotalAmount().toFixed(2)}</p>
 
+            {/* Header */}
+            <div className="qr-modal-header">
+              <div className="qr-brand-badge">
+                <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+                  <path d="M6 21h7.5L18.5 11H11L6 21z" fill="#097939" />
+                  <path d="M13.5 21l5-10H26l-5 10H13.5z" fill="#ED7D31" />
+                </svg>
+                <span>UPI</span>
+              </div>
+              <h2 className="qr-modal-title">Scan &amp; Pay</h2>
+              <p className="qr-modal-subtitle">Use any UPI app to scan and pay instantly</p>
+            </div>
+
+            {/* QR Code */}
+            <div className="qr-code-wrapper">
+              <div className="qr-code-inner">
+                <QRCodeCanvas value={qrValue} size={180} includeMargin={false} level="H" />
+              </div>
+              <div className="qr-scan-hint">
+                <span className="qr-scan-dot" />
+                <span>Point camera to scan</span>
+              </div>
+            </div>
+
+            {/* Merchant & Amount */}
+            <div className="qr-merchant-row">
+              <div className="qr-merchant-info">
+                <span className="qr-merchant-label">Paying to</span>
+                <span className="qr-merchant-name">{getPayeeName()}</span>
+              </div>
+              <div className="qr-amount-chip">₹{calculateTotalAmount().toFixed(2)}</div>
+            </div>
+
+            {/* Desktop warning */}
             {modalError && (
-              <div className="modal-error-callout" style={{
-                background: "#fff9db",
-                border: "1px solid #ffe066",
-                color: "#856404",
-                padding: "10px 14px",
-                borderRadius: "14px",
-                fontSize: "12px",
-                fontWeight: "600",
-                marginBottom: "16px",
-                textAlign: "left",
-                lineHeight: "1.4"
-              }}>
+              <div className="modal-error-callout">
                 ⚠️ {modalError}
               </div>
             )}
 
+            {/* UPI App Buttons */}
             <div className="upi-payment-section">
-              <p className="upi-section-title">Pay Via UPI</p>
+              <p className="upi-section-title">Pay directly via app</p>
               <div className="upi-apps-row">
+
                 {/* Generic UPI */}
                 <a href={qrValue} className="upi-app-btn" onClick={(e) => handleUpiAppClick(e, "generic")}>
                   <div className="upi-icon-wrapper generic-upi">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
                       <path d="M6 21h7.5L18.5 11H11L6 21z" fill="#097939" />
                       <path d="M13.5 21l5-10H26l-5 10H13.5z" fill="#ED7D31" />
                     </svg>
                   </div>
-                  <span>Pay by any UPI</span>
+                  <span>Any UPI</span>
                 </a>
 
                 {/* Google Pay */}
                 <a href={getAppUpiLink("gpay")} className="upi-app-btn" onClick={(e) => handleUpiAppClick(e, "gpay")}>
                   <div className="upi-icon-wrapper gpay">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
                       <path d="M16.5 14.5c0-.8-.1-1.6-.3-2.3H9v4.4h4.2c-.2.9-.7 1.7-1.5 2.2v2.8h2.4c1.4-1.3 2.4-3.2 2.4-7.1z" fill="#4285F4" />
                       <path d="M9 22c1.8 0 3.3-.6 4.4-1.6l-2.4-2.8c-.7.5-1.5.8-2 .8-1.6 0-3-1.1-3.5-2.6H1.9v2.9C3.1 20 5.8 22 9 22z" fill="#34A853" />
                       <path d="M5.5 15.8C5.4 15.3 5.3 14.7 5.3 14c0-.7.1-1.3.2-1.8V9.3H1.9C1.3 10.7 1 12.3 1 14c0 1.7.3 3.3.9 4.7l3.6-2.9z" fill="#FBBC05" />
                       <path d="M9 6.2c1 0 1.9.3 2.6 1l2-2C12.3 4 10.8 3.5 9 3.5 5.8 3.5 3.1 5.5 1.9 8.2l3.6 2.9c.5-1.5 1.9-2.6 3.5-2.6z" fill="#EA4335" />
                     </svg>
                   </div>
-                  <span>Google Pay</span>
+                  <span>GPay</span>
                 </a>
 
                 {/* PhonePe */}
                 <a href={getAppUpiLink("phonepe")} className="upi-app-btn" onClick={(e) => handleUpiAppClick(e, "phonepe")}>
                   <div className="upi-icon-wrapper phonepe">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <text x="16" y="22" fill="#fff" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="16" textAnchor="middle">पे</text>
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                      <text x="16" y="22" fill="#fff" fontFamily="system-ui,-apple-system,sans-serif" fontWeight="900" fontSize="16" textAnchor="middle">पे</text>
                     </svg>
                   </div>
                   <span>PhonePe</span>
@@ -413,20 +506,32 @@ export default function PaymentMethodPage() {
                 {/* Paytm */}
                 <a href={getAppUpiLink("paytm")} className="upi-app-btn" onClick={(e) => handleUpiAppClick(e, "paytm")}>
                   <div className="upi-icon-wrapper paytm">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                      <text x="16" y="20" fontFamily="system-ui, -apple-system, sans-serif" fontWeight="900" fontSize="9" textAnchor="middle">
+                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                      <text x="16" y="20" fontFamily="system-ui,-apple-system,sans-serif" fontWeight="900" fontSize="9" textAnchor="middle">
                         <tspan fill="#00baf2">pay</tspan><tspan fill="#002b5c">tm</tspan>
                       </text>
                     </svg>
                   </div>
                   <span>Paytm</span>
                 </a>
+
               </div>
             </div>
 
-            <p className="qr-timer-text">Expires in: <span className="timer-count">{formatTime(timeLeft)}</span></p>
+            {/* Timer & Cancel */}
+            <div className="qr-footer">
+              <div className="qr-timer-row">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                </svg>
+                <span>Expires in </span>
+                <span className="timer-count">{formatTime(timeLeft)}</span>
+              </div>
+              <button className="qr-close-btn" onClick={() => setShowQrModal(false)}>
+                ✕ Cancel Payment
+              </button>
+            </div>
 
-            <button className="qr-close-btn" onClick={() => setShowQrModal(false)}>Cancel Payment</button>
           </div>
         </div>
       )}
