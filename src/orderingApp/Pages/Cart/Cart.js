@@ -33,9 +33,13 @@ function OrderingCart() {
   const [modalError, setModalError] = useState("");
 
   const handleUpiAppClick = (e, app) => {
+    e.preventDefault(); // Always prevent default to avoid SPA navigation / login redirect
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (!isMobile) {
-      e.preventDefault();
+    if (isMobile) {
+      // On mobile: trigger the UPI deep link manually so the browser doesn't
+      // treat qrValue as a relative path and redirect to the login page
+      window.location.href = qrValue;
+    } else {
       let appName = "UPI";
       if (app === "gpay") appName = "Google Pay";
       if (app === "phonepe") appName = "PhonePe";

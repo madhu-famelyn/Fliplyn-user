@@ -42,9 +42,13 @@ export default function PaymentMethodPage() {
   const [modalError, setModalError] = useState("");
 
   const handleUpiAppClick = (e, app) => {
+    e.preventDefault(); // Always prevent default to avoid SPA navigation / login redirect
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (!isMobile) {
-      e.preventDefault();
+    if (isMobile) {
+      // On mobile: trigger the UPI deep link manually so the browser doesn't
+      // treat qrValue as a relative path and redirect to the login page
+      window.location.href = qrValue;
+    } else {
       let appName = "UPI";
       if (app === "gpay") appName = "Google Pay";
       if (app === "phonepe") appName = "PhonePe";
@@ -105,7 +109,8 @@ export default function PaymentMethodPage() {
     console.log("=== STARTING QR STATUS POLLING (WALLET) ===");
     const intervalId = setInterval(async () => {
       try {
-        const url = `${API_BASE}/orders/verify-payment/cashfree/${cfOrderId}`;
+        // Use PhonePe verify endpoint (cfOrderId is the PhonePe merchant txn id)
+        const url = `${API_BASE}/orders/verify-payment/phonepe/${cfOrderId}`;
         const res = await axios.get(url);
         if (res.data && res.data.payment_status === "SUCCESS") {
           console.log("=== PAYMENT DETECTED SUCCESS ===");
@@ -114,7 +119,6 @@ export default function PaymentMethodPage() {
 
           // Fetch full order details
           const orderRes = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
-
           localStorage.removeItem("cartItems");
           navigate("/success", { state: { order: orderRes.data } });
         }
@@ -208,6 +212,7 @@ export default function PaymentMethodPage() {
       user_email: user.email,
       items: itemsPayload,
       pay_with_wallet: selectedMethod === "Wallet",
+      payment_gateway: selectedMethod === "Payment Gateway" ? "phonepe" : "cashfree",
       cashfree_return_url: `${window.location.origin}/success`,
     };
 
