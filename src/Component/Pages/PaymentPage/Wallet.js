@@ -161,9 +161,9 @@ export default function PaymentMethodPage() {
     return res.data;
   };
 
-  /* ---------------- CASHFREE ---------------- */
+  /* ---------------- CASHFREE (commented out) ---------------- */
   // eslint-disable-next-line no-unused-vars
-  const openCashfreeCheckout = (paymentSessionId) => {
+  /* const openCashfreeCheckout = (paymentSessionId) => {
     if (!window.Cashfree) {
       setErrorMsg("Cashfree SDK not loaded. Please refresh the page.");
       return;
@@ -178,7 +178,7 @@ export default function PaymentMethodPage() {
       paymentSessionId,
       redirectTarget: "_self",
     });
-  };
+  }; */
 
   /* ---------------- CONFIRM PAYMENT ---------------- */
   const handleConfirmPayment = async () => {
@@ -231,26 +231,35 @@ export default function PaymentMethodPage() {
       return;
     }
 
-    /* ---------- CASHFREE GATEWAY FLOW ---------- */
+    /* ---------- PHONEPE GATEWAY FLOW ---------- */
     if (selectedMethod === "Payment Gateway") {
       try {
         setIsLoading(true);
 
         const backendOrder = await createInternalOrder(orderPayload);
 
-        // Cashfree flow: Use the Cashfree JS SDK to open the payment UI
+        // PhonePe flow: Show the QR modal on screen and allow the user to scan & pay!
         if (!backendOrder.payment_session_id) {
-          setErrorMsg("Failed to generate payment session");
+          setErrorMsg("Failed to generate payment QR");
           return;
         }
+        console.log("PhonePe Dynamic QR String generated:", backendOrder.payment_session_id);
+        console.log("PhonePe order_id:", backendOrder.cashfree_order_id);
+
+        // Store order id so polling can verify after scan
+        setCfOrderId(backendOrder.cashfree_order_id);
+        setQrValue(backendOrder.payment_session_id);
+        setTimeLeft(180); // Reset timer
+        setModalError("");
+        setShowQrModal(true);
+
+        /* ---------- CASHFREE GATEWAY FLOW (commented out) ----------
+        // Cashfree flow: Use the Cashfree JS SDK to open the payment UI
         console.log("Cashfree payment_session_id:", backendOrder.payment_session_id);
         console.log("Cashfree order_id:", backendOrder.cashfree_order_id);
-
-        // Store cfOrderId so polling can pick it up after redirect/callback
         setCfOrderId(backendOrder.cashfree_order_id);
-
-        // Open Cashfree checkout
         openCashfreeCheckout(backendOrder.payment_session_id);
+        ------------------------------------------------------------ */
 
       } catch (err) {
         console.error(err);
