@@ -110,15 +110,11 @@ export default function Stall() {
 
   // ------------------ SEARCH FILTER & ACTIVE SORT ------------------
   const filteredStalls = stalls
-    .filter((stall) =>
-      stall.name?.toLowerCase().includes(search.toLowerCase())
-    )
-    .sort((a, b) => {
-      // Available stalls first, closed at the bottom
-      if (a.is_available && !b.is_available) return -1;
-      if (!a.is_available && b.is_available) return 1;
-      return 0;
-    });
+    .filter(
+      (stall) =>
+        stall.name?.toLowerCase().includes(search.toLowerCase()) &&
+        stall.is_available
+    );
 
   return (
     <>
