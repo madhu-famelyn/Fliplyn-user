@@ -82,17 +82,25 @@ export default function Stall() {
           `https://admin-aged-field-2794.fly.dev/stalls/building/${finalBuildingId}`
         );
         const walletPromise = userId
-          ? axios.get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`)
+          ? axios
+              .get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`)
+              .catch(() => ({ data: null }))
           : Promise.resolve({ data: null });
 
-        const [stallsRes, walletRes] = await Promise.all([stallsPromise, walletPromise]);
+        const [stallsRes, walletRes] = await Promise.all([
+          stallsPromise,
+          walletPromise,
+        ]);
 
         const fetchedStalls = stallsRes.data || [];
         setStalls(fetchedStalls);
         if (walletRes?.data) setWallet(walletRes.data);
 
         // Save to cache for instant rendering next time
-        localStorage.setItem(`cached_stalls_${finalBuildingId}`, JSON.stringify(fetchedStalls));
+        localStorage.setItem(
+          `cached_stalls_${finalBuildingId}`,
+          JSON.stringify(fetchedStalls)
+        );
       } catch (err) {
         console.error("❌ Stall fetch error:", err);
       } finally {
