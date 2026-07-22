@@ -5,7 +5,8 @@ import './CategoryList.css';
 const S3_BASE_URL = 'https://fliplyn-assets.s3.ap-south-1.amazonaws.com/';
 
 export default function CategoryList({ categories, selectedCategoryId, onCategoryClick }) {
-  const [isOpen, setIsOpen] = useState(true);
+  // 🔹 Closed by default so items display directly on screen when opening a stall
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleCategoryClick = (id) => {
     onCategoryClick(id);

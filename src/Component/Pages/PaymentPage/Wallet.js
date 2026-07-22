@@ -26,7 +26,15 @@ export default function PaymentMethodPage() {
   const userId = user?.id;
 
   const [selectedMethod, setSelectedMethod] = useState("Wallet");
-  const [walletBalance, setWalletBalance] = useState(0);
+  const [walletBalance, setWalletBalance] = useState(() => {
+    if (!userId) return 0;
+    try {
+      const cached = localStorage.getItem(`cached_wallet_${userId}`);
+      return cached ? Number(cached) : 0;
+    } catch {
+      return 0;
+    }
+  });
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -110,34 +118,29 @@ export default function PaymentMethodPage() {
   }, []);
 
   useEffect(() => {
-    if (!showQrModal || !qrValue || !cfOrderId) return;
+    if (!showQrModal || !cfOrderId) return;
 
-    console.log("=== STARTING QR STATUS POLLING (WALLET) ===");
     const intervalId = setInterval(async () => {
       try {
-        // Use PhonePe verify endpoint (cfOrderId is the PhonePe merchant txn id)
+        // Use PhonePe verify endpoint
         const url = `${API_BASE}/orders/verify-payment/phonepe/${cfOrderId}`;
         const res = await axios.get(url);
         if (res.data && res.data.payment_status === "SUCCESS") {
-          console.log("=== PAYMENT DETECTED SUCCESS ===");
           clearInterval(intervalId);
-          setShowQrModal(false);
-
-          // Fetch full order details
-          const orderRes = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
           localStorage.removeItem("cartItems");
-          navigate("/success", { state: { order: orderRes.data } });
+          // Navigate FIRST (replace so wallet page is removed from history), then close modal
+          const orderRes = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
+          navigate("/success", { state: { order: orderRes.data }, replace: true });
         }
       } catch (err) {
         console.error("Polling status error:", err);
       }
-    }, 2500);
+    }, 2000);
 
     return () => {
-      console.log("=== CLEANING UP POLLING ===");
       clearInterval(intervalId);
     };
-  }, [showQrModal, qrValue, cfOrderId, navigate]);
+  }, [showQrModal, cfOrderId, navigate]);
 
   /* ---------------- WALLET ---------------- */
   useEffect(() => {
@@ -148,7 +151,9 @@ export default function PaymentMethodPage() {
         const res = await axios.get(`${API_BASE}/wallets/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setWalletBalance(res.data?.balance_amount || 0);
+        const bal = res.data?.balance_amount || 0;
+        setWalletBalance(bal);
+        if (userId) localStorage.setItem(`cached_wallet_${userId}`, bal.toString());
       } catch (err) {
         console.error("Wallet fetch error:", err);
       }
@@ -233,7 +238,8 @@ export default function PaymentMethodPage() {
         setIsLoading(true);
         const order = await createInternalOrder(orderPayload);
         localStorage.removeItem("cartItems");
-        navigate("/success", { state: { order } });
+        // replace: true removes the wallet page from history so Back doesn't return here
+        navigate("/success", { state: { order }, replace: true });
       } catch (err) {
         setErrorMsg(err?.response?.data?.detail || "Order failed");
       } finally {
@@ -246,38 +252,25 @@ export default function PaymentMethodPage() {
     if (selectedMethod === "Payment Gateway") {
       try {
         setIsLoading(true);
-
         const backendOrder = await createInternalOrder(orderPayload);
-
-        // PhonePe flow: Show the QR modal on screen and allow the user to scan & pay!
-        if (!backendOrder.payment_session_id) {
+        if (!backendOrder?.payment_session_id) {
           setErrorMsg("Failed to generate payment QR");
           return;
         }
-        console.log("PhonePe Dynamic QR String generated:", backendOrder.payment_session_id);
-        console.log("PhonePe order_id:", backendOrder.cashfree_order_id);
 
-        // Store order id so polling can verify after scan
+        // Store details and open modal synchronously
         setCfOrderId(backendOrder.cashfree_order_id);
         setQrValue(backendOrder.payment_session_id);
-        setTimeLeft(180); // Reset timer
+        setTimeLeft(180);
         setModalError("");
         setShowQrModal(true);
-
-        /* ---------- CASHFREE GATEWAY FLOW (commented out) ----------
-        // Cashfree flow: Use the Cashfree JS SDK to open the payment UI
-        console.log("Cashfree payment_session_id:", backendOrder.payment_session_id);
-        console.log("Cashfree order_id:", backendOrder.cashfree_order_id);
-        setCfOrderId(backendOrder.cashfree_order_id);
-        openCashfreeCheckout(backendOrder.payment_session_id);
-        ------------------------------------------------------------ */
-
       } catch (err) {
-        console.error(err);
-        setErrorMsg("Payment failed. Try again.");
+        console.error("Order creation error:", err);
+        setErrorMsg("Failed to initiate payment. Please try again.");
       } finally {
         setIsLoading(false);
       }
+      return;
     }
   };
 

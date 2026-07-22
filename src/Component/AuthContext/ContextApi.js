@@ -27,6 +27,9 @@ export const AuthProvider = ({ children }) => {
     // Save to storage
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));
+    if (newUser?.building_id) {
+      localStorage.setItem('selectedBuildingId', newUser.building_id);
+    }
 
     // 🔥 Console log user data
     console.log("🔐 Login Successful!");

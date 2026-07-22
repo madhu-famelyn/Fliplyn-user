@@ -17,70 +17,80 @@ function SkeletonCard() {
 }
 
 export default function Stall() {
-  const [stalls, setStalls] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [, setWallet] = useState(null);
-  const [search, setSearch] = useState("");
-
   const navigate = useNavigate();
   const { user } = useAuth();
   const userId = user?.id;
 
-  const [buildingId, setBuildingId] = useState(
-    localStorage.getItem("selectedBuildingId")
-  );
+  const currentBuildingId = user?.building_id || localStorage.getItem("selectedBuildingId");
+  const [buildingId, setBuildingId] = useState(currentBuildingId);
+
+  // 🚀 INSTANT LOAD: Read cached stalls if available (< 50ms load time)
+  const [stalls, setStalls] = useState(() => {
+    if (!currentBuildingId) return [];
+    try {
+      const cached = localStorage.getItem(`cached_stalls_${currentBuildingId}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [loading, setLoading] = useState(() => stalls.length === 0);
+  const [, setWallet] = useState(null);
+  const [search, setSearch] = useState("");
+
+  // Keep buildingId synced
+  useEffect(() => {
+    if (user?.building_id) {
+      localStorage.setItem("selectedBuildingId", user.building_id);
+      if (user.building_id !== buildingId) {
+        setBuildingId(user.building_id);
+      }
+    }
+  }, [user, buildingId]);
 
   useEffect(() => {
     const fetchWalletAndStalls = async () => {
-      if (!userId) {
-        console.warn("⚠️ User not available yet");
-        return;
-      }
+      let finalBuildingId = buildingId || localStorage.getItem("selectedBuildingId");
 
-      try {
-        let finalBuildingId = buildingId;
-
-        // ------------------ STEP 1: GET BUILDING ID ------------------
-        if (!finalBuildingId) {
-          console.log("🔍 Fetching buildingId using userId...");
-
+      // Step 1: Fallback fetch user building_id if not present
+      if (!finalBuildingId && userId) {
+        try {
           const userRes = await axios.get(
             `https://admin-aged-field-2794.fly.dev/user/${userId}`
           );
-
           finalBuildingId = userRes.data?.building_id;
-
           if (finalBuildingId) {
             localStorage.setItem("selectedBuildingId", finalBuildingId);
             setBuildingId(finalBuildingId);
           }
+        } catch (err) {
+          console.error("❌ Error fetching user building:", err);
         }
+      }
 
-        if (!finalBuildingId) {
-          console.warn("⚠️ No buildingId found, continuing without redirect");
-          setLoading(false);
-          return;
-        }
+      if (!finalBuildingId) {
+        setLoading(false);
+        return;
+      }
 
-        // ------------------ FETCH WALLET ------------------
-        try {
-          const walletRes = await axios.get(
-            `https://admin-aged-field-2794.fly.dev/wallets/${userId}`
-          );
-          setWallet(walletRes.data);
-        } catch {
-          console.warn("⚠️ Wallet not found → showing all stalls");
-        }
-
-        // ------------------ FETCH STALLS ------------------
-        console.log("🔄 Fetching fresh stalls from API...");
-
-        const res = await axios.get(
+      // 🚀 PARALLEL FETCH: Load Stalls and Wallet simultaneously
+      try {
+        const stallsPromise = axios.get(
           `https://admin-aged-field-2794.fly.dev/stalls/building/${finalBuildingId}`
         );
+        const walletPromise = userId
+          ? axios.get(`https://admin-aged-field-2794.fly.dev/wallets/${userId}`)
+          : Promise.resolve({ data: null });
 
-        let fetched = res.data || [];
-        setStalls(fetched);
+        const [stallsRes, walletRes] = await Promise.all([stallsPromise, walletPromise]);
+
+        const fetchedStalls = stallsRes.data || [];
+        setStalls(fetchedStalls);
+        if (walletRes?.data) setWallet(walletRes.data);
+
+        // Save to cache for instant rendering next time
+        localStorage.setItem(`cached_stalls_${finalBuildingId}`, JSON.stringify(fetchedStalls));
       } catch (err) {
         console.error("❌ Stall fetch error:", err);
       } finally {

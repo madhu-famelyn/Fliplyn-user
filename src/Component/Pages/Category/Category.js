@@ -15,17 +15,31 @@ export default function Category() {
   const { stallId } = useParams();
   const navigate = useNavigate();
 
-  const [categories, setCategories] = useState([]);
-  const [, setStallDetails] = useState(null);
-  const [, setItemCount] = useState(0);
+  // 🚀 INSTANT CACHE LOAD: Categories & Items
+  const [categories, setCategories] = useState(() => {
+    if (!stallId) return [];
+    try {
+      const cached = localStorage.getItem(`cached_categories_${stallId}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  // 🔹 Default = ALL ITEMS
+  const [allItems, setAllItems] = useState(() => {
+    if (!stallId) return [];
+    try {
+      const cached = localStorage.getItem(`cached_items_${stallId}`);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [selectedCategoryId, setSelectedCategoryId] = useState("ALL");
-
-  const [items, setItems] = useState([]);
-  const [itemsLoaded, setItemsLoaded] = useState(false);
-  const [, setAllItems] = useState([]);
-
+  const [items, setItems] = useState(allItems);
+  const [itemsLoaded, setItemsLoaded] = useState(() => allItems.length > 0);
+  const [, setStallDetails] = useState(null);
   const [cartCount, setCartCount] = useState(0);
 
   // ================= CART COUNT =================
@@ -49,83 +63,61 @@ export default function Category() {
     };
   }, []);
 
-  // ================= LOAD CATEGORIES + STALL + ALL ITEMS =================
+  // ================= 🚀 PARALLEL FETCH & BACKGROUND REVALIDATE =================
   useEffect(() => {
     if (!stallId) return;
 
-    axios
-      .get(`${BASE_URL}/categories/stall/${stallId}`)
-      .then((res) => {
+    const fetchCategoryAndItems = async () => {
+      try {
+        const catPromise = axios.get(`${BASE_URL}/categories/stall/${stallId}`);
+        const stallPromise = axios.get(`${BASE_URL}/stalls/${stallId}`);
+        const itemsPromise = axios.get(`${BASE_URL}/items/stall/${stallId}`);
+
+        const [catRes, stallRes, itemsRes] = await Promise.all([
+          catPromise,
+          stallPromise,
+          itemsPromise
+        ]);
+
         const updatedCategories = [
           {
             id: "ALL",
             name: "All Items",
-            icon: <FiGrid size={18} color="#f97316" />, // orange
+            icon: <FiGrid size={18} color="#f97316" />,
           },
-          ...res.data,
+          ...(catRes.data || []),
         ];
 
         setCategories(updatedCategories);
-      })
-      .catch((err) => console.error("❌ Error fetching categories:", err));
+        setStallDetails(stallRes.data);
 
-    axios
-      .get(`${BASE_URL}/stalls/${stallId}`)
-      .then((res) => setStallDetails(res.data))
-      .catch((err) => console.error("❌ Error fetching stall:", err));
+        const fetchedItems = itemsRes.data || [];
+        setAllItems(fetchedItems);
+        setItemsLoaded(true);
 
-    // 🔹 Load all items initially
-    axios
-      .get(`${BASE_URL}/items/stall/${stallId}`)
-      .then((res) => {
-        setAllItems(res.data);
-        setItems(res.data);
-        setItemCount(res.data.length);
+        // Cache for sub-second rendering
+        localStorage.setItem(`cached_categories_${stallId}`, JSON.stringify(updatedCategories));
+        localStorage.setItem(`cached_items_${stallId}`, JSON.stringify(fetchedItems));
+      } catch (err) {
+        console.error("❌ Error fetching stall menu:", err);
         setItemsLoaded(true);
-      })
-      .catch((err) => {
-        console.error("❌ Error fetching all items:", err);
-        setItems([]);
-        setItemsLoaded(true);
-      });
+      }
+    };
+
+    fetchCategoryAndItems();
   }, [stallId]);
 
-  // ================= LOAD ITEMS BASED ON CATEGORY =================
+  // ================= 🚀 INSTANT IN-MEMORY CATEGORY FILTERING =================
   useEffect(() => {
-    if (!stallId || !selectedCategoryId) return;
-
-    setItems([]);
-    setItemsLoaded(false);
-
-    // 🔹 ALL ITEMS
     if (selectedCategoryId === "ALL") {
-      axios
-        .get(`${BASE_URL}/items/stall/${stallId}`)
-        .then((res) => {
-          setItems(res.data);
-          setItemsLoaded(true);
-        })
-        .catch(() => {
-          setItems([]);
-          setItemsLoaded(true);
-        });
-      return;
+      setItems(allItems);
+    } else {
+      const filtered = allItems.filter(
+        (item) => String(item.category_id) === String(selectedCategoryId)
+      );
+      setItems(filtered.length > 0 ? filtered : allItems);
     }
-
-    // 🔹 CATEGORY ITEMS
-    axios
-      .get(
-        `${BASE_URL}/items/items/category/${selectedCategoryId}/availability?is_available=true`
-      )
-      .then((res) => {
-        setItems(res.data);
-        setItemsLoaded(true);
-      })
-      .catch(() => {
-        setItems([]);
-        setItemsLoaded(true);
-      });
-  }, [selectedCategoryId, stallId]);
+  }, [selectedCategoryId, allItems]);
 
   const handleCategoryClick = (id) => {
     setSelectedCategoryId(id);
@@ -145,23 +137,25 @@ export default function Category() {
 
         {/* RIGHT: ITEMS AREA */}
         <div className="items-section">
-          {/* Header with Cart */}
+          {/* Header */}
           <div className="menu-header">
             <h2 className="menu-title">Menu</h2>
-
-            <button
-              className={`view-cart-btn ${cartCount > 0 ? "has-items" : ""}`}
-              onClick={() => navigate("/cart")}
-            >
-              <FiShoppingCart color="#fff" size={16} />
-              Cart
-            </button>
           </div>
 
           {/* Item List */}
           <ItemList items={items} itemsLoaded={itemsLoaded} />
         </div>
       </div>
+
+      {/* 🚀 FLOATING CART BUTTON (PINNED TO BOTTOM RIGHT) */}
+      <button
+        className={`floating-cart-btn ${cartCount > 0 ? "has-items" : ""}`}
+        onClick={() => navigate("/cart")}
+      >
+        <FiShoppingCart color="#fff" size={20} />
+        <span>Cart{cartCount > 0 ? ` (${cartCount})` : ""}</span>
+      </button>
+
       <Footer/>
     </div>
   );

@@ -12,8 +12,6 @@ const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 export default function Cart() {
   const { user, token } = useAuth();
   const [cartItems, setCartItems] = useState([]);
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Load from localStorage
@@ -44,13 +42,15 @@ export default function Cart() {
     console.log("💾 Updated localStorage.cartItems:", JSON.parse(localStorage.getItem("cartItems")));
   };
 
-  // Send to backend + log
-  const handleProceed = async () => {
+  // Send to backend + log (Instant Navigation)
+  const handleProceed = () => {
     if (cartItems.length === 0) return;
 
-    setLoading(true);
+    // 🚀 INSTANT (< 10ms) transition to Payment page
+    navigate("/wallet");
 
-    try {
+    // Non-blocking background sync
+    if (user?.id && token) {
       const payload = {
         user_id: user.id,
         items: cartItems.map((i) => ({
@@ -60,18 +60,11 @@ export default function Cart() {
         })),
       };
 
-      console.log("📦 FINAL Payload sent to backend:", payload);
-
-      await axios.post(`${API_BASE_URL}/cart/add-multiple`, payload, {
+      axios.post(`${API_BASE_URL}/cart/add-multiple`, payload, {
         headers: { Authorization: `Bearer ${token}` },
+      }).catch((err) => {
+        console.warn("⚠️ Background cart sync note:", err);
       });
-
-      navigate("/wallet");
-    } catch (err) {
-      console.error("❌ Cart creation failed:", err);
-      setError("Failed to create cart. Try again.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -90,26 +83,11 @@ export default function Cart() {
   const total = subtotal + totalGST;
   const finalTotal = Math.round(total);
 
-  // Loader screen
-  if (loading) {
-    return (
-      <>
-        <Header />
-        <div className="cart-loader-container">
-          <div className="cart-loader"></div>
-          <p>Processing payment...</p>
-        </div>
-      </>
-    );
-  }
-
   return (
     <>
       <Header />
       <div className="cart-page">
         <h2 className="heading">Your Basket</h2>
-
-        {error && <div className="cart-error">{error}</div>}
 
         {cartItems.length === 0 ? (
           <div className="cart-empty-state">

@@ -10,13 +10,6 @@ export default function Header() {
         <img src={logo} alt="Fliplyn Logo" className="header-logo" />
         <span className="logo-text">Fliplyn</span>
       </Link>
-
-      {/* 👉 Policy Link */}
-      <nav className="header-nav">
-        <Link to="/policy" className="policy-link">
-          Policy
-        </Link>
-      </nav>
     </header>
   );
 }

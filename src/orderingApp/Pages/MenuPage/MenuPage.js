@@ -8,9 +8,18 @@ function MenuPage() {
   const { categoryId, stallId } = useParams();
   const navigate = useNavigate();
 
-  const [items, setItems] = useState([]);
+  const cacheKey = categoryId ? `cached_menu_cat_${categoryId}` : `cached_menu_stall_${stallId}`;
+
+  const [items, setItems] = useState(() => {
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [cart, setCart] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => items.length === 0);
 
   const [showAlert, setShowAlert] = useState(false);
   const [pendingItem, setPendingItem] = useState(null);
@@ -30,7 +39,7 @@ function MenuPage() {
     setCart(userCart);
   }, [email]);
 
-  // ✅ Fetch items
+  // ✅ Fetch items with caching for sub-second rendering
   useEffect(() => {
     const fetchItems = async () => {
       try {
@@ -42,8 +51,12 @@ function MenuPage() {
           url = `https://admin-aged-field-2794.fly.dev/items/stall/${stallId}`;
         }
 
+        if (!url) return;
+
         const res = await axios.get(url);
-        setItems(res.data);
+        const fetched = res.data || [];
+        setItems(fetched);
+        localStorage.setItem(cacheKey, JSON.stringify(fetched));
       } catch (err) {
         console.error("❌ Error fetching items:", err);
       } finally {
@@ -52,7 +65,7 @@ function MenuPage() {
     };
 
     fetchItems();
-  }, [categoryId, stallId]);
+  }, [categoryId, stallId, cacheKey]);
 
   // ✅ Save cart
   const saveCart = (updatedCart) => {

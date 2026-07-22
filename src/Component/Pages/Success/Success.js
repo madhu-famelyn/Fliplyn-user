@@ -20,42 +20,30 @@ const API_BASE = isLocal
 export default function PaymentSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [orderDetails, setOrderDetails] = useState(null);
+  const [orderDetails, setOrderDetails] = useState(() => location.state?.order || null);
   const view = "receipt";
-  const [showToken, setShowToken] = useState(false);
+  // 🚀 Instant Token Display (0s delay)
+  const [showToken] = useState(true);
   const receiptRef = useRef(null);
-
-  // ⏱ Show token after 10 seconds
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowToken(true);
-    }, 10000);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const order = location.state?.order;
     if (order?.id) {
+      localStorage.removeItem("cartItems");
+      setOrderDetails(order);
+      return;
+    }
+
+    const searchParams = new URLSearchParams(location.search);
+    const cfOrderId = searchParams.get("cf_order_id") || searchParams.get("order_id");
+    if (cfOrderId) {
       axios
-        .get(`${API_BASE}/orders/${order.id}`)
+        .get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`)
         .then((res) => {
           setOrderDetails(res.data);
           localStorage.removeItem("cartItems");
         })
-        .catch((err) => console.error("Error fetching order:", err));
-    } else {
-      const searchParams = new URLSearchParams(location.search);
-      const cfOrderId = searchParams.get("cf_order_id") || searchParams.get("order_id");
-      if (cfOrderId) {
-        axios
-          .get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`)
-          .then((res) => {
-            setOrderDetails(res.data);
-            localStorage.removeItem("cartItems");
-          })
-          .catch((err) => console.error("Error fetching order by cashfree:", err));
-      }
+        .catch((err) => console.error("Error fetching order by cashfree:", err));
     }
   }, [location]);
 
