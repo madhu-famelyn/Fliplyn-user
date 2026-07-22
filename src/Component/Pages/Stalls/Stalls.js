@@ -102,6 +102,7 @@ export default function Stall() {
     };
 
     fetchWalletAndStalls();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   // ------------------ CLICK HANDLER ------------------
