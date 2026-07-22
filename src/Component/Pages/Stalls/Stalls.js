@@ -51,9 +51,10 @@ export default function Stall() {
 
   useEffect(() => {
     const fetchWalletAndStalls = async () => {
-      let finalBuildingId = buildingId || localStorage.getItem("selectedBuildingId");
+      // Read from localStorage directly to avoid stale closure over buildingId state
+      let finalBuildingId = localStorage.getItem("selectedBuildingId") || "";
 
-      // Always re-fetch building_id from user profile to avoid stale data
+      // Always re-fetch building_id from user profile to get fresh value
       if (userId) {
         try {
           const userRes = await axios.get(
@@ -63,9 +64,7 @@ export default function Stall() {
           if (freshBuildingId) {
             finalBuildingId = freshBuildingId;
             localStorage.setItem("selectedBuildingId", freshBuildingId);
-            if (freshBuildingId !== buildingId) {
-              setBuildingId(freshBuildingId);
-            }
+            setBuildingId(freshBuildingId);
           }
         } catch (err) {
           console.error("❌ Error fetching user building:", err);
@@ -102,7 +101,6 @@ export default function Stall() {
     };
 
     fetchWalletAndStalls();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
   // ------------------ CLICK HANDLER ------------------
