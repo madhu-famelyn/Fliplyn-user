@@ -53,16 +53,19 @@ export default function Stall() {
     const fetchWalletAndStalls = async () => {
       let finalBuildingId = buildingId || localStorage.getItem("selectedBuildingId");
 
-      // Step 1: Fallback fetch user building_id if not present
-      if (!finalBuildingId && userId) {
+      // Always re-fetch building_id from user profile to avoid stale data
+      if (userId) {
         try {
           const userRes = await axios.get(
             `https://admin-aged-field-2794.fly.dev/user/${userId}`
           );
-          finalBuildingId = userRes.data?.building_id;
-          if (finalBuildingId) {
-            localStorage.setItem("selectedBuildingId", finalBuildingId);
-            setBuildingId(finalBuildingId);
+          const freshBuildingId = userRes.data?.building_id;
+          if (freshBuildingId) {
+            finalBuildingId = freshBuildingId;
+            localStorage.setItem("selectedBuildingId", freshBuildingId);
+            if (freshBuildingId !== buildingId) {
+              setBuildingId(freshBuildingId);
+            }
           }
         } catch (err) {
           console.error("❌ Error fetching user building:", err);
@@ -99,7 +102,7 @@ export default function Stall() {
     };
 
     fetchWalletAndStalls();
-  }, [buildingId, userId]);
+  }, [userId]);
 
   // ------------------ CLICK HANDLER ------------------
   const handleStallClick = (stallId) => {
@@ -109,9 +112,10 @@ export default function Stall() {
   // ------------------ SEARCH FILTER & ACTIVE SORT ------------------
   const filteredStalls = stalls
     .filter((stall) =>
-      stall.name?.toLowerCase().includes(search.toLowerCase()) && stall.is_available
+      stall.name?.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
+      // Available stalls first, closed at the bottom
       if (a.is_available && !b.is_available) return -1;
       if (!a.is_available && b.is_available) return 1;
       return 0;
