@@ -1,10 +1,10 @@
-// src/Component/SignIn/VerifyOTPPassword.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import Header from './header';
 import { ShieldCheck, ArrowRight, AlertCircle, CheckCircle2 } from 'lucide-react';
 import './VerifyOTPPassword.css';
+import { BASE_URL } from '../apis/apis';
 
 const VerifyOTPPassword = () => {
   const location = useLocation();
@@ -28,7 +28,7 @@ const VerifyOTPPassword = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://admin-aged-field-2794.fly.dev/auth/verify-otp', {
+      const response = await axios.post(`${BASE_URL}/auth/verify-otp`, {
         email,
         otp: otp.trim(),
       });

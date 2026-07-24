@@ -49,17 +49,23 @@ export default function PaymentMethodPage() {
     const upiParams = qrValue.replace(/^upi:\/\/pay\?/, "");
     switch (app) {
       case "phonepe": return `phonepe://pay?${upiParams}`;
-      case "gpay":    return `tez://upi/pay?${upiParams}`;
-      case "paytm":   return `paytmmp://pay?${upiParams}`;
-      default:        return qrValue;
+      case "gpay": return `tez://upi/pay?${upiParams}`;
+      case "paytm": return `paytmmp://pay?${upiParams}`;
+      default: return qrValue;
     }
   };
 
   const [modalError, setModalError] = useState("");
+  const [isFrozenLoading, setIsFrozenLoading] = useState(false);
 
   const handleUpiAppClick = (e, app) => {
     e.preventDefault();
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+    // Lock interaction and open mobile UPI app
+    setIsFrozenLoading(true);
+    setShowQrModal(false);
+
     if (isMobile) {
       window.location.href = getAppUpiLink(app);
     } else {
@@ -118,29 +124,54 @@ export default function PaymentMethodPage() {
   }, []);
 
   useEffect(() => {
-    if (!showQrModal || !cfOrderId) return;
+    if (!cfOrderId) return;
 
-    const intervalId = setInterval(async () => {
+    let isNavigating = false;
+
+    const checkPaymentStatus = async () => {
+      if (isNavigating) return;
       try {
-        // Use PhonePe verify endpoint
         const url = `${API_BASE}/orders/verify-payment/phonepe/${cfOrderId}`;
         const res = await axios.get(url);
         if (res.data && res.data.payment_status === "SUCCESS") {
-          clearInterval(intervalId);
+          isNavigating = true;
+          // Hide scanner modal immediately
+          setShowQrModal(false);
+          setIsLoading(true);
           localStorage.removeItem("cartItems");
-          // Navigate FIRST (replace so wallet page is removed from history), then close modal
-          const orderRes = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
-          navigate("/success", { state: { order: orderRes.data }, replace: true });
+
+          try {
+            const orderRes = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
+            navigate("/success", { state: { order: orderRes.data }, replace: true });
+          } catch {
+            // Fallback navigation with cf_order_id query param
+            navigate(`/success?cf_order_id=${cfOrderId}`, { replace: true });
+          }
         }
       } catch (err) {
         console.error("Polling status error:", err);
       }
-    }, 2000);
+    };
+
+    // 🚀 Check immediately on mount & when user returns from UPI app (focus / visibilitychange)
+    checkPaymentStatus();
+    const intervalId = setInterval(checkPaymentStatus, 1000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkPaymentStatus();
+      }
+    };
+
+    window.addEventListener("focus", checkPaymentStatus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
       clearInterval(intervalId);
+      window.removeEventListener("focus", checkPaymentStatus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [showQrModal, cfOrderId, navigate]);
+  }, [cfOrderId, navigate]);
 
   /* ---------------- WALLET ---------------- */
   useEffect(() => {
@@ -163,11 +194,24 @@ export default function PaymentMethodPage() {
   }, [userId, token]);
 
   /* ---------------- HELPERS ---------------- */
-  const calculateTotalAmount = () =>
+  const calculateSubtotal = () =>
     cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
       0
     );
+
+  const calculateTotalGST = () =>
+    cartItems.reduce(
+      (total, item) =>
+        total + item.price * item.quantity * ((item.Gst_precentage || item.gst_percentage || 0) / 100),
+      0
+    );
+
+  const calculateTotalAmount = () => {
+    const subtotal = calculateSubtotal();
+    const gst = calculateTotalGST();
+    return subtotal + gst;
+  };
 
   const createInternalOrder = async (payload) => {
     const res = await axios.post(`${API_BASE}/orders/place`, payload, {
@@ -239,7 +283,7 @@ export default function PaymentMethodPage() {
         const order = await createInternalOrder(orderPayload);
         localStorage.removeItem("cartItems");
         // replace: true removes the wallet page from history so Back doesn't return here
-        navigate("/success", { state: { order }, replace: true });
+        navigate("/success", { state: { order, fromWallet: true }, replace: true });
       } catch (err) {
         setErrorMsg(err?.response?.data?.detail || "Order failed");
       } finally {
@@ -285,7 +329,7 @@ export default function PaymentMethodPage() {
         <div className="pay-page-hero">
           <button className="pay-back-btn" onClick={() => navigate(-1)} disabled={isLoading}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M19 12H5M5 12l7-7M5 12l7 7"/>
+              <path d="M19 12H5M5 12l7-7M5 12l7 7" />
             </svg>
           </button>
           <div>
@@ -294,7 +338,7 @@ export default function PaymentMethodPage() {
           </div>
           <div className="pay-secure-badge">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
             </svg>
             Secure
           </div>
@@ -306,7 +350,7 @@ export default function PaymentMethodPage() {
           <div className="wallet-balance-card">
             <div className="wbc-icon">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="7" width="20" height="14" rx="3"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/>
+                <rect x="2" y="7" width="20" height="14" rx="3" /><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" /><line x1="12" y1="12" x2="12" y2="16" /><line x1="10" y1="14" x2="14" y2="14" />
               </svg>
             </div>
             <div className="wbc-info">
@@ -331,7 +375,7 @@ export default function PaymentMethodPage() {
                   {selectedMethod === label && (
                     <div className="pmc-check">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                        <path d="M20 6L9 17l-5-5"/>
+                        <path d="M20 6L9 17l-5-5" />
                       </svg>
                     </div>
                   )}
@@ -344,7 +388,7 @@ export default function PaymentMethodPage() {
           <div className="order-summary-card">
             <div className="osc-header">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 01-8 0" />
               </svg>
               <span>Order Summary</span>
             </div>
@@ -365,6 +409,15 @@ export default function PaymentMethodPage() {
                   ))}
                 </div>
                 <div className="osc-divider" />
+                <div className="osc-row">
+                  <span>Subtotal</span>
+                  <span>₹ {calculateSubtotal().toFixed(2)}</span>
+                </div>
+                <div className="osc-row">
+                  <span>GST Total</span>
+                  <span>₹ {calculateTotalGST().toFixed(2)}</span>
+                </div>
+                <div className="osc-divider" />
                 <div className="osc-total-row">
                   <span>Total Payable</span>
                   <strong>₹ {calculateTotalAmount().toFixed(2)}</strong>
@@ -377,7 +430,7 @@ export default function PaymentMethodPage() {
           {errorMsg && (
             <div className="pay-error-msg">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
               </svg>
               {errorMsg}
             </div>
@@ -395,7 +448,7 @@ export default function PaymentMethodPage() {
               ) : (
                 <>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                   </svg>
                   Pay ₹ {calculateTotalAmount().toFixed(2)}
                 </>
@@ -515,7 +568,7 @@ export default function PaymentMethodPage() {
             <div className="qr-footer">
               <div className="qr-timer-row">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                  <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
                 </svg>
                 <span>Expires in </span>
                 <span className="timer-count">{formatTime(timeLeft)}</span>
@@ -525,6 +578,27 @@ export default function PaymentMethodPage() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {isFrozenLoading && (
+        <div className="frozen-screen-lock-overlay">
+          <div className="frozen-lock-card">
+            <div className="frozen-lock-icon-wrapper">
+              <span className="lock-emoji">🔒</span>
+            </div>
+            <h2 className="frozen-lock-title">Payment Processing...</h2>
+            <p className="frozen-lock-subtitle">Please wait, your token is generating</p>
+
+            <div className="frozen-progress-pill">
+              <span className="pay-spinner" />
+              <span>Verifying payment & generating order token</span>
+            </div>
+
+            <p className="frozen-lock-notice">
+              ⚠️ Screen is locked to protect your transaction. Please do not refresh.
+            </p>
           </div>
         </div>
       )}

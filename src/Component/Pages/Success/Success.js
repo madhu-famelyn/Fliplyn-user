@@ -21,10 +21,42 @@ export default function PaymentSuccess() {
   const location = useLocation();
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(() => location.state?.order || null);
+  const searchParams = new URLSearchParams(location.search);
+  const cfOrderId = searchParams.get("cf_order_id") || searchParams.get("order_id") || location.state?.order?.id;
+
+  const initialOrder = location.state?.order || null;
+  const isWalletPayment = Boolean(
+    initialOrder?.paid_with_wallet ||
+    initialOrder?.pay_with_wallet ||
+    location.state?.fromWallet
+  );
+
+  // Check if token loading animation was already shown for this order session
+  const alreadySeen = cfOrderId ? sessionStorage.getItem(`token_seen_${cfOrderId}`) : false;
+
+  // Wallet payments -> Instant token receipt display (0s delay)
+  // Payment Gateway payments -> 2.5s "Please Wait... Your Token is Generating" screen
+  const [isGenerating, setIsGenerating] = useState(() => {
+    if (isWalletPayment || alreadySeen) return false;
+    return true;
+  });
+
   const view = "receipt";
-  // 🚀 Instant Token Display (0s delay)
-  const [showToken] = useState(true);
   const receiptRef = useRef(null);
+
+  useEffect(() => {
+    if (isWalletPayment || alreadySeen) {
+      setIsGenerating(false);
+    } else {
+      const timer = setTimeout(() => {
+        setIsGenerating(false);
+        if (cfOrderId) {
+          sessionStorage.setItem(`token_seen_${cfOrderId}`, "true");
+        }
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [alreadySeen, cfOrderId, isWalletPayment]);
 
   useEffect(() => {
     const order = location.state?.order;
@@ -34,8 +66,6 @@ export default function PaymentSuccess() {
       return;
     }
 
-    const searchParams = new URLSearchParams(location.search);
-    const cfOrderId = searchParams.get("cf_order_id") || searchParams.get("order_id");
     if (cfOrderId) {
       axios
         .get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`)
@@ -45,7 +75,7 @@ export default function PaymentSuccess() {
         })
         .catch((err) => console.error("Error fetching order by cashfree:", err));
     }
-  }, [location]);
+  }, [location, cfOrderId]);
 
   const downloadPDF = () => {
     const input = receiptRef.current;
@@ -59,7 +89,41 @@ export default function PaymentSuccess() {
     });
   };
 
-  if (!orderDetails) return <p className="loading-text">Loading...</p>;
+  if (isGenerating || !orderDetails) {
+    return (
+      <div className="receipt-wrapper" style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{
+          textAlign: "center",
+          padding: "40px 24px",
+          background: "#ffffff",
+          borderRadius: "24px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+          maxWidth: "380px",
+          width: "90%"
+        }}>
+          <div style={{
+            width: "56px",
+            height: "56px",
+            margin: "0 auto 20px",
+            border: "4px solid #fff3eb",
+            borderTopColor: "#eb4d26",
+            borderRightColor: "#eb4d26",
+            borderRadius: "50%",
+            animation: "spin 0.8s linear infinite"
+          }} />
+          <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", margin: "0 0 6px" }}>
+            Please Wait...
+          </h2>
+          <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#eb4d26", margin: "0 0 12px" }}>
+            Your Token is Generating
+          </h3>
+          <p style={{ fontSize: "13px", color: "#64748b", margin: 0, lineHeight: 1.5 }}>
+            Verifying your payment and preparing your kitchen token receipt.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const tokenNo = orderDetails.token_number ?? orderDetails.id.slice(0, 4);
   const createdAt = new Date(orderDetails.created_datetime).toLocaleString(
@@ -86,24 +150,8 @@ export default function PaymentSuccess() {
         <p className="success-subtitle">Thank you for your order!</p>
       </div>
 
-      {/* ⚠️ Validity Message (First 10 seconds) */}
-      {!showToken && (
-        <div className="order-validity-box">
-          <div className="token-generation-alert">
-            <div className="token-spinner-ring"></div>
-            <p className="token-alert-title">Generating Your Order Token...</p>
-            <p className="token-alert-subtitle">Please do not close this window or refresh the page.</p>
-          </div>
-          <p className="order-validity-text" style={{ marginTop: "12px", borderTop: "1px solid #fde68a", paddingTop: "8px" }}>
-            This order is valid for <strong>30 minutes</strong>.  
-            After 30 minutes, the order will not be processed and the amount will not be refunded.
-          </p>
-        </div>
-      )}
-
       {/* 🎟 Token / Receipt */}
-      {showToken && (
-        <>
+      <>
           {/* <div className="toggle-btns">
             <button
               className={`toggle-btn ${view === "receipt" ? "active" : ""}`}
@@ -129,6 +177,21 @@ export default function PaymentSuccess() {
                 <div className="token-hero-badge">
                   <span className="token-hero-label">YOUR TOKEN NUMBER</span>
                   <h3 className="token-hero-number">{tokenNo}</h3>
+                  <div style={{
+                    marginTop: "8px",
+                    background: "#fffbeb",
+                    border: "1px solid #fde68a",
+                    color: "#b45309",
+                    fontSize: "12px",
+                    fontWeight: "700",
+                    padding: "4px 12px",
+                    borderRadius: "20px",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px"
+                  }}>
+                    ⏱ Valid for 30 minutes only
+                  </div>
                 </div>
 
                 <p className="order-date">Date: {createdAt}</p>
@@ -178,12 +241,11 @@ export default function PaymentSuccess() {
           {/* 🔙 Back to Stalls */}
           <button
             className="back-to-stalls-btn"
-            onClick={() => navigate("/stalls")}
+            onClick={() => navigate("/stalls", { replace: true })}
           >
             Back to Stalls
           </button>
         </>
-      )}
     </div>
   );
 }

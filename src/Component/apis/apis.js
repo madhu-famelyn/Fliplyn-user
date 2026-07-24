@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Corrected BASE_URL to avoid '/user'
-const BASE_URL = 'https://admin-aged-field-2794.fly.dev';
+export const BASE_URL = process.env.REACT_APP_API_URL || 'https://admin-aged-field-2794.fly.dev';
 
 // ✅ User Signup
 export const signupUser = (userData) => {

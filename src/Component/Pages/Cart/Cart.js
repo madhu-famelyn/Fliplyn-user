@@ -76,12 +76,12 @@ export default function Cart() {
 
   const totalGST = cartItems.reduce(
     (sum, item) =>
-      sum + item.price * item.quantity * ((item.Gst_precentage || 0) / 100),
+      sum + item.price * item.quantity * ((item.Gst_precentage || item.gst_percentage || 0) / 100),
     0
   );
 
   const total = subtotal + totalGST;
-  const finalTotal = Math.round(total);
+  const finalTotal = total;
 
   return (
     <>
@@ -116,7 +116,7 @@ export default function Cart() {
 
                         <div className="item-info">
                           <p className="item-name">{item.name}</p>
-                         
+
                         </div>
 
                         <div className="price-and-qty">
@@ -156,14 +156,18 @@ export default function Cart() {
             <div className="cart-summary">
               <p>
                 <span>Subtotal</span>
-                <span>₹{subtotal.toFixed(0)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
+              </p>
+              <p>
+                <span>GST Total</span>
+                <span>₹{totalGST.toFixed(2)}</span>
               </p>
 
               <hr />
 
               <h3>
                 <span>Total</span>
-                <span>₹{finalTotal.toFixed(0)}</span>
+                <span>₹{finalTotal.toFixed(2)}</span>
               </h3>
             </div>
 
@@ -176,7 +180,7 @@ export default function Cart() {
           </>
         )}
       </div>
-      <Footer/>
+      <Footer />
     </>
   );
 }

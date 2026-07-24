@@ -31,13 +31,24 @@ function OrderingCart() {
   };
 
   const [modalError, setModalError] = useState("");
+  const [isFrozenLoading, setIsFrozenLoading] = useState(false);
 
   const handleUpiAppClick = (e, app) => {
-    e.preventDefault(); // Always prevent default to avoid SPA navigation / login redirect
+    e.preventDefault();
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    
+    // Freeze screen with frosted blur & navigate to token generator
+    setIsFrozenLoading(true);
+    setShowQrModal(false);
+
+    const token = sessionStorage.getItem("current_token");
+    if (token) {
+      setTimeout(() => {
+        navigate(`/ordering-success?token=${token}`);
+      }, 400);
+    }
+
     if (isMobile) {
-      // On mobile: trigger the UPI deep link manually so the browser doesn't
-      // treat qrValue as a relative path and redirect to the login page
       window.location.href = qrValue;
     } else {
       let appName = "UPI";
@@ -461,6 +472,27 @@ function OrderingCart() {
             <p className="qr-timer-text">Expires in: <span className="timer-count">{formatTime(timeLeft)}</span></p>
 
             <button className="qr-close-btn" onClick={() => setShowQrModal(false)}>Cancel Payment</button>
+          </div>
+        </div>
+      )}
+
+      {isFrozenLoading && (
+        <div className="frozen-screen-lock-overlay">
+          <div className="frozen-lock-card">
+            <div className="frozen-lock-icon-wrapper">
+              <span className="lock-emoji">🔒</span>
+            </div>
+            <h2 className="frozen-lock-title">Payment Processing...</h2>
+            <p className="frozen-lock-subtitle">Please wait, your token is generating</p>
+
+            <div className="frozen-progress-pill">
+              <span className="pay-spinner" />
+              <span>Verifying payment & generating order token</span>
+            </div>
+
+            <p className="frozen-lock-notice">
+              ⚠️ Screen is locked to protect your transaction. Please do not refresh.
+            </p>
           </div>
         </div>
       )}

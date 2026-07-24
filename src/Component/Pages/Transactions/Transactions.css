@@ -109,15 +109,47 @@
   font-size: 0.85rem;
 }
 
-/* ====== QR ====== */
+/* ====== View Token Button & Badges ====== */
 .txn-qr {
   text-align: center;
 }
 
-.qr-expired {
-  font-size: 0.8rem;
-  color: #c62828;
-  font-weight: 500;
+.txn-view-token-button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #eb4d26 0%, #f97316 100%);
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(235, 77, 38, 0.3);
+}
+
+.txn-view-token-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(235, 77, 38, 0.45);
+}
+
+.txn-view-token-button:active {
+  transform: scale(0.96);
+}
+
+.token-expired-badge {
+  font-size: 0.82rem;
+  color: #dc2626;
+  font-weight: 700;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.token-failed-badge {
+  font-size: 0.82rem;
+  color: #991b1b;
+  font-weight: 600;
 }
 
 /* ====== QR Modal ====== */

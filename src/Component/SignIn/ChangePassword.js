@@ -1,10 +1,10 @@
-// src/Component/SignIn/ChangePassword.js
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import Header from './header';
 import { Lock, Eye, EyeOff, CheckCircle2, AlertCircle, KeyRound } from 'lucide-react';
 import './ChangePassword.css';
+import { BASE_URL } from '../apis/apis';
 
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState('');
@@ -35,7 +35,7 @@ const ChangePassword = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post('https://admin-aged-field-2794.fly.dev/auth/reset-password', {
+      const response = await axios.post(`${BASE_URL}/auth/reset-password`, {
         email,
         otp,
         new_password: newPassword

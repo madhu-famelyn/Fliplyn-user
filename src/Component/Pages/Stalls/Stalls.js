@@ -171,31 +171,39 @@ export default function Stall() {
         ) : (
           <div className="bottom-section">
             <div className="stalls-grid">
-              {filteredStalls.map((stall) => (
-                <div
-                  className={`stall-card ${!stall.is_available ? "unavailable" : ""}`}
-                  key={stall.id}
-                  onClick={() => stall.is_available && handleStallClick(stall.id)}
-                >
-                  {/* Image wrapper with shine + open badge */}
-                  <div className="stall-image-wrapper">
-                    <img
-                      src={stall.image_url}
-                      alt={stall.name}
-                      className="stall-image"
-                      loading="lazy"
-                    />
+              {filteredStalls.map((stall) => {
+                const nameLower = stall.name?.toLowerCase() || "";
+                const isBiryani = nameLower.includes("biryani");
+                const isTeaTopia = nameLower.includes("tea");
 
-                    {!stall.is_available && (
-                      <div className="unavailable-overlay">
-                        <p>Closed</p>
-                      </div>
-                    )}
+                const fitClass = isBiryani ? "contain-fit" : isTeaTopia ? "teatopia-fit" : "";
+
+                return (
+                  <div
+                    className={`stall-card ${!stall.is_available ? "unavailable" : ""}`}
+                    key={stall.id}
+                    onClick={() => stall.is_available && handleStallClick(stall.id)}
+                  >
+                    {/* Image wrapper with shine + open badge */}
+                    <div className={`stall-image-wrapper ${fitClass}`}>
+                      <img
+                        src={stall.image_url}
+                        alt={stall.name}
+                        className={`stall-image ${fitClass}`}
+                        loading="lazy"
+                      />
+
+                      {!stall.is_available && (
+                        <div className="unavailable-overlay">
+                          <p>Closed</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <p className="stall-names">{stall.name}</p>
                   </div>
-
-                  <p className="stall-names">{stall.name}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

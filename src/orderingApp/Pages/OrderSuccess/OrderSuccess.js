@@ -109,6 +109,21 @@ const OrderSuccess = () => {
             #{order.token_number?.slice(-3)}
           </h1>
 
+          <div style={{
+            marginTop: "6px",
+            marginBottom: "10px",
+            background: "#fffbeb",
+            border: "1px solid #fde68a",
+            color: "#b45309",
+            fontSize: "12px",
+            fontWeight: "700",
+            padding: "4px 12px",
+            borderRadius: "20px",
+            display: "inline-block"
+          }}>
+            ⏱ Valid for 30 minutes only
+          </div>
+
           <p className="date">{formattedDate}</p>
 
         </div>

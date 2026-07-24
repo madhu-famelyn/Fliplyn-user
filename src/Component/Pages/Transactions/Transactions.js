@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { getOrderDetailsByUserId } from "./Service";
 import { useAuth } from "../../AuthContext/ContextApi";
 import Header from "../Header/Header";
@@ -7,9 +8,9 @@ import "./Transactions.css";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axios from "axios";
-import { QRCodeCanvas } from "qrcode.react";
 
 export default function Transactions() {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const userId = user?.id;
 
@@ -17,7 +18,6 @@ export default function Transactions() {
   const [loading, setLoading] = useState(true);
   const receiptRef = useRef(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [qrModal, setQrModal] = useState({ open: false, orderId: null });
 
   useEffect(() => {
     if (!userId) return;
@@ -55,14 +55,17 @@ export default function Transactions() {
     return isPaymentSuccessful(order);
   };
 
-  const isQRExpired = (createdAt) => {
+  // ✅ Token is valid for 30 minutes only
+  const isTokenExpired = (createdAt) => {
+    if (!createdAt) return true;
     const createdTime = new Date(createdAt).getTime();
     const now = Date.now();
-    return (now - createdTime) / (1000 * 60) > 60;
+    const diffMinutes = (now - createdTime) / (1000 * 60);
+    return diffMinutes > 30;
   };
 
-  const canShowQR = (order) => {
-    return isPaymentSuccessful(order) && !isQRExpired(order.created_datetime);
+  const canViewToken = (order) => {
+    return isPaymentSuccessful(order) && !isTokenExpired(order.created_datetime);
   };
 
   /* =======================
@@ -120,12 +123,11 @@ export default function Transactions() {
                 <span>Payment Method</span>
                 <span>Status</span>
                 <span>Download</span>
-                <span>QR</span>
+                <span>View Token</span>
               </div>
 
               {orders.map((order) => {
                 const success = isPaymentSuccessful(order);
-                const qrExpired = isQRExpired(order.created_datetime);
 
                 return (
                   <div key={order.id} className="txn-row">
@@ -162,26 +164,21 @@ export default function Transactions() {
                       )}
                     </span>
 
-                    {/* QR */}
+                    {/* VIEW TOKEN / EXPIRED */}
                     <span className="txn-qr">
-                      {canShowQR(order) ? (
-                        <div
-                          style={{ cursor: "pointer" }}
+                      {canViewToken(order) ? (
+                        <button
+                          className="txn-view-token-button"
                           onClick={() =>
-                            setQrModal({ open: true, orderId: order.id })
+                            navigate("/success", { state: { order } })
                           }
                         >
-                          <QRCodeCanvas
-                            value={`https://admin-aged-field-2794.fly.dev/receipt/${order.id}`}
-                            size={60}
-                          />
-                        </div>
+                          View Token
+                        </button>
                       ) : !success ? (
-                        <p className="qr-expired">Payment Failed</p>
-                      ) : qrExpired ? (
-                        <p className="qr-expired">QR Expired</p>
+                        <span className="token-failed-badge">Payment Failed</span>
                       ) : (
-                        <span className="txn-no-download">—</span>
+                        <span className="token-expired-badge">Token Expired</span>
                       )}
                     </span>
                   </div>
@@ -191,25 +188,6 @@ export default function Transactions() {
           </div>
         )}
       </div>
-
-      {/* QR MODAL */}
-      {qrModal.open && (
-        <div
-          className="qr-modal-overlay"
-          onClick={() => setQrModal({ open: false, orderId: null })}
-        >
-          <div
-            className="qr-modal-content"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h3>Order QR Code</h3>
-            <QRCodeCanvas
-              value={`https://admin-aged-field-2794.fly.dev/receipt/${qrModal.orderId}`}
-              size={250}
-            />
-          </div>
-        </div>
-      )}
 
       {/* HIDDEN RECEIPT */}
       {selectedOrder && (

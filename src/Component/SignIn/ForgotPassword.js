@@ -1,10 +1,10 @@
-// src/Component/SignIn/ForgotPassword.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from './header';
 import { Mail, KeyRound, ArrowRight, AlertCircle, CheckCircle2, ShieldAlert } from 'lucide-react';
 import './ForgotPassword.css';
+import { BASE_URL } from '../apis/apis';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -25,7 +25,7 @@ const ForgotPassword = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("https://admin-aged-field-2794.fly.dev/auth/request-otp", {
+      const response = await axios.post(`${BASE_URL}/auth/request-otp`, {
         email: email.trim(),
       });
       setMessage(response.data.message || 'OTP sent successfully to your email!');

@@ -65,6 +65,7 @@ export default function ItemList({ items, itemsLoaded }) {
         price: item.price,
         is_veg: item.is_veg,
         stall_id: item.stall_id,
+        Gst_precentage: item.Gst_precentage ?? item.gst_percentage ?? 0,
         image_url: item.image_url?.startsWith("http")
           ? item.image_url
           : `${S3_BASE_URL}${item.image_url}`,
@@ -102,19 +103,19 @@ export default function ItemList({ items, itemsLoaded }) {
   };
 
   /* ================= FILTER + SEARCH ================= */
-const filteredItems = items
-  // ✅ SHOW ONLY AVAILABLE ITEMS
-  .filter((item) => item.is_available === true)
-  // VEG / NON-VEG FILTER
-  .filter((item) => {
-    if (filterType === "veg") return item.is_veg;
-    if (filterType === "nonveg") return !item.is_veg;
-    return true;
-  })
-  // SEARCH FILTER
-  .filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredItems = items
+    // ✅ SHOW ONLY AVAILABLE ITEMS
+    .filter((item) => item.is_available === true)
+    // VEG / NON-VEG FILTER
+    .filter((item) => {
+      if (filterType === "veg") return item.is_veg;
+      if (filterType === "nonveg") return !item.is_veg;
+      return true;
+    })
+    // SEARCH FILTER
+    .filter((item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
 
   return (
@@ -180,9 +181,8 @@ const filteredItems = items
                   />
 
                   <div
-                    className={`food-icon ${
-                      item.is_veg ? "veg" : "nonveg"
-                    }`}
+                    className={`food-icon ${item.is_veg ? "veg" : "nonveg"
+                      }`}
                   >
                     <div className="dot"></div>
                   </div>
