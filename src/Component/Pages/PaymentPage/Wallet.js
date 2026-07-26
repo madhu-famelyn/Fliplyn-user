@@ -247,6 +247,7 @@ export default function PaymentMethodPage() {
 
   /* ---------------- CONFIRM PAYMENT ---------------- */
   const handleConfirmPayment = async () => {
+    if (isLoading) return;
     setErrorMsg("");
 
     if (!cartItems.length) {
