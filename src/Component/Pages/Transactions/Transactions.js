@@ -143,9 +143,8 @@ export default function Transactions() {
                     <span>{getPaymentMethod(order)}</span>
 
                     <span
-                      className={`txn-status ${
-                        success ? "success" : "failed"
-                      }`}
+                      className={`txn-status ${success ? "success" : "failed"
+                        }`}
                     >
                       {success ? "Success" : "Failed"}
                     </span>
@@ -247,7 +246,7 @@ export default function Transactions() {
           </div>
         </div>
       )}
-      <Footer/>
+      <Footer />
     </>
   );
 }

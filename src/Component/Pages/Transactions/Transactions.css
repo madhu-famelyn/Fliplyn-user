@@ -137,19 +137,33 @@
 }
 
 .token-expired-badge {
-  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
   color: #dc2626;
   font-weight: 700;
   background: #fef2f2;
   border: 1px solid #fecaca;
-  padding: 4px 8px;
-  border-radius: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .token-failed-badge {
-  font-size: 0.82rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
   color: #991b1b;
-  font-weight: 600;
+  font-weight: 700;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 /* ====== QR Modal ====== */
