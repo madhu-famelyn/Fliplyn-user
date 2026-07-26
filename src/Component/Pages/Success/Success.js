@@ -22,7 +22,11 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [orderDetails, setOrderDetails] = useState(() => location.state?.order || null);
   const searchParams = new URLSearchParams(location.search);
-  const cfOrderId = searchParams.get("cf_order_id") || searchParams.get("order_id") || location.state?.order?.id;
+  const cfOrderId =
+    searchParams.get("cf_order_id") ||
+    searchParams.get("order_id") ||
+    location.state?.order?.cashfree_order_id ||
+    location.state?.order?.id;
 
   const initialOrder = location.state?.order || null;
   const isWalletPayment = Boolean(
@@ -32,20 +36,28 @@ export default function PaymentSuccess() {
   );
 
   // Check if token loading animation was already shown for this order session
-  const alreadySeen = cfOrderId ? sessionStorage.getItem(`token_seen_${cfOrderId}`) : false;
+  const alreadySeen = cfOrderId
+    ? sessionStorage.getItem(`token_seen_${cfOrderId}`) === "true"
+    : false;
 
-  // Wallet payments -> Instant token receipt display (0s delay)
-  // Payment Gateway payments -> 2.5s "Please Wait... Your Token is Generating" screen
+  // If order details are already passed or seen, show receipt immediately without 2.5s delay
   const [isGenerating, setIsGenerating] = useState(() => {
-    if (isWalletPayment || alreadySeen) return false;
+    if (isWalletPayment || alreadySeen || initialOrder) return false;
     return true;
   });
 
   const view = "receipt";
   const receiptRef = useRef(null);
 
+  // Redirect to stalls if page accessed directly without any order ID or state
   useEffect(() => {
-    if (isWalletPayment || alreadySeen) {
+    if (!cfOrderId && !location.state?.order) {
+      navigate("/stalls", { replace: true });
+    }
+  }, [cfOrderId, location.state, navigate]);
+
+  useEffect(() => {
+    if (isWalletPayment || alreadySeen || initialOrder) {
       setIsGenerating(false);
     } else {
       const timer = setTimeout(() => {
@@ -56,13 +68,16 @@ export default function PaymentSuccess() {
       }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [alreadySeen, cfOrderId, isWalletPayment]);
+  }, [alreadySeen, cfOrderId, isWalletPayment, initialOrder]);
 
   useEffect(() => {
     const order = location.state?.order;
     if (order?.id) {
       localStorage.removeItem("cartItems");
       setOrderDetails(order);
+      if (order.id) sessionStorage.setItem(`token_seen_${order.id}`, "true");
+      if (order.cashfree_order_id)
+        sessionStorage.setItem(`token_seen_${order.cashfree_order_id}`, "true");
       return;
     }
 
@@ -72,6 +87,7 @@ export default function PaymentSuccess() {
         .then((res) => {
           setOrderDetails(res.data);
           localStorage.removeItem("cartItems");
+          sessionStorage.setItem(`token_seen_${cfOrderId}`, "true");
         })
         .catch((err) => console.error("Error fetching order by cashfree:", err));
     }
@@ -241,7 +257,10 @@ export default function PaymentSuccess() {
           {/* 🔙 Back to Stalls */}
           <button
             className="back-to-stalls-btn"
-            onClick={() => navigate("/stalls", { replace: true })}
+            onClick={() => {
+              localStorage.removeItem("cartItems");
+              navigate("/stalls", { replace: true });
+            }}
           >
             Back to Stalls
           </button>

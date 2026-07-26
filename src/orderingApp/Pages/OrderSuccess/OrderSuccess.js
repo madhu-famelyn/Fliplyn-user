@@ -190,7 +190,10 @@ const OrderSuccess = () => {
 
         <button
           className="home-btn"
-          onClick={() => navigate("/orderingpage")}
+          onClick={() => {
+            sessionStorage.removeItem("current_token");
+            navigate("/orderingpage", { replace: true });
+          }}
         >
           🏠 Back to Home
         </button>

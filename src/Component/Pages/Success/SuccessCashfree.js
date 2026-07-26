@@ -214,7 +214,10 @@ export default function PaymentSuccessCashfree() {
       {/* 🔙 Back to Stalls */}
       <button
         className="back-to-stalls-btn"
-        onClick={() => navigate("/stalls")}
+        onClick={() => {
+          localStorage.removeItem("cartItems");
+          navigate("/stalls", { replace: true });
+        }}
       >
         Back to Stalls
       </button>
