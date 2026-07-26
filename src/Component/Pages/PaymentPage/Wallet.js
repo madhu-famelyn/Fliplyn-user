@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
@@ -123,19 +123,26 @@ export default function PaymentMethodPage() {
     setCartItems(storedCart);
   }, []);
 
+  const isNavigatingRef = useRef(false);
+
   useEffect(() => {
     if (!cfOrderId) return;
+    isNavigatingRef.current = false;
 
-    let isNavigating = false;
+    let intervalId = null;
+    const stopPolling = () => {
+      if (intervalId) clearInterval(intervalId);
+    };
 
     const checkPaymentStatus = async () => {
-      if (isNavigating) return;
+      if (isNavigatingRef.current) return;
       try {
         const url = `${API_BASE}/orders/verify-payment/phonepe/${cfOrderId}`;
         const res = await axios.get(url);
         if (res.data && res.data.payment_status === "SUCCESS") {
-          isNavigating = true;
-          // Hide scanner modal immediately
+          if (isNavigatingRef.current) return;
+          isNavigatingRef.current = true;
+          stopPolling();
           setShowQrModal(false);
           setIsLoading(true);
           localStorage.removeItem("cartItems");
@@ -149,16 +156,15 @@ export default function PaymentMethodPage() {
           }
         }
       } catch (err) {
-        console.error("Polling status error:", err);
+        // Quiet error during transient network pause
       }
     };
 
-    // 🚀 Check immediately on mount & when user returns from UPI app (focus / visibilitychange)
     checkPaymentStatus();
-    const intervalId = setInterval(checkPaymentStatus, 1000);
+    intervalId = setInterval(checkPaymentStatus, 1500);
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" && !isNavigatingRef.current) {
         checkPaymentStatus();
       }
     };
@@ -167,7 +173,7 @@ export default function PaymentMethodPage() {
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      clearInterval(intervalId);
+      stopPolling();
       window.removeEventListener("focus", checkPaymentStatus);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };

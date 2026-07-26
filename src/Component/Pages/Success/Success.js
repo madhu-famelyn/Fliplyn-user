@@ -28,24 +28,6 @@ export default function PaymentSuccess() {
     location.state?.order?.cashfree_order_id ||
     location.state?.order?.id;
 
-  const initialOrder = location.state?.order || null;
-  const isWalletPayment = Boolean(
-    initialOrder?.paid_with_wallet ||
-    initialOrder?.pay_with_wallet ||
-    location.state?.fromWallet
-  );
-
-  // Check if token loading animation was already shown for this order session
-  const alreadySeen = cfOrderId
-    ? sessionStorage.getItem(`token_seen_${cfOrderId}`) === "true"
-    : false;
-
-  // If order details are already passed or seen, show receipt immediately without 2.5s delay
-  const [isGenerating, setIsGenerating] = useState(() => {
-    if (isWalletPayment || alreadySeen || initialOrder) return false;
-    return true;
-  });
-
   const view = "receipt";
   const receiptRef = useRef(null);
 
@@ -57,27 +39,10 @@ export default function PaymentSuccess() {
   }, [cfOrderId, location.state, navigate]);
 
   useEffect(() => {
-    if (isWalletPayment || alreadySeen || initialOrder) {
-      setIsGenerating(false);
-    } else {
-      const timer = setTimeout(() => {
-        setIsGenerating(false);
-        if (cfOrderId) {
-          sessionStorage.setItem(`token_seen_${cfOrderId}`, "true");
-        }
-      }, 2500);
-      return () => clearTimeout(timer);
-    }
-  }, [alreadySeen, cfOrderId, isWalletPayment, initialOrder]);
-
-  useEffect(() => {
     const order = location.state?.order;
     if (order?.id) {
       localStorage.removeItem("cartItems");
       setOrderDetails(order);
-      if (order.id) sessionStorage.setItem(`token_seen_${order.id}`, "true");
-      if (order.cashfree_order_id)
-        sessionStorage.setItem(`token_seen_${order.cashfree_order_id}`, "true");
       return;
     }
 
@@ -87,11 +52,13 @@ export default function PaymentSuccess() {
         .then((res) => {
           setOrderDetails(res.data);
           localStorage.removeItem("cartItems");
-          sessionStorage.setItem(`token_seen_${cfOrderId}`, "true");
         })
-        .catch((err) => console.error("Error fetching order by cashfree:", err));
+        .catch((err) => {
+          console.error("Error fetching order by cashfree:", err);
+          navigate("/stalls", { replace: true });
+        });
     }
-  }, [location, cfOrderId]);
+  }, [location, cfOrderId, navigate]);
 
   const downloadPDF = () => {
     const input = receiptRef.current;
@@ -105,7 +72,7 @@ export default function PaymentSuccess() {
     });
   };
 
-  if (isGenerating || !orderDetails) {
+  if (!orderDetails) {
     return (
       <div className="receipt-wrapper" style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{
@@ -127,15 +94,9 @@ export default function PaymentSuccess() {
             borderRadius: "50%",
             animation: "spin 0.8s linear infinite"
           }} />
-          <h2 style={{ fontSize: "22px", fontWeight: "800", color: "#0f172a", margin: "0 0 6px" }}>
-            Please Wait...
+          <h2 style={{ fontSize: "20px", fontWeight: "800", color: "#0f172a", margin: "0 0 6px" }}>
+            Loading Receipt...
           </h2>
-          <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#eb4d26", margin: "0 0 12px" }}>
-            Your Token is Generating
-          </h3>
-          <p style={{ fontSize: "13px", color: "#64748b", margin: 0, lineHeight: 1.5 }}>
-            Verifying your payment and preparing your kitchen token receipt.
-          </p>
         </div>
       </div>
     );
