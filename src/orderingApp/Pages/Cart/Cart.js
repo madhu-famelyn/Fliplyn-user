@@ -483,11 +483,10 @@ function OrderingCart() {
               <span className="lock-emoji">🔒</span>
             </div>
             <h2 className="frozen-lock-title">Payment Processing...</h2>
-            <p className="frozen-lock-subtitle">Please wait, your token is generating</p>
 
             <div className="frozen-progress-pill">
               <span className="pay-spinner" />
-              <span>Verifying payment & generating order token</span>
+              <span>Verifying payment...</span>
             </div>
 
             <p className="frozen-lock-notice">
