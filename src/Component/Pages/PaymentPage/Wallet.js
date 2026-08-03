@@ -145,6 +145,7 @@ export default function PaymentMethodPage() {
           stopPolling();
           setShowQrModal(false);
           setIsLoading(true);
+          setIsFrozenLoading(true);
           localStorage.removeItem("cartItems");
 
           try {

@@ -40,24 +40,46 @@ export default function PaymentSuccess() {
 
   useEffect(() => {
     const order = location.state?.order;
-    if (order?.id) {
+    if (order?.id && order?.payment_status === "SUCCESS") {
       localStorage.removeItem("cartItems");
       setOrderDetails(order);
       return;
     }
 
-    if (cfOrderId) {
-      axios
-        .get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`)
-        .then((res) => {
-          setOrderDetails(res.data);
+    if (!cfOrderId) return;
+
+    let isSubscribed = true;
+    let pollInterval = null;
+
+    const verifyAndFetchOrder = async () => {
+      try {
+        // 1. Trigger verification
+        await axios.get(`${API_BASE}/orders/verify-payment/cashfree/${cfOrderId}`).catch(() => {});
+
+        // 2. Fetch full order details
+        const res = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
+        if (!isSubscribed) return;
+
+        setOrderDetails(res.data);
+
+        if (res.data.payment_status === "SUCCESS") {
           localStorage.removeItem("cartItems");
-        })
-        .catch((err) => {
-          console.error("Error fetching order by cashfree:", err);
-          navigate("/stalls", { replace: true });
-        });
-    }
+          if (pollInterval) clearInterval(pollInterval);
+        } else if (res.data.payment_status === "FAILED") {
+          if (pollInterval) clearInterval(pollInterval);
+        }
+      } catch (err) {
+        console.error("Error verifying/fetching order:", err);
+      }
+    };
+
+    verifyAndFetchOrder();
+    pollInterval = setInterval(verifyAndFetchOrder, 2000);
+
+    return () => {
+      isSubscribed = false;
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [location, cfOrderId, navigate]);
 
   const downloadPDF = () => {
@@ -72,7 +94,7 @@ export default function PaymentSuccess() {
     });
   };
 
-  if (!orderDetails) {
+  if (!orderDetails || orderDetails.payment_status === "PENDING") {
     return (
       <div className="receipt-wrapper" style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <div style={{
@@ -95,8 +117,49 @@ export default function PaymentSuccess() {
             animation: "spin 0.8s linear infinite"
           }} />
           <h2 style={{ fontSize: "20px", fontWeight: "800", color: "#0f172a", margin: "0 0 6px" }}>
-            Loading Receipt...
+            Payment Processing...
           </h2>
+          <p style={{ fontSize: "14px", color: "#64748b", margin: "0" }}>
+            Please wait, your payment is in processing. We are confirming your payment...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (orderDetails.payment_status === "FAILED") {
+    return (
+      <div className="receipt-wrapper" style={{ minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{
+          textAlign: "center",
+          padding: "40px 24px",
+          background: "#ffffff",
+          borderRadius: "24px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+          maxWidth: "380px",
+          width: "90%"
+        }}>
+          <div style={{ fontSize: "48px", color: "#ef4444", marginBottom: "16px" }}>❌</div>
+          <h2 style={{ fontSize: "20px", fontWeight: "800", color: "#0f172a", margin: "0 0 6px" }}>
+            Payment Failed
+          </h2>
+          <p style={{ fontSize: "14px", color: "#64748b", marginBottom: "20px" }}>
+            Your payment could not be completed.
+          </p>
+          <button
+            onClick={() => navigate("/stalls")}
+            style={{
+              padding: "12px 24px",
+              background: "#eb4d26",
+              color: "#fff",
+              border: "none",
+              borderRadius: "12px",
+              fontWeight: "700",
+              cursor: "pointer"
+            }}
+          >
+            Back to Stalls
+          </button>
         </div>
       </div>
     );

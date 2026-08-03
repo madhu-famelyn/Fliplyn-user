@@ -130,6 +130,7 @@ function AppRoutes() {
         <Route path="/wallet" element={<PaymentMethodPage />} />
         <Route path="/transactions-wallet" element={<TransactionHistory />} />
         <Route path="/success" element={<PaymentSuccess />} />
+        <Route path="/payment-pending" element={<PaymentSuccess />} />
         <Route path="/success-payment" element={<PaymentSuccessCashfree />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/trans" element={<Transactions />} />
