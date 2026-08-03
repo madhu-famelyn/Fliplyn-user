@@ -137,8 +137,8 @@ export default function PaymentMethodPage() {
     const checkPaymentStatus = async () => {
       if (isNavigatingRef.current) return;
       try {
-        const url = `${API_BASE}/orders/verify-payment/phonepe/${cfOrderId}`;
-        const res = await axios.get(url);
+        const verifyEndpoint = `${API_BASE}/orders/verify-payment/phonepe/${cfOrderId}`;
+        const res = await axios.get(verifyEndpoint);
         if (res.data && res.data.payment_status === "SUCCESS") {
           if (isNavigatingRef.current) return;
           isNavigatingRef.current = true;
