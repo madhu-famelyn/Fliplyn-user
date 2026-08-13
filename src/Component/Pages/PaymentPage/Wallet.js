@@ -117,10 +117,16 @@ export default function PaymentMethodPage() {
     { label: "Payment Gateway", icon: <SiPhonepe /> },
   ];
 
-  /* ---------------- CART ---------------- */
+  /* ---------------- CART & STALL ---------------- */
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
     setCartItems(storedCart);
+    if (storedCart.length > 0 && storedCart[0]?.stall_id) {
+      axios
+        .get(`${API_BASE}/stalls/${storedCart[0].stall_id}`)
+        .then((res) => setStallDetails(res.data))
+        .catch((err) => console.error("Error fetching stall in Wallet:", err));
+    }
   }, []);
 
   const isNavigatingRef = useRef(false);
@@ -200,6 +206,8 @@ export default function PaymentMethodPage() {
     fetchWallet();
   }, [userId, token]);
 
+  const [stallDetails, setStallDetails] = useState(null);
+
   /* ---------------- HELPERS ---------------- */
   const calculateSubtotal = () =>
     cartItems.reduce(
@@ -218,6 +226,21 @@ export default function PaymentMethodPage() {
     const subtotal = calculateSubtotal();
     const gst = calculateTotalGST();
     return subtotal + gst;
+  };
+
+  const isKammaniStall = Boolean(
+    stallDetails?.name?.toLowerCase().includes("kammani") ||
+    stallDetails?.stall_name?.toLowerCase().includes("kammani") ||
+    cartItems.some((i) => i?.stall_name?.toLowerCase().includes("kammani")) ||
+    cartItems.some((i) => i?.stall?.name?.toLowerCase().includes("kammani")) ||
+    cartItems[0]?.stall_id === "173a52e9-e5f7-4198-84dd-fb5fbfdf048c"
+  );
+  const isKammaniDiscountApplied = isKammaniStall && calculateSubtotal() >= 399;
+  const kammaniDiscount = isKammaniDiscountApplied ? 100 : 0;
+
+  const calculateFinalTotalAmount = () => {
+    const rawTotal = calculateTotalAmount();
+    return Math.max(0, rawTotal - kammaniDiscount);
   };
 
   const createInternalOrder = async (payload) => {
@@ -262,7 +285,7 @@ export default function PaymentMethodPage() {
       return;
     }
 
-    const totalAmount = calculateTotalAmount();
+    const finalTotalAmount = calculateFinalTotalAmount();
 
     const itemsPayload = cartItems.map((item) => ({
       item_id: item.id,
@@ -281,7 +304,7 @@ export default function PaymentMethodPage() {
 
     /* ---------- WALLET FLOW ---------- */
     if (selectedMethod === "Wallet") {
-      if (totalAmount > walletBalance) {
+      if (finalTotalAmount > walletBalance) {
         setErrorMsg("Insufficient Wallet Balance");
         return;
       }
@@ -293,7 +316,14 @@ export default function PaymentMethodPage() {
         // replace: true removes the wallet page from history so Back doesn't return here
         navigate("/success", { state: { order, fromWallet: true }, replace: true });
       } catch (err) {
-        setErrorMsg(err?.response?.data?.detail || "Order failed");
+        const detail = err?.response?.data?.detail;
+        setErrorMsg(
+          typeof detail === "string"
+            ? detail
+            : Array.isArray(detail)
+            ? detail.map((e) => (typeof e === "string" ? e : e.msg)).join(", ")
+            : "Order failed"
+        );
       } finally {
         setIsLoading(false);
       }
@@ -318,7 +348,14 @@ export default function PaymentMethodPage() {
         setShowQrModal(true);
       } catch (err) {
         console.error("Order creation error:", err);
-        setErrorMsg("Failed to initiate payment. Please try again.");
+        const detail = err?.response?.data?.detail;
+        setErrorMsg(
+          typeof detail === "string"
+            ? detail
+            : Array.isArray(detail)
+            ? detail.map((e) => (typeof e === "string" ? e : e.msg)).join(", ")
+            : "Failed to initiate payment. Please try again."
+        );
       } finally {
         setIsLoading(false);
       }
@@ -405,6 +442,20 @@ export default function PaymentMethodPage() {
               <p className="empty-cart-msg">No items in cart</p>
             ) : (
               <>
+                {isKammaniDiscountApplied && (
+                  <div style={{
+                    background: "linear-gradient(135deg, #10b981, #059669)",
+                    color: "#fff",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    marginBottom: "12px",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    textAlign: "center"
+                  }}>
+                    🎉 Kammani Offer: ₹100 Instant Discount Applied!
+                  </div>
+                )}
                 <div className="osc-items">
                   {cartItems.map((item, index) => (
                     <div key={index} className="osc-item-row">
@@ -425,10 +476,16 @@ export default function PaymentMethodPage() {
                   <span>GST Total</span>
                   <span>₹ {calculateTotalGST().toFixed(2)}</span>
                 </div>
+                {isKammaniDiscountApplied && (
+                  <div className="osc-row" style={{ color: "#16a34a", fontWeight: "600" }}>
+                    <span>🎉 Kammani Offer Discount</span>
+                    <span>- ₹ 100.00</span>
+                  </div>
+                )}
                 <div className="osc-divider" />
                 <div className="osc-total-row">
                   <span>Total Payable</span>
-                  <strong>₹ {calculateTotalAmount().toFixed(2)}</strong>
+                  <strong>₹ {calculateFinalTotalAmount().toFixed(2)}</strong>
                 </div>
               </>
             )}
@@ -458,7 +515,7 @@ export default function PaymentMethodPage() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                   </svg>
-                  Pay ₹ {calculateTotalAmount().toFixed(2)}
+                  Pay ₹ {calculateFinalTotalAmount().toFixed(2)}
                 </>
               )}
             </button>
@@ -508,7 +565,7 @@ export default function PaymentMethodPage() {
                 <span className="qr-merchant-label">Paying to</span>
                 <span className="qr-merchant-name">{getPayeeName()}</span>
               </div>
-              <div className="qr-amount-chip">₹{calculateTotalAmount().toFixed(2)}</div>
+              <div className="qr-amount-chip">₹{calculateFinalTotalAmount().toFixed(2)}</div>
             </div>
 
             {/* Desktop warning */}
