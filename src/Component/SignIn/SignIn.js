@@ -112,17 +112,17 @@ export default function EmailLogin({ initialMode }) {
     'Abu Dhabi': ['Yas Island']
   };
 
-  const isPublicEmail = (email) => {
-    const parts = email.split('@');
-    if (parts.length !== 2) return true;
-    const domain = parts[1].toLowerCase();
-    return publicDomains.includes(domain);
-  };
+  // const isPublicEmail = (email) => {
+  //   const parts = email.split('@');
+  //   if (parts.length !== 2) return true;
+  //   const domain = parts[1].toLowerCase();
+  //   return publicDomains.includes(domain);
+  // };
 
-  const isValidCompanyEmail = (email) => {
-    const domain = email.split('@')[1]?.toLowerCase();
-    return domain && !publicDomains.includes(domain);
-  };
+  // const isValidCompanyEmail = (email) => {
+  //   const domain = email.split('@')[1]?.toLowerCase();
+  //   return domain && !publicDomains.includes(domain);
+  // };
 
   const isValidPassword = (password) => {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
@@ -140,9 +140,9 @@ export default function EmailLogin({ initialMode }) {
         throw new Error('Please enter email and password');
       }
 
-      if (isPublicEmail(loginEmail)) {
-        throw new Error('Please enter your official company email address');
-      }
+      // if (isPublicEmail(loginEmail)) {
+      //   throw new Error('Please enter your official company email address');
+      // }
 
       const response = await initiateLogin({
         company_email: loginEmail,
@@ -224,10 +224,10 @@ export default function EmailLogin({ initialMode }) {
       return;
     }
 
-    if (!isValidCompanyEmail(form.company_email)) {
-      setSignupError('Public email domains (Gmail, Yahoo, etc.) are not allowed. Please use your official work email.');
-      return;
-    }
+    // if (!isValidCompanyEmail(form.company_email)) {
+    //   setSignupError('Public email domains (Gmail, Yahoo, etc.) are not allowed. Please use your official work email.');
+    //   return;
+    // }
 
     if (!isValidPassword(form.password)) {
       setSignupError('Password must be at least 8 characters long with uppercase, lowercase, number and special character.');
