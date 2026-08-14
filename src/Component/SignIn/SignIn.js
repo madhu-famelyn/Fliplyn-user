@@ -318,8 +318,9 @@ export default function EmailLogin({ initialMode }) {
                     <span>Fliplyn Food Portal</span>
                   </div>
                   <h2 className="auth-title">Create Your Account</h2>
+                  {/* Original: New user? Register with your work email to order food from your office building stalls. */}
                   <p className="auth-subtitle">
-                    New user? Register with your work email to order food from your office building stalls.
+                    New user? Register with your email to order food from your office building stalls.
                   </p>
                 </div>
 
@@ -394,14 +395,17 @@ export default function EmailLogin({ initialMode }) {
                     </div>
 
                     <div className="form-group">
-                      <label className="auth-label">Company Email</label>
+                      {/* <label className="auth-label">Company Email</label> */}
+                      {/* <label className="auth-label">Email Address</label> */}
+                      <label className="auth-label">Email Id</label>
                       <div className="auth-input-wrapper">
                         <Mail className="input-icon" size={17} />
+                        {/* Original placeholder: john@company.com */}
                         <input
                           type="email"
                           name="company_email"
                           className="auth-input-field"
-                          placeholder="john@company.com"
+                          placeholder="john@example.com"
                           value={form.company_email}
                           onChange={handleFormChange}
                           required
@@ -586,8 +590,9 @@ export default function EmailLogin({ initialMode }) {
                     <span>Fliplyn Food Portal</span>
                   </div>
                   <h2 className="auth-title">Welcome Back</h2>
+                  {/* Original: Sign in with your company email to order from your office cafeteria. */}
                   <p className="auth-subtitle">
-                    Sign in with your company email to order from your office cafeteria.
+                    Sign in with your email to order from your office cafeteria.
                   </p>
                 </div>
 
@@ -600,13 +605,16 @@ export default function EmailLogin({ initialMode }) {
 
                 <form onSubmit={handleLogin} className="auth-form">
                   <div className="form-group">
-                    <label className="auth-label">Company Email</label>
+                    {/* <label className="auth-label">Company Email</label> */}
+                    {/* <label className="auth-label">Email Address</label> */}
+                    <label className="auth-label">Email Id</label>
                     <div className="auth-input-wrapper">
                       <Mail className="input-icon" size={17} />
+                      {/* Original placeholder: Enter your company email */}
                       <input
                         type="email"
                         className="auth-input-field"
-                        placeholder="Enter your company email"
+                        placeholder="Enter your email address"
                         value={loginEmail}
                         onChange={(e) => setLoginEmail(e.target.value)}
                         required
