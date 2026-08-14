@@ -1,5 +1,36 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap");
 
+/* =================== KAMMANI PROMO =================== */
+.kammani-promo-banner {
+  margin: 0 0 10px 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #fff7ed, #fef3c7);
+  border: 1.5px dashed #f97316;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+.kammani-promo-banner.applied {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  border-color: #22c55e;
+  color: #166534;
+}
+.discount-row {
+  color: #16a34a !important;
+  font-weight: 700 !important;
+}
+.discount-row span:last-child {
+  color: #16a34a !important;
+}
+.net-amount-row {
+  font-weight: 600;
+  border-top: 1px dashed #d1d5db;
+  padding-top: 6px;
+  margin-top: 2px;
+}
+
 /* =================== PAGE WRAPPER =================== */
 .cart-page {
   min-height: 100vh;

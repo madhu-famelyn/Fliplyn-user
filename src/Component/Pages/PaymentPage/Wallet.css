@@ -294,6 +294,24 @@
   color: #1e293b;
 }
 
+.osc-discount-row {
+  color: #16a34a !important;
+  font-weight: 700 !important;
+}
+.osc-discount-row span:last-child {
+  color: #16a34a !important;
+}
+.osc-net-row {
+  font-weight: 600;
+  border-top: 1px dashed #d1d5db;
+  padding-top: 6px;
+  margin-top: 2px;
+}
+.osc-net-row span:last-child {
+  font-weight: 700;
+  color: #1e293b;
+}
+
 .osc-total-row {
   display: flex;
   justify-content: space-between;
@@ -1144,46 +1162,56 @@
 }
 
 /* ---- Footer: Timer + Cancel ---- */
-.qr-footer {
+.qr-modal-footer {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  padding-top: 4px;
 }
 
-.qr-timer-row {
+.qr-timer-badge {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
   font-size: 13px;
   font-weight: 600;
   color: #64748b;
-}
-
-.timer-count {
-  color: #dc2626;
-  font-weight: 800;
-  font-size: 14px;
-}
-
-.qr-close-btn {
-  width: 100%;
-  padding: 15px;
-  border: none;
-  border-radius: 16px;
   background: #f1f5f9;
-  color: #374151;
+  padding: 7px 14px;
+  border-radius: 20px;
+}
+
+.qr-cancel-btn {
+  width: 100%;
+  padding: 14px;
+  border: 1.5px solid #fca5a5;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff5f5, #fee2e2);
+  color: #dc2626;
   font-size: 15px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.18s ease;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
   -webkit-tap-highlight-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
 }
 
-.qr-close-btn:active {
-  background: #e2e8f0;
+.qr-cancel-btn:hover {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  border-color: #f87171;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+}
+
+.qr-cancel-btn:active {
+  background: #fecaca;
   transform: scale(0.98);
+  box-shadow: none;
 }
 
 /* ---- Animations ---- */

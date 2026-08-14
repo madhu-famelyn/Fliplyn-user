@@ -6,7 +6,7 @@ import { FiSearch } from "react-icons/fi";
 
 const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 
-export default function ItemList({ items, itemsLoaded }) {
+export default function ItemList({ items, itemsLoaded, stallName }) {
   const { user } = useAuth();
 
   const [showPopup, setShowPopup] = useState(false);
@@ -65,6 +65,7 @@ export default function ItemList({ items, itemsLoaded }) {
         price: item.price,
         is_veg: item.is_veg,
         stall_id: item.stall_id,
+        stall_name: stallName || "",
         Gst_precentage: item.Gst_precentage ?? item.gst_percentage ?? 0,
         image_url: item.image_url?.startsWith("http")
           ? item.image_url

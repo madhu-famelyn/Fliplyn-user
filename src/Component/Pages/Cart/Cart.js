@@ -14,12 +14,37 @@ export default function Cart() {
   const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
-  // Load from localStorage
+  // Load from localStorage and backfill stall_name if missing
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("cartItems")) || [];
 
-    console.log("🛒 Loaded cart items from localStorage:", stored);
+    // Backfill stall_name for old cart items that were saved without it
+    if (stored.length > 0 && !stored[0].stall_name) {
+      // Search all cached stall lists in localStorage
+      const stallId = stored[0].stall_id;
+      let foundStallName = "";
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("cached_stalls_")) {
+          try {
+            const stalls = JSON.parse(localStorage.getItem(key)) || [];
+            const match = stalls.find((s) => s.id === stallId);
+            if (match) {
+              foundStallName = match.name || "";
+              break;
+            }
+          } catch {}
+        }
+      }
+      if (foundStallName) {
+        const enriched = stored.map((item) => ({ ...item, stall_name: foundStallName }));
+        localStorage.setItem("cartItems", JSON.stringify(enriched));
+        setCartItems(enriched);
+        return;
+      }
+    }
 
+    console.log("🛒 Loaded cart items from localStorage:", stored);
     setCartItems(stored);
   }, []);
 
@@ -37,10 +62,12 @@ export default function Cart() {
 
     setCartItems(updated);
     localStorage.setItem("cartItems", JSON.stringify(updated));
+    window.dispatchEvent(new Event("cart-updated"));  // ← keeps cart count in sync
 
     console.log("🔄 Updated cartItems:", updated);
     console.log("💾 Updated localStorage.cartItems:", JSON.parse(localStorage.getItem("cartItems")));
   };
+
 
   // Send to backend + log (Instant Navigation)
   const handleProceed = () => {
@@ -81,7 +108,12 @@ export default function Cart() {
   );
 
   const total = subtotal + totalGST;
-  const finalTotal = total;
+  const isKammani = cartItems.length > 0 &&
+    cartItems[0].stall_name?.toLowerCase().includes("kammani");
+  const kammaniDiscount = isKammani && subtotal >= 399 ? 100 : 0;
+  const finalTotal = total - kammaniDiscount;
+  const cgst = totalGST / 2;
+  const sgst = totalGST / 2;
 
   return (
     <>
@@ -152,11 +184,43 @@ export default function Cart() {
               </div>
             </div>
 
+            {/* Kammani promo banner */}
+            {isKammani && subtotal < 399 && (
+              <div className="kammani-promo-banner">
+                🎉 Add ₹{(399 - subtotal).toFixed(2)} more to get ₹100 off!
+              </div>
+            )}
+            {isKammani && kammaniDiscount > 0 && (
+              <div className="kammani-promo-banner applied">
+                🎉 ₹100 Kammani discount applied!
+              </div>
+            )}
+
             {/* Summary section */}
             <div className="cart-summary">
               <p>
                 <span>Subtotal</span>
                 <span>₹{subtotal.toFixed(2)}</span>
+              </p>
+              {kammaniDiscount > 0 && (
+                <p className="discount-row">
+                  <span>🎉 Discount (Kammani)</span>
+                  <span>- ₹{kammaniDiscount.toFixed(2)}</span>
+                </p>
+              )}
+              {kammaniDiscount > 0 && (
+                <p className="net-amount-row">
+                  <span>Net Amount</span>
+                  <span>₹{(subtotal - kammaniDiscount).toFixed(2)}</span>
+                </p>
+              )}
+              <p>
+                <span>CGST</span>
+                <span>₹{cgst.toFixed(2)}</span>
+              </p>
+              <p>
+                <span>SGST</span>
+                <span>₹{sgst.toFixed(2)}</span>
               </p>
               <p>
                 <span>GST Total</span>

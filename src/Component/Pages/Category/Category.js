@@ -39,7 +39,7 @@ export default function Category() {
   const [selectedCategoryId, setSelectedCategoryId] = useState("ALL");
   const [items, setItems] = useState(allItems);
   const [itemsLoaded, setItemsLoaded] = useState(() => allItems.length > 0);
-  const [, setStallDetails] = useState(null);
+  const [stallDetails, setStallDetails] = useState(null);
   const [cartCount, setCartCount] = useState(0);
 
   // ================= CART COUNT =================
@@ -143,7 +143,7 @@ export default function Category() {
           </div>
 
           {/* Item List */}
-          <ItemList items={items} itemsLoaded={itemsLoaded} />
+          <ItemList items={items} itemsLoaded={itemsLoaded} stallName={stallDetails?.name || ""} />
         </div>
       </div>
 

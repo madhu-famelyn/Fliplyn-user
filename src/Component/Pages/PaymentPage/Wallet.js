@@ -56,6 +56,7 @@ export default function PaymentMethodPage() {
   };
 
   const [modalError, setModalError] = useState("");
+  // eslint-disable-next-line no-unused-vars
   const [isFrozenLoading, setIsFrozenLoading] = useState(false);
 
   const handleUpiAppClick = (e, app) => {
@@ -117,16 +118,36 @@ export default function PaymentMethodPage() {
     { label: "Payment Gateway", icon: <SiPhonepe /> },
   ];
 
-  /* ---------------- CART & STALL ---------------- */
+  /* ---------------- CART ---------------- */
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
-    setCartItems(storedCart);
-    if (storedCart.length > 0 && storedCart[0]?.stall_id) {
-      axios
-        .get(`${API_BASE}/stalls/${storedCart[0].stall_id}`)
-        .then((res) => setStallDetails(res.data))
-        .catch((err) => console.error("Error fetching stall in Wallet:", err));
+
+    // Backfill stall_name for old cart items that were saved without it
+    if (storedCart.length > 0 && !storedCart[0].stall_name) {
+      const stallId = storedCart[0].stall_id;
+      let foundStallName = "";
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("cached_stalls_")) {
+          try {
+            const stalls = JSON.parse(localStorage.getItem(key)) || [];
+            const match = stalls.find((s) => s.id === stallId);
+            if (match) {
+              foundStallName = match.name || "";
+              break;
+            }
+          } catch {}
+        }
+      }
+      if (foundStallName) {
+        const enriched = storedCart.map((item) => ({ ...item, stall_name: foundStallName }));
+        localStorage.setItem("cartItems", JSON.stringify(enriched));
+        setCartItems(enriched);
+        return;
+      }
     }
+
+    setCartItems(storedCart);
   }, []);
 
   const isNavigatingRef = useRef(false);
@@ -206,8 +227,6 @@ export default function PaymentMethodPage() {
     fetchWallet();
   }, [userId, token]);
 
-  const [stallDetails, setStallDetails] = useState(null);
-
   /* ---------------- HELPERS ---------------- */
   const calculateSubtotal = () =>
     cartItems.reduce(
@@ -222,25 +241,20 @@ export default function PaymentMethodPage() {
       0
     );
 
+  const calculateCGST = () => calculateTotalGST() / 2;
+  const calculateSGST = () => calculateTotalGST() / 2;
+
+  const isKammaniCart = () =>
+    cartItems.length > 0 &&
+    cartItems[0].stall_name?.toLowerCase().includes("kammani");
+
+  const calculateKammaniDiscount = () =>
+    isKammaniCart() && calculateSubtotal() >= 399 ? 100 : 0;
+
   const calculateTotalAmount = () => {
     const subtotal = calculateSubtotal();
     const gst = calculateTotalGST();
-    return subtotal + gst;
-  };
-
-  const isKammaniStall = Boolean(
-    stallDetails?.name?.toLowerCase().includes("kammani") ||
-    stallDetails?.stall_name?.toLowerCase().includes("kammani") ||
-    cartItems.some((i) => i?.stall_name?.toLowerCase().includes("kammani")) ||
-    cartItems.some((i) => i?.stall?.name?.toLowerCase().includes("kammani")) ||
-    cartItems[0]?.stall_id === "173a52e9-e5f7-4198-84dd-fb5fbfdf048c"
-  );
-  const isKammaniDiscountApplied = isKammaniStall && calculateSubtotal() >= 399;
-  const kammaniDiscount = isKammaniDiscountApplied ? 100 : 0;
-
-  const calculateFinalTotalAmount = () => {
-    const rawTotal = calculateTotalAmount();
-    return Math.max(0, rawTotal - kammaniDiscount);
+    return subtotal + gst - calculateKammaniDiscount();
   };
 
   const createInternalOrder = async (payload) => {
@@ -249,25 +263,6 @@ export default function PaymentMethodPage() {
     });
     return res.data;
   };
-
-  /* ---------------- CASHFREE (commented out) ---------------- */
-  // eslint-disable-next-line no-unused-vars
-  /* const openCashfreeCheckout = (paymentSessionId) => {
-    if (!window.Cashfree) {
-      setErrorMsg("Cashfree SDK not loaded. Please refresh the page.");
-      return;
-    }
-
-    // Cashfree SDK v3: use as factory function (NO 'new' keyword)
-    const cashfree = window.Cashfree({
-      mode: "production",
-    });
-
-    cashfree.checkout({
-      paymentSessionId,
-      redirectTarget: "_self",
-    });
-  }; */
 
   /* ---------------- CONFIRM PAYMENT ---------------- */
   const handleConfirmPayment = async () => {
@@ -279,13 +274,12 @@ export default function PaymentMethodPage() {
       return;
     }
 
-
     if (!userId || !user?.phone_number || !user?.email) {
       setErrorMsg("User phone or email missing");
       return;
     }
 
-    const finalTotalAmount = calculateFinalTotalAmount();
+    const totalAmount = calculateTotalAmount();
 
     const itemsPayload = cartItems.map((item) => ({
       item_id: item.id,
@@ -304,7 +298,7 @@ export default function PaymentMethodPage() {
 
     /* ---------- WALLET FLOW ---------- */
     if (selectedMethod === "Wallet") {
-      if (finalTotalAmount > walletBalance) {
+      if (totalAmount > walletBalance) {
         setErrorMsg("Insufficient Wallet Balance");
         return;
       }
@@ -313,17 +307,9 @@ export default function PaymentMethodPage() {
         setIsLoading(true);
         const order = await createInternalOrder(orderPayload);
         localStorage.removeItem("cartItems");
-        // replace: true removes the wallet page from history so Back doesn't return here
         navigate("/success", { state: { order, fromWallet: true }, replace: true });
       } catch (err) {
-        const detail = err?.response?.data?.detail;
-        setErrorMsg(
-          typeof detail === "string"
-            ? detail
-            : Array.isArray(detail)
-            ? detail.map((e) => (typeof e === "string" ? e : e.msg)).join(", ")
-            : "Order failed"
-        );
+        setErrorMsg(err?.response?.data?.detail || "Order failed");
       } finally {
         setIsLoading(false);
       }
@@ -340,7 +326,6 @@ export default function PaymentMethodPage() {
           return;
         }
 
-        // Store details and open modal synchronously
         setCfOrderId(backendOrder.cashfree_order_id);
         setQrValue(backendOrder.payment_session_id);
         setTimeLeft(180);
@@ -348,14 +333,7 @@ export default function PaymentMethodPage() {
         setShowQrModal(true);
       } catch (err) {
         console.error("Order creation error:", err);
-        const detail = err?.response?.data?.detail;
-        setErrorMsg(
-          typeof detail === "string"
-            ? detail
-            : Array.isArray(detail)
-            ? detail.map((e) => (typeof e === "string" ? e : e.msg)).join(", ")
-            : "Failed to initiate payment. Please try again."
-        );
+        setErrorMsg(err?.response?.data?.detail || "Failed to initiate payment. Please try again.");
       } finally {
         setIsLoading(false);
       }
@@ -442,20 +420,6 @@ export default function PaymentMethodPage() {
               <p className="empty-cart-msg">No items in cart</p>
             ) : (
               <>
-                {isKammaniDiscountApplied && (
-                  <div style={{
-                    background: "linear-gradient(135deg, #10b981, #059669)",
-                    color: "#fff",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    marginBottom: "12px",
-                    fontSize: "13px",
-                    fontWeight: "600",
-                    textAlign: "center"
-                  }}>
-                    🎉 Kammani Offer: ₹100 Instant Discount Applied!
-                  </div>
-                )}
                 <div className="osc-items">
                   {cartItems.map((item, index) => (
                     <div key={index} className="osc-item-row">
@@ -472,20 +436,34 @@ export default function PaymentMethodPage() {
                   <span>Subtotal</span>
                   <span>₹ {calculateSubtotal().toFixed(2)}</span>
                 </div>
+                {calculateKammaniDiscount() > 0 && (
+                  <div className="osc-row osc-discount-row">
+                    <span>🎉 Discount (Kammani)</span>
+                    <span>- ₹ {calculateKammaniDiscount().toFixed(2)}</span>
+                  </div>
+                )}
+                {calculateKammaniDiscount() > 0 && (
+                  <div className="osc-row osc-net-row">
+                    <span>Net Amount</span>
+                    <span>₹ {(calculateSubtotal() - calculateKammaniDiscount()).toFixed(2)}</span>
+                  </div>
+                )}
+                <div className="osc-row">
+                  <span>CGST</span>
+                  <span>₹ {calculateCGST().toFixed(2)}</span>
+                </div>
+                <div className="osc-row">
+                  <span>SGST</span>
+                  <span>₹ {calculateSGST().toFixed(2)}</span>
+                </div>
                 <div className="osc-row">
                   <span>GST Total</span>
                   <span>₹ {calculateTotalGST().toFixed(2)}</span>
                 </div>
-                {isKammaniDiscountApplied && (
-                  <div className="osc-row" style={{ color: "#16a34a", fontWeight: "600" }}>
-                    <span>🎉 Kammani Offer Discount</span>
-                    <span>- ₹ 100.00</span>
-                  </div>
-                )}
                 <div className="osc-divider" />
                 <div className="osc-total-row">
                   <span>Total Payable</span>
-                  <strong>₹ {calculateFinalTotalAmount().toFixed(2)}</strong>
+                  <strong>₹ {calculateTotalAmount().toFixed(2)}</strong>
                 </div>
               </>
             )}
@@ -515,7 +493,7 @@ export default function PaymentMethodPage() {
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z" />
                   </svg>
-                  Pay ₹ {calculateFinalTotalAmount().toFixed(2)}
+                  Pay ₹ {calculateTotalAmount().toFixed(2)}
                 </>
               )}
             </button>
@@ -565,7 +543,7 @@ export default function PaymentMethodPage() {
                 <span className="qr-merchant-label">Paying to</span>
                 <span className="qr-merchant-name">{getPayeeName()}</span>
               </div>
-              <div className="qr-amount-chip">₹{calculateFinalTotalAmount().toFixed(2)}</div>
+              <div className="qr-amount-chip">₹{calculateTotalAmount().toFixed(2)}</div>
             </div>
 
             {/* Desktop warning */}
@@ -607,9 +585,7 @@ export default function PaymentMethodPage() {
                 {/* PhonePe */}
                 <a href={getAppUpiLink("phonepe")} className="upi-app-btn" onClick={(e) => handleUpiAppClick(e, "phonepe")}>
                   <div className="upi-icon-wrapper phonepe">
-                    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-                      <text x="16" y="22" fill="#fff" fontFamily="system-ui,-apple-system,sans-serif" fontWeight="900" fontSize="16" textAnchor="middle">पे</text>
-                    </svg>
+                    <SiPhonepe size={24} color="#5f259f" />
                   </div>
                   <span>PhonePe</span>
                 </a>
@@ -618,9 +594,8 @@ export default function PaymentMethodPage() {
                 <a href={getAppUpiLink("paytm")} className="upi-app-btn" onClick={(e) => handleUpiAppClick(e, "paytm")}>
                   <div className="upi-icon-wrapper paytm">
                     <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-                      <text x="16" y="20" fontFamily="system-ui,-apple-system,sans-serif" fontWeight="900" fontSize="9" textAnchor="middle">
-                        <tspan fill="#00baf2">pay</tspan><tspan fill="#002b5c">tm</tspan>
-                      </text>
+                      <path d="M19.5 9.5h-3v13h3v-13z" fill="#002E6E" />
+                      <path d="M26.5 9.5h-3v13h3v-13z" fill="#00BAF2" />
                     </svg>
                   </div>
                   <span>Paytm</span>
@@ -630,39 +605,20 @@ export default function PaymentMethodPage() {
             </div>
 
             {/* Timer & Cancel */}
-            <div className="qr-footer">
-              <div className="qr-timer-row">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
+            <div className="qr-modal-footer">
+              <div className="qr-timer-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
                 </svg>
-                <span>Expires in </span>
-                <span className="timer-count">{formatTime(timeLeft)}</span>
+                <span>Expires in <strong style={{ color: timeLeft < 60 ? "#ef4444" : "#1e293b" }}>{formatTime(timeLeft)}</strong></span>
               </div>
-              <button className="qr-close-btn" onClick={() => setShowQrModal(false)}>
+
+              <button className="qr-cancel-btn" onClick={() => setShowQrModal(false)}>
                 ✕ Cancel Payment
               </button>
             </div>
 
-          </div>
-        </div>
-      )}
-
-      {isFrozenLoading && (
-        <div className="frozen-screen-lock-overlay">
-          <div className="frozen-lock-card">
-            <div className="frozen-lock-icon-wrapper">
-              <span className="lock-emoji">🔒</span>
-            </div>
-            <h2 className="frozen-lock-title">Payment Processing...</h2>
-
-            <div className="frozen-progress-pill">
-              <span className="pay-spinner" />
-              <span>Verifying payment...</span>
-            </div>
-
-            <p className="frozen-lock-notice">
-              ⚠️ Screen is locked to protect your transaction. Please do not refresh.
-            </p>
           </div>
         </div>
       )}
