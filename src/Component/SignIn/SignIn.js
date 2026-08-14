@@ -71,10 +71,10 @@ export default function EmailLogin({ initialMode }) {
 
   const [buildings, setBuildings] = useState([]);
 
-  const publicDomains = [
-    'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
-    'rediffmail.com', 'aol.com', 'protonmail.com', 'icloud.com', 'zoho.com'
-  ];
+  // const publicDomains = [
+  //   'gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com',
+  //   'rediffmail.com', 'aol.com', 'protonmail.com', 'icloud.com', 'zoho.com'
+  // ];
 
   const countryCodes = [
     { code: '+91', country: 'India' },
