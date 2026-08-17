@@ -175,13 +175,25 @@ export default function PaymentMethodPage() {
           setIsFrozenLoading(true);
           localStorage.removeItem("cartItems");
 
-          try {
-            const orderRes = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
-            navigate("/success", { state: { order: orderRes.data }, replace: true });
-          } catch {
-            // Fallback navigation with cf_order_id query param
-            navigate(`/success?cf_order_id=${cfOrderId}`, { replace: true });
+          // Poll for SUCCESS order during frozen screen, then navigate straight to receipt
+          const startTime = Date.now();
+          const minDisplay = 1800;
+          let orderData = null;
+          for (let i = 0; i < 10; i++) {
+            try {
+              const res = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
+              if (res.data.payment_status === "SUCCESS") { orderData = res.data; break; }
+            } catch {}
+            await new Promise(r => setTimeout(r, 600));
           }
+          const remaining = Math.max(0, minDisplay - (Date.now() - startTime));
+          setTimeout(() => {
+            if (orderData) {
+              navigate("/success", { state: { order: orderData }, replace: true });
+            } else {
+              navigate(`/success?cf_order_id=${cfOrderId}`, { replace: true });
+            }
+          }, remaining);
         }
       } catch (err) {
         // Quiet error during transient network pause
@@ -619,6 +631,26 @@ export default function PaymentMethodPage() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {isFrozenLoading && (
+        <div className="frozen-screen-lock-overlay">
+          <div className="frozen-lock-card">
+            <div className="frozen-lock-icon-wrapper">
+              <span className="lock-emoji">🔒</span>
+            </div>
+            <h2 className="frozen-lock-title">Payment Processing...</h2>
+
+            <div className="frozen-progress-pill">
+              <span className="pay-spinner" />
+              <span>Verifying payment...</span>
+            </div>
+
+            <p className="frozen-lock-notice">
+              ⚠️ Screen is locked to protect your transaction. Please do not refresh.
+            </p>
           </div>
         </div>
       )}

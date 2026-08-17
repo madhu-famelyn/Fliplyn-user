@@ -25,6 +25,7 @@ import PaymentMethodPage from "./Component/Pages/PaymentPage/Wallet";
 import TransactionHistory from "./Component/Pages/TransactionHistory/TransactionHistory";
 import PaymentSuccess from "./Component/Pages/Success/Success";
 import PaymentSuccessCashfree from "./Component/Pages/Success/SuccessCashfree";
+import PaymentFailed from "./Component/Pages/Success/PaymentFailed";
 import Profile from "./Component/Pages/Profile/Profile";
 import Transactions from "./Component/Pages/Transactions/Transactions";
 import VerifyOTP from "./Component/SignIn/VerifyOTP";
@@ -131,6 +132,7 @@ function AppRoutes() {
         <Route path="/transactions-wallet" element={<TransactionHistory />} />
         <Route path="/success" element={<PaymentSuccess />} />
         <Route path="/payment-pending" element={<PaymentSuccess />} />
+        <Route path="/payment-failed" element={<PaymentFailed />} />
         <Route path="/success-payment" element={<PaymentSuccessCashfree />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/trans" element={<Transactions />} />
