@@ -18,18 +18,13 @@ export const verifyOtp = (data) => {
 };
 
 
-// ✅ User Login - initiate OTP
+// ✅ User Login
 export const initiateLogin = async ({ company_email, password }) => {
   const response = await axios.post(
-    'https://admin-aged-field-2794.fly.dev/user/login',
-    { company_email, password }, // ✅ JSON body
-    {
-      headers: {
-        'Content-Type': 'application/json', // ✅ Required for FastAPI to parse correctly
-      },
-    }
+    `${BASE_URL}/user/login`,
+    { company_email, password },
+    { headers: { 'Content-Type': 'application/json' } }
   );
-
   return response.data;
 };
 
