@@ -24,23 +24,39 @@ export default function PaymentSuccessCashfree() {
       return;
     }
 
+    let isSubscribed = true;
+    let pollInterval = null;
     const verifyEndpoint = `https://admin-aged-field-2794.fly.dev/orders/verify-payment/cashfree/${cfOrderId}`;
+    const byCashfreeEndpoint = `https://admin-aged-field-2794.fly.dev/orders/by-cashfree/${cfOrderId}`;
 
-    axios
-      .get(verifyEndpoint)
-      .then(() => {
-        return axios.get(
-          `https://admin-aged-field-2794.fly.dev/orders/by-cashfree/${cfOrderId}`
-        );
-      })
-      .then((res) => {
+    const verifyAndFetchOrder = async () => {
+      try {
+        // Trigger verification, but ignore transient errors (e.g. amount not yet settled) — just keep polling
+        await axios.get(verifyEndpoint).catch(() => {});
+
+        const res = await axios.get(byCashfreeEndpoint);
+        if (!isSubscribed) return;
+
         setOrderDetails(res.data);
-        localStorage.removeItem("cartItems");
-      })
-      .catch(() => {
-        alert("Payment verification failed.");
-        navigate("/stalls");
-      });
+
+        if (res.data.payment_status === "SUCCESS") {
+          localStorage.removeItem("cartItems");
+          if (pollInterval) clearInterval(pollInterval);
+        } else if (res.data.payment_status === "FAILED") {
+          if (pollInterval) clearInterval(pollInterval);
+        }
+      } catch (err) {
+        // Quiet error during transient network pause; keep polling
+      }
+    };
+
+    verifyAndFetchOrder();
+    pollInterval = setInterval(verifyAndFetchOrder, 2000);
+
+    return () => {
+      isSubscribed = false;
+      if (pollInterval) clearInterval(pollInterval);
+    };
   }, [location.search, navigate]);
 
   const downloadPDF = () => {
@@ -59,7 +75,7 @@ export default function PaymentSuccessCashfree() {
     });
   };
 
-  if (!orderDetails) {
+  if (!orderDetails || orderDetails.payment_status === "PENDING") {
     return <p className="loading-text">Verifying Payment...</p>;
   }
 
@@ -68,7 +84,7 @@ export default function PaymentSuccessCashfree() {
     orderDetails.payment_status === "SUCCESS" &&
     orderDetails.payment_verified === true;
 
-  // ❌ If payment failed or pending → show failure screen
+  // ❌ Only show failure screen once payment is explicitly FAILED
   if (!isPaymentSuccessful) {
     return (
       <div className="receipt-wrapper">
