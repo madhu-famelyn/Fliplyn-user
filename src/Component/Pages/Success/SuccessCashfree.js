@@ -75,7 +75,7 @@ export default function PaymentSuccessCashfree() {
     });
   };
 
-  if (!orderDetails || orderDetails.payment_status === "PENDING") {
+  if (!orderDetails) {
     return <p className="loading-text">Verifying Payment...</p>;
   }
 
@@ -84,7 +84,7 @@ export default function PaymentSuccessCashfree() {
     orderDetails.payment_status === "SUCCESS" &&
     orderDetails.payment_verified === true;
 
-  // ❌ Only show failure screen once payment is explicitly FAILED
+  // ❌ If payment failed or pending → show failure screen
   if (!isPaymentSuccessful) {
     return (
       <div className="receipt-wrapper">
