@@ -78,13 +78,13 @@ export default function PaymentMethodPage() {
     }
   };
 
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   useEffect(() => {
     if (!showQrModal) return;
 
     if (timeLeft <= 0) {
-      alert("Payment session expired. Please try again.");
+      alert("Payment session timed out. If money was debited from your account, your order will be automatically confirmed in your Order History.");
       setShowQrModal(false);
       return;
     }
@@ -340,7 +340,7 @@ export default function PaymentMethodPage() {
 
         setCfOrderId(backendOrder.cashfree_order_id);
         setQrValue(backendOrder.payment_session_id);
-        setTimeLeft(180);
+        setTimeLeft(300);
         setModalError("");
         setShowQrModal(true);
       } catch (err) {

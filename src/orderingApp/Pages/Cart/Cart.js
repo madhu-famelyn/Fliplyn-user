@@ -59,13 +59,13 @@ function OrderingCart() {
     }
   };
 
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(300);
 
   useEffect(() => {
     if (!showQrModal) return;
 
     if (timeLeft <= 0) {
-      alert("Payment session expired. Please try again.");
+      alert("Payment session timed out. If money was debited from your account, your order and token will be automatically confirmed.");
       setShowQrModal(false);
       return;
     }
@@ -298,7 +298,7 @@ function OrderingCart() {
       if (data.payment_session_id) {
         console.log("PhonePe Dynamic QR String generated:", data.payment_session_id);
         setQrValue(data.payment_session_id);
-        setTimeLeft(180); // Reset timer to 180 seconds
+        setTimeLeft(300); // Reset timer to 300 seconds (5 mins)
         setModalError(""); // Clear any previous error
         setShowQrModal(true);
       } else {
