@@ -35,6 +35,7 @@ import ChangePassword from "./Component/SignIn/ChangePassword";
 import ReceiptPage from "./Component/Pages/Success/RecepitPage";
 import QRScannerPage from "./Component/Pages/ScanQR/ScanQR";
 import PolicyReview from "./Component/Policy/Policy";
+import FeedbackPage from "./Component/Pages/Feedback/FeedbackPage";
 import LandingPage from './orderingApp/Pages/LandingPage/LandingPage'
 import CustomerDetails from './orderingApp/Pages/CustomerDetails/CustomerDetails'
 import OutletSelection from './orderingApp/Pages/OutletSelection/OutletSelection'
@@ -142,6 +143,7 @@ function AppRoutes() {
         <Route path="/receipt/:id" element={<ReceiptPage />} />
         <Route path="/policy" element={<PolicyReview />} />
         <Route path="/qr-scanner" element={<QRScannerPage />} />
+        <Route path="/feedback" element={<FeedbackPage />} />
 
 
         <Route path="/orderingpage" element={<LandingPage />} />
