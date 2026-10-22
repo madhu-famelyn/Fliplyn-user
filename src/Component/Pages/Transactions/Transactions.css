@@ -255,3 +255,79 @@
     padding: 5px 10px;
   }
 }
+
+/* ====== Header Row & Tabs ====== */
+.txn-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.txn-tabs {
+  display: flex;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.txn-tab-btn {
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  border-radius: 9px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.txn-tab-btn.active {
+  background: #fff;
+  color: #ea580c;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.txn-tab-btn:hover:not(.active) {
+  color: #1e293b;
+}
+
+/* ====== Wallet Loads Table Grid ====== */
+.txn-wallet-header,
+.txn-wallet-row {
+  grid-template-columns: 1.5fr 2fr 1.2fr 1.2fr 1fr;
+  min-width: 650px;
+}
+
+.txn-desc-cell {
+  word-break: break-word;
+  color: #334155;
+}
+
+@media (max-width: 768px) {
+  .txn-header-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .txn-tabs {
+    width: 100%;
+  }
+
+  .txn-tab-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px 10px;
+    font-size: 0.82rem;
+  }
+
+  .txn-wallet-header,
+  .txn-wallet-row {
+    grid-template-columns: 1.4fr 1.8fr 1.1fr 1.1fr 0.9fr;
+    min-width: 580px;
+  }
+}

@@ -36,6 +36,7 @@ import ReceiptPage from "./Component/Pages/Success/RecepitPage";
 import QRScannerPage from "./Component/Pages/ScanQR/ScanQR";
 import PolicyReview from "./Component/Policy/Policy";
 import FeedbackPage from "./Component/Pages/Feedback/FeedbackPage";
+import WalletLoadPage from "./Component/Pages/WalletLoad/WalletLoad";
 import LandingPage from './orderingApp/Pages/LandingPage/LandingPage'
 import CustomerDetails from './orderingApp/Pages/CustomerDetails/CustomerDetails'
 import OutletSelection from './orderingApp/Pages/OutletSelection/OutletSelection'
@@ -144,6 +145,7 @@ function AppRoutes() {
         <Route path="/policy" element={<PolicyReview />} />
         <Route path="/qr-scanner" element={<QRScannerPage />} />
         <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="/wallet/load" element={<WalletLoadPage />} />
 
 
         <Route path="/orderingpage" element={<LandingPage />} />

@@ -12,18 +12,22 @@
   font-weight: 600;
   text-align: center;
 }
+
 .kammani-promo-banner.applied {
   background: linear-gradient(135deg, #f0fdf4, #dcfce7);
   border-color: #22c55e;
   color: #166534;
 }
+
 .discount-row {
   color: #16a34a !important;
   font-weight: 700 !important;
 }
+
 .discount-row span:last-child {
   color: #16a34a !important;
 }
+
 .net-amount-row {
   font-weight: 600;
   border-top: 1px dashed #d1d5db;
@@ -70,7 +74,7 @@
   background: #ffffff;
   border-radius: 20px;
   padding: 8px 12px;
-  box-shadow: 0 4px 20px rgba(255, 160, 80, 0.1), 0 1px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(255, 160, 80, 0.1), 0 1px 4px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(255, 107, 53, 0.08);
 }
 
@@ -97,7 +101,7 @@
   border-radius: 14px;
   object-fit: cover;
   flex-shrink: 0;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* =================== ITEM INFO =================== */
@@ -281,7 +285,7 @@
   left: -80%;
   width: 60%;
   height: 100%;
-  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25) 50%, transparent 70%);
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.25) 50%, transparent 70%);
   transition: left 0.5s ease;
 }
 
@@ -361,5 +365,7 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

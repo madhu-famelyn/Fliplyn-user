@@ -162,6 +162,7 @@ export default function PaymentSuccessCashfree() {
               <h3 className="token-hero-number">{tokenNo}</h3>
             </div>
 
+            <p className="order-date">GSTIN: 36AAVFN1793L1ZE</p>
             <p className="order-date">Date: {createdAt}</p>
 
             <hr className="separator" />

@@ -65,6 +65,7 @@ export default function ReceiptPage() {
         <p className="view-token print-token">
           Token No.: <strong>{tokenNo}</strong>
         </p>
+        <p className="view-date print-date">GSTIN: 36AAVFN1793L1ZE</p>
         <p className="view-date print-date">Date: {createdAt}</p>
 
         <hr className="view-separator print-separator" />

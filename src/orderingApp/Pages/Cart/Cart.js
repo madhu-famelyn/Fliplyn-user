@@ -27,7 +27,14 @@ function OrderingCart() {
   const email = localStorage.getItem("customerEmail");
 
   const getAppUpiLink = (app) => {
-    return qrValue;
+    if (!qrValue) return "#";
+    const upiParams = qrValue.replace(/^upi:\/\/pay\?/, "");
+    switch (app) {
+      case "phonepe": return `phonepe://pay?${upiParams}`;
+      case "gpay": return `tez://upi/pay?${upiParams}`;
+      case "paytm": return `paytmmp://pay?${upiParams}`;
+      default: return qrValue;
+    }
   };
 
   const [modalError, setModalError] = useState("");
@@ -36,20 +43,10 @@ function OrderingCart() {
   const handleUpiAppClick = (e, app) => {
     e.preventDefault();
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    
-    // Freeze screen with frosted blur & navigate to token generator
-    setIsFrozenLoading(true);
-    setShowQrModal(false);
-
-    const token = sessionStorage.getItem("current_token");
-    if (token) {
-      setTimeout(() => {
-        navigate(`/ordering-success?token=${token}`);
-      }, 400);
-    }
 
     if (isMobile) {
-      window.location.href = qrValue;
+      setIsFrozenLoading(true);
+      window.location.href = getAppUpiLink(app);
     } else {
       let appName = "UPI";
       if (app === "gpay") appName = "Google Pay";
@@ -125,38 +122,53 @@ function OrderingCart() {
   }, [email]);
 
   useEffect(() => {
-    if (!showQrModal || !qrValue) return;
+    if ((!showQrModal && !isFrozenLoading) || !qrValue) return;
 
     const token = sessionStorage.getItem("current_token");
     if (!token) return;
 
-    console.log("=== STARTING QR STATUS POLLING ===");
-    const intervalId = setInterval(async () => {
+    let isNavigating = false;
+
+    const checkStatus = async () => {
+      if (isNavigating) return;
       try {
         const url = `${API_BASE}/cashfree-orders/by-token/${token}`;
         const res = await axios.get(url);
         if (res.data && res.data.payment_status === "SUCCESS") {
-          console.log("=== PAYMENT DETECTED SUCCESS ===");
+          isNavigating = true;
           clearInterval(intervalId);
+          setIsFrozenLoading(false);
           setShowQrModal(false);
 
           // Clear cart on successful order placement
           setCart([]);
           saveCart([]);
 
-          navigate(`/ordering-success?token=${token}`);
+          navigate(`/ordering-success?token=${token}`, { replace: true });
         }
       } catch (err) {
         console.error("Polling status error:", err);
       }
-    }, 2500);
+    };
+
+    const intervalId = setInterval(checkStatus, 2000);
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkStatus();
+      }
+    };
+
+    window.addEventListener("focus", checkStatus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      console.log("=== CLEANING UP POLLING ===");
       clearInterval(intervalId);
+      window.removeEventListener("focus", checkStatus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showQrModal, qrValue, navigate]);
+  }, [showQrModal, isFrozenLoading, qrValue, navigate]);
 
 
   const saveCart = (updatedCart) => {

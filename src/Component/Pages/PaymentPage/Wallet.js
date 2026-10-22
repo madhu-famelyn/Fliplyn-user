@@ -62,7 +62,7 @@ export default function PaymentMethodPage() {
   const handleUpiAppClick = (e, app) => {
     e.preventDefault();
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    
+
     // Lock interaction and open mobile UPI app
     setIsFrozenLoading(true);
     setShowQrModal(false);
@@ -136,7 +136,7 @@ export default function PaymentMethodPage() {
               foundStallName = match.name || "";
               break;
             }
-          } catch {}
+          } catch { }
         }
       }
       if (foundStallName) {
@@ -183,7 +183,7 @@ export default function PaymentMethodPage() {
             try {
               const res = await axios.get(`${API_BASE}/orders/by-cashfree/${cfOrderId}`);
               if (res.data.payment_status === "SUCCESS") { orderData = res.data; break; }
-            } catch {}
+            } catch { }
             await new Promise(r => setTimeout(r, 600));
           }
           const remaining = Math.max(0, minDisplay - (Date.now() - startTime));
@@ -194,6 +194,10 @@ export default function PaymentMethodPage() {
               navigate(`/success?cf_order_id=${cfOrderId}`, { replace: true });
             }
           }, remaining);
+        } else if (res.data && res.data.payment_status === "FAILED") {
+          stopPolling();
+          setIsFrozenLoading(false);
+          setModalError("Payment was declined or cancelled. If money was debited from your bank, it will auto-reverse shortly.");
         }
       } catch (err) {
         // Quiet error during transient network pause
@@ -321,7 +325,9 @@ export default function PaymentMethodPage() {
         localStorage.removeItem("cartItems");
         navigate("/success", { state: { order, fromWallet: true }, replace: true });
       } catch (err) {
-        setErrorMsg(err?.response?.data?.detail || "Order failed");
+        const msg = err?.response?.data?.detail || "Order failed";
+        setErrorMsg(msg);
+        alert(msg);
       } finally {
         setIsLoading(false);
       }
@@ -345,7 +351,9 @@ export default function PaymentMethodPage() {
         setShowQrModal(true);
       } catch (err) {
         console.error("Order creation error:", err);
-        setErrorMsg(err?.response?.data?.detail || "Failed to initiate payment. Please try again.");
+        const msg = err?.response?.data?.detail || "Failed to initiate payment. Please try again.";
+        setErrorMsg(msg);
+        alert(msg);
       } finally {
         setIsLoading(false);
       }
@@ -392,6 +400,17 @@ export default function PaymentMethodPage() {
               <span className="wbc-label">Wallet Balance</span>
               <span className="wbc-amount">₹ {walletBalance.toFixed(2)}</span>
             </div>
+            <button
+              className="wbc-add-money-btn"
+              onClick={() => navigate("/wallet/load")}
+              title="Add money to wallet"
+            >
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Add Money
+            </button>
           </div>
 
           {/* ── Payment Method Selector ── */}

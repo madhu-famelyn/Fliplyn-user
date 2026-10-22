@@ -23,18 +23,17 @@ const OrderSuccess = () => {
       return;
     }
 
+    let isMounted = true;
     let retryCount = 0;
-    const maxRetries = 10;
+    const maxRetries = 40; // 40 * 2000ms = 80 seconds
 
     const verifyOrder = async () => {
-
       try {
-
         const url = `https://admin-aged-field-2794.fly.dev/cashfree-orders/by-token/${token}`;
         const res = await axios.get(url);
         const data = res.data;
 
-        if (data) {
+        if (data && isMounted) {
           setOrder(data);
 
           if (data.payment_status === "SUCCESS") {
@@ -43,22 +42,34 @@ const OrderSuccess = () => {
           }
         }
 
-        if (retryCount < maxRetries) {
+        if (retryCount < maxRetries && isMounted) {
           retryCount++;
           setTimeout(verifyOrder, 2000);
-        } else {
+        } else if (isMounted) {
           setLoading(false);
         }
-
       } catch (err) {
         console.error("Order verification failed:", err);
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
-
     };
 
     verifyOrder();
 
+    const handleFocusOrVisible = () => {
+      if (document.visibilityState === "visible") {
+        verifyOrder();
+      }
+    };
+
+    window.addEventListener("focus", handleFocusOrVisible);
+    document.addEventListener("visibilitychange", handleFocusOrVisible);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("focus", handleFocusOrVisible);
+      document.removeEventListener("visibilitychange", handleFocusOrVisible);
+    };
   }, [token]);
 
 

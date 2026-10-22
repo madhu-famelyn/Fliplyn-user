@@ -136,6 +136,36 @@
   letter-spacing: -0.5px;
 }
 
+/* ── Add Money Button (inside wallet balance card) ── */
+.wbc-add-money-btn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.22);
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 7px 13px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+  transition: all 0.18s ease;
+  font-family: 'Inter', sans-serif;
+}
+
+.wbc-add-money-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.wbc-add-money-btn:active {
+  transform: translateY(0);
+}
+
 /* ── Payment Method Section ── */
 .pay-method-section {}
 
@@ -298,15 +328,18 @@
   color: #16a34a !important;
   font-weight: 700 !important;
 }
+
 .osc-discount-row span:last-child {
   color: #16a34a !important;
 }
+
 .osc-net-row {
   font-weight: 600;
   border-top: 1px dashed #d1d5db;
   padding-top: 6px;
   margin-top: 2px;
 }
+
 .osc-net-row span:last-child {
   font-weight: 700;
   color: #1e293b;

@@ -234,6 +234,7 @@ export default function PaymentSuccess() {
                   </div>
                 </div>
 
+                <p className="order-date">GSTIN: 36AAVFN1793L1ZE</p>
                 <p className="order-date">Date: {createdAt}</p>
 
                 <hr className="separator" />

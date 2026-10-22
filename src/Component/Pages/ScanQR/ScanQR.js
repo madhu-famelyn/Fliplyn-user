@@ -168,6 +168,7 @@ export default function QRScannerReceipt() {
                 Token No.: <strong>{orderDetails.token_number}</strong>
               </p>
               <p>post-paid</p>
+              <p className="view-date print-date">GSTIN: 36AAVFN1793L1ZE</p>
 
               <p className="view-date print-date">
                 Date:{" "}

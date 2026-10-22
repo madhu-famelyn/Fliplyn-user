@@ -9,12 +9,25 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import axios from "axios";
 
+const isLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname.startsWith("192.168.") ||
+  window.location.hostname.startsWith("10.") ||
+  window.location.hostname.startsWith("172.");
+
+const API_BASE = isLocal
+  ? `http://${window.location.hostname}:8000`
+  : "https://admin-aged-field-2794.fly.dev";
+
 export default function Transactions() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const userId = user?.id;
 
+  const [activeTab, setActiveTab] = useState("orders"); // "orders" | "wallet"
   const [orders, setOrders] = useState([]);
+  const [walletLoads, setWalletLoads] = useState([]);
   const [loading, setLoading] = useState(true);
   const receiptRef = useRef(null);
   const [selectedOrder, setSelectedOrder] = useState(null);
@@ -22,16 +35,35 @@ export default function Transactions() {
   useEffect(() => {
     if (!userId) return;
 
-    getOrderDetailsByUserId(userId)
-      .then((data) => {
-        setOrders(data || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching orders:", err);
-        setLoading(false);
+    setLoading(true);
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+    Promise.all([
+      getOrderDetailsByUserId(userId).catch(() => []),
+      axios
+        .get(`${API_BASE}/wallets/${userId}/history?transaction_type=CREDIT`, { headers })
+        .then((r) => r.data)
+        .catch(() => []),
+    ]).then(([ordersData, walletData]) => {
+      setOrders(ordersData || []);
+
+      // Filter exclusively for wallet loads (credits only, excluding order payments)
+      const filteredLoads = (walletData || []).filter((item) => {
+        const isCredit =
+          (item.transaction_type || "").toUpperCase() === "CREDIT" ||
+          item.source === "SELF_LOAD" ||
+          item.amount > 0;
+        const isOrder =
+          item.source === "ORDER_PAYMENT" ||
+          (item.description && item.description.toLowerCase().startsWith("order"));
+        const isSuccess = (item.status || "SUCCESS").toUpperCase() === "SUCCESS";
+        return isCredit && !isOrder && isSuccess;
       });
-  }, [userId]);
+
+      setWalletLoads(filteredLoads);
+      setLoading(false);
+    });
+  }, [userId, token]);
 
   /* =======================
      PAYMENT HELPERS
@@ -107,85 +139,184 @@ export default function Transactions() {
       <Header />
 
       <div className="txn-wrapper">
-        {loading ? (
-          <p className="txn-loading">Loading transactions...</p>
-        ) : !orders.length ? (
-          <p className="txn-empty">No transactions found.</p>
-        ) : (
-          <div className="txn-container">
+        <div className="txn-container">
+          <div className="txn-header-row">
             <h2 className="txn-title">Transaction History</h2>
 
-            <div className="txn-table">
-              <div className="txn-header">
-                <span>Date</span>
-                <span>Token</span>
-                <span>Amount</span>
-                <span>Payment Method</span>
-                <span>Status</span>
-                <span>Download</span>
-                <span>View Token</span>
-              </div>
-
-              {orders.map((order) => {
-                const success = isPaymentSuccessful(order);
-
-                return (
-                  <div key={order.id} className="txn-row">
-                    <span>
-                      {new Date(order.created_datetime).toLocaleDateString(
-                        "en-GB",
-                        { day: "2-digit", month: "short", year: "numeric" }
-                      )}
-                    </span>
-
-                    <span>{order.token_number}</span>
-                    <span>₹{order.total_amount.toFixed(2)}</span>
-                    <span>{getPaymentMethod(order)}</span>
-
-                    <span
-                      className={`txn-status ${success ? "success" : "failed"
-                        }`}
-                    >
-                      {success ? "Success" : "Failed"}
-                    </span>
-
-                    {/* DOWNLOAD */}
-                    <span>
-                      {canDownload(order) ? (
-                        <button
-                          className="txn-download-button"
-                          onClick={() => fetchAndDownload(order.id)}
-                        >
-                          Download
-                        </button>
-                      ) : (
-                        <span className="txn-no-download">—</span>
-                      )}
-                    </span>
-
-                    {/* VIEW TOKEN / EXPIRED */}
-                    <span className="txn-qr">
-                      {canViewToken(order) ? (
-                        <button
-                          className="txn-view-token-button"
-                          onClick={() =>
-                            navigate("/success", { state: { order } })
-                          }
-                        >
-                          View Token
-                        </button>
-                      ) : !success ? (
-                        <span className="token-failed-badge">Payment Failed</span>
-                      ) : (
-                        <span className="token-expired-badge">Token Expired</span>
-                      )}
-                    </span>
-                  </div>
-                );
-              })}
+            {/* TAB SELECTOR */}
+            <div className="txn-tabs">
+              <button
+                className={`txn-tab-btn ${activeTab === "orders" ? "active" : ""}`}
+                onClick={() => setActiveTab("orders")}
+              >
+                Food Orders ({orders.length})
+              </button>
+              <button
+                className={`txn-tab-btn ${activeTab === "wallet" ? "active" : ""}`}
+                onClick={() => setActiveTab("wallet")}
+              >
+                Wallet Loads ({walletLoads.length})
+              </button>
             </div>
           </div>
-        )}
+
+          {loading ? (
+            <p className="txn-loading">Loading transactions...</p>
+          ) : activeTab === "orders" ? (
+            !orders.length ? (
+              <p className="txn-empty">No food orders found.</p>
+            ) : (
+              <div className="txn-table">
+                <div className="txn-header">
+                  <span>Date</span>
+                  <span>Token</span>
+                  <span>Amount</span>
+                  <span>Payment Method</span>
+                  <span>Status</span>
+                  <span>Download</span>
+                  <span>View Token</span>
+                </div>
+
+                {orders.map((order) => {
+                  const success = isPaymentSuccessful(order);
+
+                  return (
+                    <div key={order.id} className="txn-row">
+                      <span>
+                        {new Date(order.created_datetime).toLocaleDateString(
+                          "en-GB",
+                          { day: "2-digit", month: "short", year: "numeric" }
+                        )}
+                      </span>
+
+                      <span>{order.token_number}</span>
+                      <span>₹{order.total_amount.toFixed(2)}</span>
+                      <span>{getPaymentMethod(order)}</span>
+
+                      <span
+                        className={`txn-status ${
+                          success ? "success" : "failed"
+                        }`}
+                      >
+                        {success ? "Success" : "Failed"}
+                      </span>
+
+                      {/* DOWNLOAD */}
+                      <span>
+                        {canDownload(order) ? (
+                          <button
+                            className="txn-download-button"
+                            onClick={() => fetchAndDownload(order.id)}
+                          >
+                            Download
+                          </button>
+                        ) : (
+                          <span className="txn-no-download">—</span>
+                        )}
+                      </span>
+
+                      {/* VIEW TOKEN / EXPIRED */}
+                      <span className="txn-qr">
+                        {canViewToken(order) ? (
+                          <button
+                            className="txn-view-token-button"
+                            onClick={() =>
+                              navigate("/success", { state: { order } })
+                            }
+                          >
+                            View Token
+                          </button>
+                        ) : !success ? (
+                          <span className="token-failed-badge">
+                            Payment Failed
+                          </span>
+                        ) : (
+                          <span className="token-expired-badge">
+                            Token Expired
+                          </span>
+                        )}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          ) : (
+            /* WALLET LOADS TAB */
+            !walletLoads.length ? (
+              <div style={{ textAlign: "center", padding: "40px 10px" }}>
+                <p className="txn-empty" style={{ margin: "0 0 16px" }}>No wallet loads found.</p>
+                <button
+                  style={{
+                    background: "linear-gradient(135deg, #f97316, #ea580c)",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "12px",
+                    padding: "10px 22px",
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                  onClick={() => navigate("/wallet/load")}
+                >
+                  + Add Money to Wallet
+                </button>
+              </div>
+            ) : (
+              <div className="txn-table txn-wallet-table">
+                <div className="txn-header txn-wallet-header">
+                  <span>Date & Time</span>
+                  <span>Description</span>
+                  <span>Amount Loaded</span>
+                  <span>Payment Method</span>
+                  <span>Status</span>
+                </div>
+
+                {walletLoads.map((item, index) => {
+                  const amt = Math.abs(item.amount || item.raw_amount || 0);
+                  const isSuccess = (item.status || "SUCCESS").toUpperCase() === "SUCCESS";
+
+                  return (
+                    <div key={item.id || index} className="txn-row txn-wallet-row">
+                      <span>
+                        {new Date(item.date).toLocaleString("en-GB", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+
+                      <span className="txn-desc-cell">
+                        <strong>{item.description || "Wallet Top-Up via PhonePe"}</strong>
+                      </span>
+
+                      <span
+                        style={{
+                          fontWeight: "700",
+                          color: "#16a34a",
+                        }}
+                      >
+                        + ₹{amt.toFixed(2)}
+                      </span>
+
+                      <span>{item.payment_method || "PhonePe / UPI"}</span>
+
+                      <span
+                        className={`txn-status ${
+                          isSuccess ? "success" : "failed"
+                        }`}
+                      >
+                        {isSuccess ? "Success" : item.status || "Failed"}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            )
+          )}
+        </div>
       </div>
 
       {/* HIDDEN RECEIPT */}
@@ -199,6 +330,8 @@ export default function Transactions() {
             <p>
               Token No: <strong>{selectedOrder.token_number}</strong>
             </p>
+
+            <p>GSTIN: 36AAVFN1793L1ZE</p>
 
             <p>
               Date:{" "}

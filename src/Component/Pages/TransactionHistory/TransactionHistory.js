@@ -7,30 +7,44 @@ import Footer from '../Footer/Footer';
 import walletImg from '../../../assets/Images/wallet image.png';
 import noTxnImg from '../../../assets/Images/no transactions images.png';
 
-axios.defaults.baseURL = 'https://admin-aged-field-2794.fly.dev';
+const isLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1" ||
+  window.location.hostname.startsWith("192.168.") ||
+  window.location.hostname.startsWith("10.") ||
+  window.location.hostname.startsWith("172.");
+
+const API_BASE = isLocal
+  ? `http://${window.location.hostname}:8000`
+  : "https://admin-aged-field-2794.fly.dev";
 
 export default function TransactionHistory() {
-  const { user } = useAuth();
+  const { user, token } = useAuth();
   const [walletBalance, setWalletBalance] = useState(0);
   const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user?.id) return;
 
     async function fetchWalletData() {
       try {
-        const walletRes = await axios.get(`/wallets/${user.id}`);
-        const historyRes = await axios.get(`/wallets/${user.id}/history`);
+        setLoading(true);
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const walletRes = await axios.get(`${API_BASE}/wallets/${user.id}`, { headers });
+        const historyRes = await axios.get(`${API_BASE}/wallets/${user.id}/history`, { headers });
 
-        setWalletBalance(walletRes.data.balance_amount || 0);
+        setWalletBalance(walletRes.data?.balance_amount || 0);
         setHistory(historyRes.data || []);
       } catch (error) {
         console.error('Error fetching wallet data', error);
+      } finally {
+        setLoading(false);
       }
     }
 
     fetchWalletData();
-  }, [user]);
+  }, [user, token]);
 
   return (
     <>
@@ -52,7 +66,9 @@ export default function TransactionHistory() {
         {/* TRANSACTION HISTORY */}
         <h3 className="txn-title">Transaction History</h3>
 
-        {history.length === 0 ? (
+        {loading ? (
+          <p className="txn-loading" style={{ textAlign: "center", color: "#64748b", margin: "30px 0" }}>Loading transactions...</p>
+        ) : history.length === 0 ? (
           <div className="empty-txn">
             <img src={noTxnImg} alt="No Transactions" />
             <p>No transactions yet.</p>
@@ -61,21 +77,34 @@ export default function TransactionHistory() {
           <ul className="transaction-list">
             {history.map((entry, index) => {
               const isCredit = entry.amount > 0;
-              const amount = Math.abs(entry.amount);
+              const amount = Math.abs(entry.amount || entry.raw_amount || 0);
+              const title =
+                entry.description ||
+                (isCredit
+                  ? entry.source === "SELF_LOAD"
+                    ? "Wallet Top-up via PhonePe"
+                    : "Money Added"
+                  : "Order Payment");
 
               return (
-                <li key={index} className="transaction-item">
+                <li key={entry.id || index} className="transaction-item">
                   <div>
-                    <p className="txn-text">
-                      {isCredit ? 'Money Added' : 'Order Payment'}
+                    <p className="txn-text" style={{ fontWeight: 600, color: "#1e293b" }}>
+                      {title}
                     </p>
-                    <span className="txn-date">
-                      {new Date(entry.date).toLocaleString('en-GB')}
+                    <span className="txn-date" style={{ fontSize: "12px", color: "#64748b" }}>
+                      {new Date(entry.date).toLocaleString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
                     </span>
                   </div>
 
                   <div className={`txn-amount ${isCredit ? 'credit' : 'debit'}`}>
-                    {isCredit ? `+ ₹${amount}` : `- ₹${amount}`}
+                    {isCredit ? `+ ₹${amount.toFixed(2)}` : `- ₹${amount.toFixed(2)}`}
                   </div>
                 </li>
               );
