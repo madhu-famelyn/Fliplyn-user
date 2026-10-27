@@ -108,10 +108,7 @@ export default function Cart() {
   );
 
   const total = subtotal + totalGST;
-  const isKammani = cartItems.length > 0 &&
-    cartItems[0].stall_name?.toLowerCase().includes("kammani");
-  const kammaniDiscount = isKammani && subtotal >= 399 ? 100 : 0;
-  const finalTotal = total - kammaniDiscount;
+  const finalTotal = total;
   const cgst = totalGST / 2;
   const sgst = totalGST / 2;
 
@@ -184,36 +181,12 @@ export default function Cart() {
               </div>
             </div>
 
-            {/* Kammani promo banner */}
-            {isKammani && subtotal < 399 && (
-              <div className="kammani-promo-banner">
-                🎉 Add ₹{(399 - subtotal).toFixed(2)} more to get ₹100 off!
-              </div>
-            )}
-            {isKammani && kammaniDiscount > 0 && (
-              <div className="kammani-promo-banner applied">
-                🎉 ₹100 Kammani discount applied!
-              </div>
-            )}
-
             {/* Summary section */}
             <div className="cart-summary">
               <p>
                 <span>Subtotal</span>
                 <span>₹{subtotal.toFixed(2)}</span>
               </p>
-              {kammaniDiscount > 0 && (
-                <p className="discount-row">
-                  <span>🎉 Discount (Kammani)</span>
-                  <span>- ₹{kammaniDiscount.toFixed(2)}</span>
-                </p>
-              )}
-              {kammaniDiscount > 0 && (
-                <p className="net-amount-row">
-                  <span>Net Amount</span>
-                  <span>₹{(subtotal - kammaniDiscount).toFixed(2)}</span>
-                </p>
-              )}
               <p>
                 <span>CGST</span>
                 <span>₹{cgst.toFixed(2)}</span>

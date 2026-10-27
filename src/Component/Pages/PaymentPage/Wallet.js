@@ -260,18 +260,7 @@ export default function PaymentMethodPage() {
   const calculateCGST = () => calculateTotalGST() / 2;
   const calculateSGST = () => calculateTotalGST() / 2;
 
-  const isKammaniCart = () =>
-    cartItems.length > 0 &&
-    cartItems[0].stall_name?.toLowerCase().includes("kammani");
-
-  const calculateKammaniDiscount = () =>
-    isKammaniCart() && calculateSubtotal() >= 399 ? 100 : 0;
-
-  const calculateTotalAmount = () => {
-    const subtotal = calculateSubtotal();
-    const gst = calculateTotalGST();
-    return subtotal + gst - calculateKammaniDiscount();
-  };
+  const calculateTotalAmount = () => calculateSubtotal() + calculateTotalGST();
 
   const createInternalOrder = async (payload) => {
     const res = await axios.post(`${API_BASE}/orders/place`, payload, {
@@ -467,18 +456,6 @@ export default function PaymentMethodPage() {
                   <span>Subtotal</span>
                   <span>₹ {calculateSubtotal().toFixed(2)}</span>
                 </div>
-                {calculateKammaniDiscount() > 0 && (
-                  <div className="osc-row osc-discount-row">
-                    <span>🎉 Discount (Kammani)</span>
-                    <span>- ₹ {calculateKammaniDiscount().toFixed(2)}</span>
-                  </div>
-                )}
-                {calculateKammaniDiscount() > 0 && (
-                  <div className="osc-row osc-net-row">
-                    <span>Net Amount</span>
-                    <span>₹ {(calculateSubtotal() - calculateKammaniDiscount()).toFixed(2)}</span>
-                  </div>
-                )}
                 <div className="osc-row">
                   <span>CGST</span>
                   <span>₹ {calculateCGST().toFixed(2)}</span>
