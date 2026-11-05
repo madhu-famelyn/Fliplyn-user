@@ -5,6 +5,7 @@ import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext/ContextApi";
+import tokenBanner from "../../../assets/Images/token-banner.png";
 
 // Skeleton loader card
 function SkeletonCard() {
@@ -208,6 +209,12 @@ export default function Stall() {
           </div>
         )}
       </div>
+
+      <img
+        src={tokenBanner}
+        alt="Token not generated? Simply show your payment screen at the counter to collect your food."
+        className="floating-token-banner"
+      />
 
       <Footer />
     </>

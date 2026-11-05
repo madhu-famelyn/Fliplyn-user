@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 32px 20px 120px 20px;
+  padding: 32px 20px 220px 20px;
   font-family: "Outfit", "Inter", sans-serif;
   box-sizing: border-box;
   position: relative;
@@ -369,6 +369,21 @@
   100% { background-position: -200% 0; }
 }
 
+/* =================== Floating Token Banner =================== */
+.floating-token-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 80px; /* sits just above the 68px fixed footer */
+  transform: translateX(-50%);
+  width: calc(100% - 28px);
+  max-width: 560px;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  z-index: 900;
+  pointer-events: none;
+}
+
 /* =================== Back Button =================== */
 .back-btn {
   display: none;
@@ -385,7 +400,7 @@
 
 @media (max-width: 600px) {
   .stalls-page-container {
-    padding: 24px 14px 110px;
+    padding: 24px 14px 190px;
   }
 
   .stalls-grid,
