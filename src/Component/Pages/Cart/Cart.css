@@ -206,7 +206,7 @@
   color: #ea580c;
   border: 1.5px dashed #f97316;
   border-radius: 14px;
-  padding: 10px 0;
+  padding: 8px 14px;
   width: 100%;
   font-size: 13px;
   font-weight: 700;
@@ -216,9 +216,9 @@
   letter-spacing: 0.04em;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
+  justify-content: space-between;
   transition: all 0.2s ease;
+  box-sizing: border-box;
 }
 
 .add-more-stall-btn:hover {
@@ -229,6 +229,50 @@
 
 .add-more-stall-btn:active {
   transform: scale(0.98);
+}
+
+.stall-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stall-avatar-stack {
+  display: flex;
+  align-items: center;
+}
+
+.stall-btn-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+  margin-left: -7px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  background: #ffffff;
+}
+
+.stall-btn-avatar:first-child {
+  margin-left: 0;
+}
+
+.stall-btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #ffedd5;
+  color: #ea580c;
+}
+
+.stall-btn-arrow {
+  font-size: 20px;
+  color: #ea580c;
+  line-height: 1;
+  font-weight: 800;
 }
 
 /* =================== SUMMARY SECTION =================== */

@@ -382,12 +382,18 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
   z-index: 900;
   pointer-events: none;
+  transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* When items are in cart, banner shifts cleanly up above the cart button */
+.floating-token-banner.banner-shifted-up {
+  bottom: 146px;
 }
 
 /* =================== Floating Cart Button (Bottom Middle) =================== */
 .floating-cart-btn {
   position: fixed !important;
-  bottom: 84px !important; /* Floats perfectly above 68px bottom footer */
+  bottom: 84px !important; /* Floats right above the 68px bottom footer */
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 99999 !important;

@@ -4,6 +4,7 @@ import { useAuth } from "../../AuthContext/ContextApi";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Footer from "../Footer/Footer";
+import { IoStorefrontOutline } from "react-icons/io5";
 import "./Cart.css";
 
 const API_BASE_URL = "https://admin-aged-field-2794.fly.dev";
@@ -12,7 +13,29 @@ const S3_BASE_URL = "https://fliplyn-assets.s3.ap-south-1.amazonaws.com/";
 export default function Cart() {
   const { user, token } = useAuth();
   const [cartItems, setCartItems] = useState([]);
+  const [otherStallImages, setOtherStallImages] = useState([]);
   const navigate = useNavigate();
+
+  // Find preview images of other stalls
+  useEffect(() => {
+    try {
+      const currentStallIds = new Set(cartItems.map((i) => String(i.stall_id)));
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("cached_stalls_")) {
+          const stalls = JSON.parse(localStorage.getItem(key)) || [];
+          const otherImages = stalls
+            .filter((s) => !currentStallIds.has(String(s.id)) && s.image_url)
+            .map((s) => s.image_url)
+            .slice(0, 3);
+          if (otherImages.length > 0) {
+            setOtherStallImages(otherImages);
+            break;
+          }
+        }
+      }
+    } catch {}
+  }, [cartItems]);
 
   // Load from localStorage and backfill stall_name if missing
   useEffect(() => {
@@ -182,7 +205,26 @@ export default function Cart() {
                   className="add-more-stall-btn"
                   onClick={() => navigate("/stalls")}
                 >
-                  + ADD FROM ANOTHER STALL
+                  <div className="stall-btn-left">
+                    {otherStallImages.length > 0 ? (
+                      <div className="stall-avatar-stack">
+                        {otherStallImages.map((img, i) => (
+                          <img
+                            key={i}
+                            src={img}
+                            alt=""
+                            className="stall-btn-avatar"
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="stall-btn-icon">
+                        <IoStorefrontOutline size={16} />
+                      </span>
+                    )}
+                    <span>+ ADD FROM ANOTHER STALL</span>
+                  </div>
+                  <span className="stall-btn-arrow">›</span>
                 </button>
               </div>
             </div>

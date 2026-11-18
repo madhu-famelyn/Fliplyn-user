@@ -240,7 +240,9 @@ export default function Stall() {
       <img
         src={tokenBanner}
         alt="Token not generated? Simply show your payment screen at the counter to collect your food."
-        className="floating-token-banner"
+        className={`floating-token-banner ${
+          cartCount > 0 ? "banner-shifted-up" : ""
+        }`}
       />
 
       {/* 🚀 FLOATING CART BUTTON (BOTTOM MIDDLE) */}
