@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import CoinEarnedPopup from "../MyCoins/CoinEarnedPopup";
 import "./Success.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { BsCheck } from "react-icons/bs";
@@ -30,20 +29,6 @@ export default function PaymentSuccess() {
     location.state?.order?.id;
 
   const view = "receipt";
-  // ── Coin Earned Popup (mock: replace with real API data later) ──
-  const [showCoinPopup, setShowCoinPopup] = useState(false);
-  const coinsEarned = orderDetails
-    ? Math.floor((orderDetails.total_amount || 0) / 100) * 2
-    : 0;
-  const mockNewBalance = 1240 + coinsEarned;
-
-  useEffect(() => {
-    if (orderDetails?.payment_status === "SUCCESS" && coinsEarned > 0) {
-      const t = setTimeout(() => setShowCoinPopup(true), 1200);
-      return () => clearTimeout(t);
-    }
-  }, [orderDetails, coinsEarned]);
-
   const receiptRef = useRef(null);
 
   // Redirect to stalls if page accessed directly without any order ID or state
@@ -588,14 +573,6 @@ export default function PaymentSuccess() {
             Back to Stalls
           </button>
         </>
-
-      {showCoinPopup && (
-        <CoinEarnedPopup
-          coinsEarned={coinsEarned}
-          newBalance={mockNewBalance}
-          onClose={() => setShowCoinPopup(false)}
-        />
-      )}
     </div>
   );
 }
