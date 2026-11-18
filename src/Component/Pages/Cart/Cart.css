@@ -201,6 +201,36 @@
   border-color: #f84d25;
 }
 
+.add-more-stall-btn {
+  background: #fff8f5;
+  color: #ea580c;
+  border: 1.5px dashed #f97316;
+  border-radius: 14px;
+  padding: 10px 0;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: "Outfit", sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.add-more-stall-btn:hover {
+  background: #ffedd5;
+  border-color: #ea580c;
+  transform: translateY(-1px);
+}
+
+.add-more-stall-btn:active {
+  transform: scale(0.98);
+}
+
 /* =================== SUMMARY SECTION =================== */
 .cart-summary {
   background: #ffffff;

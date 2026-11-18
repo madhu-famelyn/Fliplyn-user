@@ -94,15 +94,6 @@ function MenuPage() {
       return;
     }
 
-    const existingStallId = cart[0].stall_id;
-
-    // ❌ Different stall → show popup
-    if (existingStallId !== cleanItem.stall_id) {
-      setPendingItem(item);
-      setShowAlert(true);
-      return;
-    }
-
     const exists = cart.find((i) => i.id === item.id);
 
     if (!exists) {

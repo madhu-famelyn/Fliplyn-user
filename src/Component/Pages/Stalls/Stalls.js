@@ -5,6 +5,7 @@ import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../AuthContext/ContextApi";
+import { FiShoppingCart } from "react-icons/fi";
 import tokenBanner from "../../../assets/Images/token-banner.png";
 
 // Skeleton loader card
@@ -39,6 +40,32 @@ export default function Stall() {
   const [loading, setLoading] = useState(() => stalls.length === 0);
   const [, setWallet] = useState(null);
   const [search, setSearch] = useState("");
+  const [cartCount, setCartCount] = useState(0);
+
+  // Sync cart count
+  const loadLocalCartCount = () => {
+    try {
+      const storedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
+      const totalQuantity = storedCart.reduce(
+        (sum, item) => sum + (item.quantity || 1),
+        0
+      );
+      setCartCount(totalQuantity);
+    } catch {
+      setCartCount(0);
+    }
+  };
+
+  useEffect(() => {
+    loadLocalCartCount();
+    window.addEventListener("storage", loadLocalCartCount);
+    window.addEventListener("cart-updated", loadLocalCartCount);
+
+    return () => {
+      window.removeEventListener("storage", loadLocalCartCount);
+      window.removeEventListener("cart-updated", loadLocalCartCount);
+    };
+  }, []);
 
   // Keep buildingId synced
   useEffect(() => {
@@ -215,6 +242,17 @@ export default function Stall() {
         alt="Token not generated? Simply show your payment screen at the counter to collect your food."
         className="floating-token-banner"
       />
+
+      {/* 🚀 FLOATING CART BUTTON (BOTTOM MIDDLE) */}
+      {cartCount > 0 && (
+        <button
+          className="floating-cart-btn"
+          onClick={() => navigate("/cart")}
+        >
+          <FiShoppingCart color="#fff" size={20} />
+          <span>Cart ({cartCount})</span>
+        </button>
+      )}
 
       <Footer />
     </>

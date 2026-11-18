@@ -46,7 +46,11 @@ export default function Category() {
   const loadLocalCartCount = () => {
     try {
       const storedCart = JSON.parse(localStorage.getItem("cartItems")) || [];
-      setCartCount(storedCart.length);
+      const totalQuantity = storedCart.reduce(
+        (sum, item) => sum + (item.quantity || 1),
+        0
+      );
+      setCartCount(totalQuantity);
     } catch {
       setCartCount(0);
     }
@@ -147,14 +151,16 @@ export default function Category() {
         </div>
       </div>
 
-      {/* 🚀 FLOATING CART BUTTON (PINNED TO BOTTOM RIGHT) */}
-      <button
-        className={`floating-cart-btn ${cartCount > 0 ? "has-items" : ""}`}
-        onClick={() => navigate("/cart")}
-      >
-        <FiShoppingCart color="#fff" size={20} />
-        <span>Cart{cartCount > 0 ? ` (${cartCount})` : ""}</span>
-      </button>
+      {/* 🚀 FLOATING CART BUTTON (BOTTOM MIDDLE) */}
+      {cartCount > 0 && (
+        <button
+          className="floating-cart-btn"
+          onClick={() => navigate("/cart")}
+        >
+          <FiShoppingCart color="#fff" size={20} />
+          <span>Cart ({cartCount})</span>
+        </button>
+      )}
 
       <Footer/>
     </div>

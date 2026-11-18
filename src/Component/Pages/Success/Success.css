@@ -532,3 +532,220 @@ body {
     padding: 10px;
   }
 }
+
+/* Multi-Stall Sliding / Scrolling Tokens Carousel (iOS App Switcher 3D Deck Style) */
+.tokens-carousel-container {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.swipe-hint-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff7ed;
+  border: 1.5px solid #fed7aa;
+  color: #c2410c;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 700;
+  margin: 0 auto 10px;
+  animation: pulseHint 2s infinite ease-in-out;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.08);
+}
+
+.swipe-hand-icon {
+  font-size: 13px;
+  animation: bounceHand 1.5s infinite ease-in-out;
+}
+
+@keyframes bounceHand {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(3px); }
+}
+
+@keyframes pulseHint {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes deckIntroNudge {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-35px); }
+  55% { transform: translateX(10px); }
+  80% { transform: translateX(-8px); }
+  100% { transform: translateX(0); }
+}
+
+.deck-nudge-anim {
+  animation: deckIntroNudge 1.1s cubic-bezier(0.25, 1, 0.5, 1) 0.4s;
+}
+
+.token-carousel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 340px;
+  margin-bottom: 8px;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.multi-token-badge {
+  background: #fff3eb;
+  color: #eb4d26;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid #ffd6c4;
+}
+
+.carousel-nav-arrows {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.carousel-arrow-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.carousel-arrow-btn:active {
+  transform: scale(0.92);
+}
+
+.carousel-arrow-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.carousel-counter-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+/* iOS App Switcher / 3D Deck Style Scroll Track */
+.tokens-scroll-track {
+  display: flex;
+  width: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  gap: 16px;
+  padding: 8px calc(50% - 150px) 18px; /* Centers active 300px card and allows neighbor cards to peek */
+  box-sizing: border-box;
+}
+
+@media (max-width: 360px) {
+  .tokens-scroll-track {
+    padding: 8px 24px 16px;
+  }
+}
+
+.tokens-scroll-track::-webkit-scrollbar {
+  display: none;
+}
+
+.token-card-slide {
+  flex: 0 0 300px;
+  max-width: 85vw;
+  scroll-snap-align: center;
+  display: flex;
+  justify-content: center;
+  box-sizing: border-box;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.35s ease, filter 0.35s ease;
+  cursor: pointer;
+}
+
+.token-card-slide.inactive-slide {
+  transform: scale(0.91);
+  opacity: 0.65;
+  filter: blur(0.2px);
+}
+
+.token-card-slide.active-slide {
+  transform: scale(1);
+  opacity: 1;
+  filter: none;
+}
+
+.token-card-slide.active-slide .receipt-card {
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(235, 77, 38, 0.08);
+  border-color: #cbd5e1;
+}
+
+.token-card-slide.inactive-slide .receipt-card {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.03);
+}
+
+.slide-badge-top {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.02em;
+}
+
+.carousel-dots-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0 14px;
+  flex-wrap: wrap;
+  max-width: 340px;
+}
+
+.carousel-dot-pill {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.carousel-dot-pill:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.carousel-dot-pill.active {
+  background: #eb4d26;
+  color: #ffffff;
+  border-color: #eb4d26;
+  box-shadow: 0 3px 10px rgba(235, 77, 38, 0.3);
+}

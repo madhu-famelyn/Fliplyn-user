@@ -44,17 +44,6 @@ export default function ItemList({ items, itemsLoaded, stallName }) {
       return;
     }
 
-    // ⛔ STALL CONFLICT CHECK
-    if (cartItems.length > 0) {
-      const existingStall = cartItems[0].stall_id;
-      if (existingStall !== item.stall_id) {
-        setPopupMessage("⚠ You can add items only from one stall at a time.");
-        setShowPopup(true);
-        setTimeout(() => setShowPopup(false), 2000);
-        return;
-      }
-    }
-
     const index = cartItems.findIndex((c) => c.id === item.id);
     let updatedCart = [...cartItems];
 

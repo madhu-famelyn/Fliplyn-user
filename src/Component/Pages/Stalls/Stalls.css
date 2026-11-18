@@ -384,6 +384,54 @@
   pointer-events: none;
 }
 
+/* =================== Floating Cart Button (Bottom Middle) =================== */
+.floating-cart-btn {
+  position: fixed !important;
+  bottom: 84px !important; /* Floats perfectly above 68px bottom footer */
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 99999 !important;
+  background: linear-gradient(135deg, #f84d25 0%, #ff833b 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 0 24px !important;
+  height: 48px !important;
+  font-size: 15px !important;
+  border-radius: 30px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  cursor: pointer !important;
+  font-weight: 700 !important;
+  font-family: "Outfit", sans-serif !important;
+  box-shadow: 0 8px 24px rgba(248, 77, 37, 0.45) !important;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
+  touch-action: manipulation;
+  white-space: nowrap;
+  animation: slideUpFloat 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.floating-cart-btn:hover {
+  transform: translateX(-50%) translateY(-3px) scale(1.04) !important;
+  box-shadow: 0 12px 30px rgba(248, 77, 37, 0.6) !important;
+}
+
+.floating-cart-btn:active {
+  transform: translateX(-50%) scale(0.95) !important;
+}
+
+@keyframes slideUpFloat {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(24px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
 /* =================== Back Button =================== */
 .back-btn {
   display: none;

@@ -178,6 +178,12 @@ export default function Cart() {
                 <button className="add-more-btn" onClick={() => navigate(-1)}>
                   ADD MORE ITEMS
                 </button>
+                <button
+                  className="add-more-stall-btn"
+                  onClick={() => navigate("/stalls")}
+                >
+                  + ADD FROM ANOTHER STALL
+                </button>
               </div>
             </div>
 
